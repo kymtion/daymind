@@ -29,30 +29,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         return true
     }
     
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        if let token = fcmToken {
-            print("Firebase registration token: \(token)")
-        } else {
-            print("Firebase registration token is nil")
-        }
-    }
-    
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        Messaging.messaging().apnsToken = deviceToken
-        fetchFCMToken()
-    }
-    
-    func fetchFCMToken() {
-           Messaging.messaging().token { token, error in
-               if let error = error {
-                   print("Error fetching FCM registration token: \(error)")
-               } else if let token = token {
-                   print("FCM registration token: \(token)")
-                   // 여기서 필요한 작업 수행
-               }
-           }
-       }
-    
+
+
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         if (AuthApi.isKakaoTalkLoginUrl(url)) {
             return AuthController.handleOpenUrl(url: url)
@@ -86,4 +64,32 @@ struct dayMindApp: App {
         }
     }
 }
-//깃헙 잘 올라가나?? 테스트용이야!!
+
+
+
+
+// --------------------------------------------푸시 알람 관련 코드 시작 ---------------------------------------------------
+//    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+//        if let token = fcmToken {
+//            print("Firebase registration token: \(token)")
+//        } else {
+//            print("Firebase registration token is nil")
+//        }
+//    }
+//
+//    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+//        Messaging.messaging().apnsToken = deviceToken
+//        fetchFCMToken()
+//    }
+//
+//    func fetchFCMToken() {
+//           Messaging.messaging().token { token, error in
+//               if let error = error {
+//                   print("Error fetching FCM registration token: \(error)")
+//               } else if let token = token {
+//                   print("FCM registration token: \(token)")
+//                   // 여기서 필요한 작업 수행
+//               }
+//           }
+//       }
+//    // --------------------------------------------푸시 알람 관련 코드 끝 ---------------------------------------------------
