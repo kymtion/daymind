@@ -86,3 +86,4 @@ struct dayMindApp: App {
         }
     }
 }
+//깃헙 잘 올라가나?? 테스트용이야!!
