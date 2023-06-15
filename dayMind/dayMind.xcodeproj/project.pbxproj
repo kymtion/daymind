@@ -23,6 +23,7 @@
 		A863AECC2A0D300400407B6F /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A863AECB2A0D300400407B6F /* DetailView.swift */; };
 		A863AED32A0F601200407B6F /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A863AED22A0F601200407B6F /* LoginViewModel.swift */; };
 		A863AED52A0F60AC00407B6F /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A863AED42A0F60AC00407B6F /* LoginView.swift */; };
+		A872019E2A384E6D0022099B /* TimeSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A872019D2A384E6D0022099B /* TimeSettingView.swift */; };
 		A879EBA72A0F812100791AAC /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A879EBA62A0F812100791AAC /* SignUpView.swift */; };
 		A880DAD02A37250500E3FD94 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = A880DACF2A37250500E3FD94 /* Kingfisher */; };
 		A8A2953D2A30A0FB00F73B9D /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A8A2953C2A30A0FB00F73B9D /* FirebaseAnalyticsSwift */; };
@@ -48,6 +49,7 @@
 		A8F2CFA92A0A2DB50030E175 /* TapBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F2CFA82A0A2DB50030E175 /* TapBarView.swift */; };
 		A8F2CFAB2A0A41790030E175 /* UserInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F2CFAA2A0A41790030E175 /* UserInfoView.swift */; };
 		A8F2CFAE2A0A680B0030E175 /* MissionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F2CFAD2A0A680B0030E175 /* MissionRow.swift */; };
+		A8FD9F5C2A3B677900905352 /* AllowListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FD9F5B2A3B677900905352 /* AllowListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +81,7 @@
 		A863AECB2A0D300400407B6F /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		A863AED22A0F601200407B6F /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		A863AED42A0F60AC00407B6F /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		A872019D2A384E6D0022099B /* TimeSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSettingView.swift; sourceTree = "<group>"; };
 		A879EBA62A0F812100791AAC /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		A88762992A15DFD2004376EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A890FBF42A1B9A5B00F44249 /* dayMindTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dayMindTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -98,6 +101,7 @@
 		A8F2CFA82A0A2DB50030E175 /* TapBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapBarView.swift; sourceTree = "<group>"; };
 		A8F2CFAA2A0A41790030E175 /* UserInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoView.swift; sourceTree = "<group>"; };
 		A8F2CFAD2A0A680B0030E175 /* MissionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionRow.swift; sourceTree = "<group>"; };
+		A8FD9F5B2A3B677900905352 /* AllowListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllowListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -217,10 +221,12 @@
 		A8F2CFB12A0A91C00030E175 /* Mission */ = {
 			isa = PBXGroup;
 			children = (
+				A8F2CFAD2A0A680B0030E175 /* MissionRow.swift */,
 				A863AEC92A0D27C000407B6F /* MissionViewModel.swift */,
 				A8F2CFA62A0A2AC70030E175 /* MissionListView.swift */,
 				A863AECB2A0D300400407B6F /* DetailView.swift */,
-				A8F2CFAD2A0A680B0030E175 /* MissionRow.swift */,
+				A872019D2A384E6D0022099B /* TimeSettingView.swift */,
+				A8FD9F5B2A3B677900905352 /* AllowListView.swift */,
 			);
 			path = Mission;
 			sourceTree = "<group>";
@@ -402,10 +408,12 @@
 				A8F2CFA92A0A2DB50030E175 /* TapBarView.swift in Sources */,
 				A8229A842A139A1A00881C31 /* PasswordResetView.swift in Sources */,
 				A863AECA2A0D27C000407B6F /* MissionViewModel.swift in Sources */,
+				A872019E2A384E6D0022099B /* TimeSettingView.swift in Sources */,
 				A8F2CFA52A08F20E0030E175 /* HomeCell.swift in Sources */,
 				A8F2CFA72A0A2AC70030E175 /* MissionListView.swift in Sources */,
 				A863AED52A0F60AC00407B6F /* LoginView.swift in Sources */,
 				A8229A822A13914400881C31 /* ChangePasswordView.swift in Sources */,
+				A8FD9F5C2A3B677900905352 /* AllowListView.swift in Sources */,
 				A863AECC2A0D300400407B6F /* DetailView.swift in Sources */,
 				A879EBA72A0F812100791AAC /* SignUpView.swift in Sources */,
 				A8F2CF792A08F1600030E175 /* dayMindApp.swift in Sources */,
