@@ -59,7 +59,7 @@ struct TimeSettingView: View {
                                 .stroke(Color.black, lineWidth: 1))
                     }
                     .sheet(isPresented: $isPopupPresented) {
-                        AllowListView()
+                        AllowListView(vm: vm)
                     }
                     .padding(.vertical)
                 }

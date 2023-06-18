@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A80607972A3F1AAC00946A5E /* ActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80607962A3F1AAC00946A5E /* ActionView.swift */; };
+		A80607992A3F1E8B00946A5E /* ActionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80607982A3F1E8B00946A5E /* ActionViewModel.swift */; };
+		A806079B2A3F212400946A5E /* TextInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A806079A2A3F212400946A5E /* TextInputView.swift */; };
 		A8229A822A13914400881C31 /* ChangePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8229A812A13914400881C31 /* ChangePasswordView.swift */; };
 		A8229A842A139A1A00881C31 /* PasswordResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8229A832A139A1A00881C31 /* PasswordResetView.swift */; };
 		A8229A862A13A8AE00881C31 /* DeleteAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8229A852A13A8AE00881C31 /* DeleteAccountView.swift */; };
@@ -70,6 +73,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A80607922A3C2F1C00946A5E /* dayMind.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = dayMind.entitlements; sourceTree = "<group>"; };
+		A80607962A3F1AAC00946A5E /* ActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionView.swift; sourceTree = "<group>"; };
+		A80607982A3F1E8B00946A5E /* ActionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionViewModel.swift; sourceTree = "<group>"; };
+		A806079A2A3F212400946A5E /* TextInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputView.swift; sourceTree = "<group>"; };
 		A8190B582A1B938A006EC7A8 /* dayMind.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dayMind.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8229A812A13914400881C31 /* ChangePasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordView.swift; sourceTree = "<group>"; };
 		A8229A832A139A1A00881C31 /* PasswordResetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordResetView.swift; sourceTree = "<group>"; };
@@ -144,6 +151,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A80607952A3F1A6500946A5E /* MissionAction */ = {
+			isa = PBXGroup;
+			children = (
+				A80607982A3F1E8B00946A5E /* ActionViewModel.swift */,
+				A80607962A3F1AAC00946A5E /* ActionView.swift */,
+			);
+			path = MissionAction;
+			sourceTree = "<group>";
+		};
 		A8CB7FF62A1B8F260030B0FB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -167,6 +183,7 @@
 		A8F2CF772A08F1600030E175 /* dayMind */ = {
 			isa = PBXGroup;
 			children = (
+				A80607922A3C2F1C00946A5E /* dayMind.entitlements */,
 				A88762992A15DFD2004376EF /* Info.plist */,
 				A8C0AEAE2A1BABEC00EE5C64 /* GoogleService-Info.plist */,
 				A8F2CF782A08F1600030E175 /* dayMindApp.swift */,
@@ -178,6 +195,7 @@
 				A8F2CFA82A0A2DB50030E175 /* TapBarView.swift */,
 				A8F2CFB22A0A91F10030E175 /* Home */,
 				A8F2CFB12A0A91C00030E175 /* Mission */,
+				A80607952A3F1A6500946A5E /* MissionAction */,
 				A8F2CFAC2A0A671F0030E175 /* Model */,
 				A8F2CF7C2A08F1610030E175 /* Assets.xcassets */,
 				A8F2CF7E2A08F1610030E175 /* Preview Content */,
@@ -227,6 +245,7 @@
 				A863AECB2A0D300400407B6F /* DetailView.swift */,
 				A872019D2A384E6D0022099B /* TimeSettingView.swift */,
 				A8FD9F5B2A3B677900905352 /* AllowListView.swift */,
+				A806079A2A3F212400946A5E /* TextInputView.swift */,
 			);
 			path = Mission;
 			sourceTree = "<group>";
@@ -413,14 +432,17 @@
 				A8F2CFA72A0A2AC70030E175 /* MissionListView.swift in Sources */,
 				A863AED52A0F60AC00407B6F /* LoginView.swift in Sources */,
 				A8229A822A13914400881C31 /* ChangePasswordView.swift in Sources */,
+				A80607992A3F1E8B00946A5E /* ActionViewModel.swift in Sources */,
 				A8FD9F5C2A3B677900905352 /* AllowListView.swift in Sources */,
 				A863AECC2A0D300400407B6F /* DetailView.swift in Sources */,
 				A879EBA72A0F812100791AAC /* SignUpView.swift in Sources */,
 				A8F2CF792A08F1600030E175 /* dayMindApp.swift in Sources */,
 				A8A7A6802A0FAF300058B407 /* UserProfileUpdateView.swift in Sources */,
+				A80607972A3F1AAC00946A5E /* ActionView.swift in Sources */,
 				A8F2CFAE2A0A680B0030E175 /* MissionRow.swift in Sources */,
 				A8229A8A2A14B3CC00881C31 /* UserInfoViewModel.swift in Sources */,
 				A8D61DDE2A1E6E2A00F30E5B /* SceneDelegate.swift in Sources */,
+				A806079B2A3F212400946A5E /* TextInputView.swift in Sources */,
 				A8229A862A13A8AE00881C31 /* DeleteAccountView.swift in Sources */,
 				A863AED32A0F601200407B6F /* LoginViewModel.swift in Sources */,
 				A8229A882A13A9B600881C31 /* AccountSetting.swift in Sources */,
@@ -580,6 +602,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = dayMind/dayMind.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"dayMind/Preview Content\"";
@@ -610,6 +633,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = dayMind/dayMind.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"dayMind/Preview Content\"";

@@ -70,19 +70,21 @@ struct DetailView: View {
 
                     
                     VStack(alignment: .leading, spacing: 30) {
-                        HStack(spacing: 20) {
+                        HStack(spacing: 10) {
                             Text("1")
                                 .font(.system(size: 30, weight: .bold))
                             Text(mission.confirmmethod1)
+                                .frame(width: UIScreen.main.bounds.width * 0.8)
                         }
-                        .frame(width: UIScreen.main.bounds.width * 0.8)
+                        
 
-                        HStack(spacing: 20) {
+                        HStack(spacing: 10) {
                             Text("2")
                                 .font(.system(size: 30, weight: .bold))
                             Text(mission.confirmmethod2)
+                                .frame(width: UIScreen.main.bounds.width * 0.8)
                         }
-                        .frame(width: UIScreen.main.bounds.width * 0.8)
+                        
 
                     }
                 }
@@ -155,6 +157,6 @@ struct DetailView: View {
 }
 struct DetailView_Previews: PreviewProvider {
     static var previews: some View {
-        DetailView(vm: MissionViewModel(), mission: missionData[0])
+        DetailView(vm: MissionViewModel(), mission: missionData[1])
     }
 }

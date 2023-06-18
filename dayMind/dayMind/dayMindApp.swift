@@ -6,6 +6,7 @@ import KakaoSDKCommon
 import KakaoSDKAuth
 import UIKit
 import FirebaseFunctions
+import FamilyControls
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
     
@@ -50,7 +51,7 @@ struct dayMindApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject var loginViewModel = LoginViewModel()
     @StateObject var userInfoViewModel = UserInfoViewModel()
-    
+    let center = AuthorizationCenter.shared
     
     var body: some Scene {
         WindowGroup {
@@ -58,6 +59,15 @@ struct dayMindApp: App {
                 TapBarView()
                     .environmentObject(loginViewModel)
                     .environmentObject(userInfoViewModel)
+                    .onAppear {
+                        Task {
+                            do {
+                                try await center.requestAuthorization(for: .individual)
+                            } catch {
+                                print("Failed to request authorization with error: \(error)")
+                            }
+                        }
+                    }
             } else {
                 LoginView().environmentObject(loginViewModel)
             }
