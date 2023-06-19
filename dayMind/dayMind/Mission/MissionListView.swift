@@ -15,24 +15,26 @@ struct MissionListView: View {
             ZStack {
                 Color(red: 247 / 255, green: 247 / 255, blue: 247 / 255)
                     .edgesIgnoringSafeArea(.all)
-
+                
                 ScrollView {
-                    LazyVGrid(columns: layout) {
-                        ForEach(missionData) { mission in
-                            NavigationLink {
-                                DetailView(vm: vm, mission: mission)
-                            } label: {
-                                MissionRow(mission: mission)
-                                
+                    VStack {
+                        Text("🎯 미션 리스트")
+                            .font(.system(size: 30))
+                        LazyVGrid(columns: layout) {
+                            ForEach(missionData) { mission in
+                                NavigationLink {
+                                    DetailView(vm: vm, mission: mission)
+                                } label: {
+                                    MissionRow(mission: mission)
+                                    
+                                }
                             }
                         }
                     }
+                    .padding([.top, .leading, .trailing], 15)
+                    
                 }
-                .padding([.top, .leading, .trailing], 15)
-                
             }
-            .navigationTitle("🎯 미션 리스트")
-       
             
         }
     }

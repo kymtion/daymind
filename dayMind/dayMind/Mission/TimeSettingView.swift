@@ -44,11 +44,11 @@ struct TimeSettingView: View {
                     Rectangle()
                         .fill(Color.gray.opacity(0.1))
                         .frame(height: 10)
-                    
+                    Spacer()
                     Button {
                         self.isPopupPresented = true
                     } label: {
-                        Text("현재 앱 허용 리스트: 업무용")
+                        Text("현재 앱 허용 리스트: \(vm.currentStore)")
                             .foregroundColor(Color.black)
                             .font(.system(size: 19))
                             .padding()
@@ -59,9 +59,22 @@ struct TimeSettingView: View {
                                 .stroke(Color.black, lineWidth: 1))
                     }
                     .sheet(isPresented: $isPopupPresented) {
-                        AllowListView(vm: vm)
+                        AllowListView(isPopupPresented: $isPopupPresented, vm: vm)
                     }
-                    .padding(.vertical)
+                    Spacer()
+                    Button {
+                        
+                    } label: {
+                        Text("미션 등록")
+                            .padding(10)
+                            .font(.system(size: 25, weight: .bold))
+                            .frame(width: UIScreen.main.bounds.width * 0.5)
+                            .background(Color(red: 242 / 255, green: 206 / 255, blue: 102 / 255))
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                    }
+                    
+                    
                 }
             }
         }
