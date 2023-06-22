@@ -6,11 +6,11 @@ struct AllowListView: View {
     @Binding var isPopupPresented: Bool
     @State var selection = FamilyActivitySelection()
     @State var isPresented = false
-    @State var savedStores: [ManagedSettingsStore.Name] = []
     @State var textInputPresented = false
     @State var selectedStore = ""
     @State var showingActionSheet = false
     @State var editingStoreName = false
+    @State var managedSettings: [ManagedSettingsStore.Name: FamilyActivitySelection] = [:]
     
     @ObservedObject var vm = MissionViewModel()
     
@@ -18,15 +18,15 @@ struct AllowListView: View {
         NavigationView {
             VStack {
                 List {
-                    ForEach(vm.savedStores, id: \.self) { storeName in
+                    ForEach(Array(vm.managedSettings.keys), id: \.self) { storeName in
                         Button(action: {
-                            selectedStore = storeName
+                            selectedStore = storeName.rawValue
                             showingActionSheet = true
                         }) {
                             HStack {
-                                Text(storeName)
+                                Text(storeName.rawValue)
                                 Spacer()
-                                if storeName == selectedStore {
+                                if storeName.rawValue == selectedStore {
                                     Image(systemName: "checkmark")
                                         .foregroundColor(.blue)
                                 }
@@ -38,7 +38,7 @@ struct AllowListView: View {
                             .destructive(Text("삭제"), action: {
                                 vm.deleteStore(storeName: selectedStore)
                                 if selectedStore == selectedStore {
-                                    selectedStore = vm.savedStores.first ?? ""
+                                    selectedStore = vm.managedSettings.keys.first?.rawValue ?? ""
                                 }
                                 showingActionSheet = false
                             }),
@@ -75,7 +75,7 @@ struct AllowListView: View {
                 .sheet(isPresented: $textInputPresented) {
                     TextInputView(textInputPresented: $textInputPresented) { storeName in
                         let store = ManagedSettingsStore.Name(rawValue: storeName)
-                        vm.addStore(store)
+                        vm.addStore(store.rawValue, selection: selection)
                     }
                 }
             }
@@ -87,6 +87,19 @@ struct AllowListView: View {
         }
     }
 }
+
+
+extension Dictionary {
+    func mapKeys<T>(_ transform: (Key) throws -> T) rethrows -> [T: Value] {
+        var dictionary: [T: Value] = [:]
+        for (key, value) in self {
+            dictionary[try transform(key)] = value
+        }
+        return dictionary
+    }
+}
+
+
 struct AllowListView_Previews: PreviewProvider {
     @State static var isPopupPresented = false
     static var previews: some View {

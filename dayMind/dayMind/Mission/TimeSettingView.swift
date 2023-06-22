@@ -1,5 +1,7 @@
 
 import SwiftUI
+import ManagedSettings
+
 
 struct TimeSettingView: View {
     
