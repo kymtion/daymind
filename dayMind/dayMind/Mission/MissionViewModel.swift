@@ -13,28 +13,32 @@ class MissionViewModel: ObservableObject {
     @Published var selectedTime2: Date = Date()
     @Published var managedSettings: [ManagedSettingsStore.Name: FamilyActivitySelection] = [:]
     
-   
+    
     
     private let storage = Storage.storage()
-
+    
     private let userDefaultsKey = "managedSettings"
     
     init() {
-            loadManagedSettings()
-        }
-  
+        loadManagedSettings()
+    }
+    
+    
+    
+    
+    
     
     func addStore(_ store: String, selection: FamilyActivitySelection) {
         let storeName = ManagedSettingsStore.Name(rawValue: store)
         self.managedSettings[storeName] = selection
         saveManagedSettings()
-            }
+    }
     
     func deleteStore(storeName: String) {
         let storeName = ManagedSettingsStore.Name(rawValue: storeName)
         self.managedSettings.removeValue(forKey: storeName)
         saveManagedSettings()
-            }
+    }
     
     func updateStoreName(oldName: String, newName: String) {
         let oldStoreName = ManagedSettingsStore.Name(rawValue: oldName)
@@ -44,8 +48,8 @@ class MissionViewModel: ObservableObject {
             self.managedSettings.removeValue(forKey: oldStoreName)
             self.managedSettings[newStoreName] = oldValue
             saveManagedSettings()
-                }
-            }
+        }
+    }
     
     func fetchImageURL(from path: String) {
         let storageRef = Storage.storage().reference()
@@ -64,10 +68,10 @@ class MissionViewModel: ObservableObject {
             }
         }
     }
-
-
-
-private func saveManagedSettings() {
+    
+    
+    
+    private func saveManagedSettings() {
         let encoder = JSONEncoder()
         let transformedDictionary = managedSettings.mapKeys { $0.rawValue }
         do {
@@ -77,7 +81,7 @@ private func saveManagedSettings() {
             print("Error encoding managedSettings: \(error)")
         }
     }
-
+    
     private func loadManagedSettings() {
         let decoder = JSONDecoder()
         if let savedData = UserDefaults.standard.data(forKey: userDefaultsKey) {
