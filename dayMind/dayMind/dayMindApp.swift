@@ -51,6 +51,7 @@ struct dayMindApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject var loginViewModel = LoginViewModel()
     @StateObject var userInfoViewModel = UserInfoViewModel()
+    @StateObject var missionViewModel = MissionViewModel()
     let center = AuthorizationCenter.shared
     
     var body: some Scene {
@@ -59,6 +60,7 @@ struct dayMindApp: App {
                 TapBarView()
                     .environmentObject(loginViewModel)
                     .environmentObject(userInfoViewModel)
+                    .environmentObject(missionViewModel)
                     .onAppear {
                         Task {
                             do {

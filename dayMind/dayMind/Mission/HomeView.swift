@@ -3,14 +3,13 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var userInfoViewModel: UserInfoViewModel
+    @EnvironmentObject var missionViewModel: MissionViewModel
     
     var body: some View {
-        
         NavigationView {
             ZStack {
                 Color(red: 247 / 255, green: 247 / 255, blue: 247 / 255)
                     .edgesIgnoringSafeArea(.all)
-                Text("현재 등록된 미션이 없습니다.")
                     .navigationBarTitle("오늘의 미션")
                     .navigationBarItems(trailing: NavigationLink(destination: UserInfoView().environmentObject(userInfoViewModel)) {
                         Image(systemName: "gearshape")
@@ -22,6 +21,19 @@ struct HomeView: View {
                             .frame(width: 30, height: 30)
                     }
                     )
+                VStack {
+                    List {
+                        ForEach(missionViewModel.missions, id: \.id) { mission in
+                            NavigationLink {
+                                ActionView(mission: mission)
+                            }label: {
+                                Text("store: mission.currentStore")
+//                                HomeCell()
+                               
+                            }
+                        }
+                    }
+                }
             }
         }
     }

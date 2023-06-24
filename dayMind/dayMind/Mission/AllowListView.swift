@@ -12,7 +12,7 @@ struct AllowListView: View {
     @State var editingStoreName = false
     @State var managedSettings: [ManagedSettingsStore.Name: FamilyActivitySelection] = [:]
     
-    @ObservedObject var vm = MissionViewModel()
+    @EnvironmentObject var vm: MissionViewModel
     
     var body: some View {
         NavigationView {
@@ -103,6 +103,8 @@ extension Dictionary {
 struct AllowListView_Previews: PreviewProvider {
     @State static var isPopupPresented = false
     static var previews: some View {
-        AllowListView(isPopupPresented: $isPopupPresented, vm: MissionViewModel())
+        AllowListView(isPopupPresented: $isPopupPresented)
+                    .environmentObject(MissionViewModel())
+        
     }
 }

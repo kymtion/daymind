@@ -4,7 +4,7 @@ import Kingfisher
 
 struct DetailView: View {
     
-    @ObservedObject var vm: MissionViewModel
+    @EnvironmentObject var missionViewModel: MissionViewModel
     var mission: Mission
     
     var body: some View {
@@ -103,7 +103,7 @@ struct DetailView: View {
                             Text(mission.examplePhoto1)
                                 .font(.system(size: 25, weight: .bold))
                             Group {
-                                if let url = vm.imageURL {
+                                if let url = missionViewModel.imageURL {
                                     KFImage(url)
                                         .resizable()
                                         .onFailure { error in
@@ -119,7 +119,7 @@ struct DetailView: View {
                             Text(mission.examplePhoto3)
                             
                         }.onAppear {
-                            vm.fetchImageURL(from: mission.examplePhoto2)
+                            missionViewModel.fetchImageURL(from: mission.examplePhoto2)
                             
                             
                         }
@@ -130,7 +130,7 @@ struct DetailView: View {
                         .background(Color.gray.opacity(0.1))
                     
                     NavigationLink {
-                        TimeSettingView(vm: vm, mission: mission)
+                        TimeSettingView(mission: mission)
                     } label: {
                         Text("시작 하기")
                             .padding()
@@ -157,6 +157,7 @@ struct DetailView: View {
 }
 struct DetailView_Previews: PreviewProvider {
     static var previews: some View {
-        DetailView(vm: MissionViewModel(), mission: missionData[1])
+        DetailView(mission: missionData[1])
+                   .environmentObject(MissionViewModel())
     }
 }

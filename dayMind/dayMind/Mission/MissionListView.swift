@@ -23,7 +23,7 @@ struct MissionListView: View {
                         LazyVGrid(columns: layout) {
                             ForEach(missionData) { mission in
                                 NavigationLink {
-                                    DetailView(vm: vm, mission: mission)
+                                    DetailView(mission: mission)
                                 } label: {
                                     MissionRow(mission: mission)
                                     

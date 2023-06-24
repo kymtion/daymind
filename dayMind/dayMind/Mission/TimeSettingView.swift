@@ -6,7 +6,7 @@ import DeviceActivity
 
 struct TimeSettingView: View {
     
-    @ObservedObject var vm: MissionViewModel
+    @EnvironmentObject var missionViewModel: MissionViewModel
     @State private var selectedTime1 = Date()
     @State private var selectedTime2 = Date()
     @State private var isPopupPresented = false
@@ -51,7 +51,7 @@ struct TimeSettingView: View {
                     Button {
                         self.isPopupPresented = true
                     } label: {
-                        Text("현재 앱 허용 리스트: \(vm.currentStore)")
+                        Text("현재 앱 허용 리스트: \(missionViewModel.currentStore)")
                             .foregroundColor(Color.black)
                             .font(.system(size: 19))
                             .padding()
@@ -62,41 +62,16 @@ struct TimeSettingView: View {
                                 .stroke(Color.black, lineWidth: 1))
                     }
                     .sheet(isPresented: $isPopupPresented) {
-                        AllowListView(isPopupPresented: $isPopupPresented, vm: vm)
+                        AllowListView(isPopupPresented: $isPopupPresented)
+                            .environmentObject(missionViewModel)
                     }
                     Spacer()
                     Button {
-                        let currentStoreName = ManagedSettingsStore.Name(rawValue: vm.currentStore)
-                        if let store = vm.managedSettings[currentStoreName] {
-                            // 이미 선택된 앱, 카테고리, 웹 도메인 토큰 가져오기
-                            let selectedAppTokens = store.applicationTokens
-                            let selectedWebDomainTokens = store.webDomainTokens
-                            
-                            let selectedList = ManagedSettingsStore(named: currentStoreName)
-                            // 선택된 앱들을 차단에서 제외하고 나머지 모든 앱을 차단
-                            selectedList.shield.applicationCategories = .all(except: selectedAppTokens)
-                            selectedList.shield.webDomainCategories = .all(except: selectedWebDomainTokens)
-                            
-                            
-                            
-                        }
+                           self.missionViewModel.selectedTime1 = self.selectedTime1
+                           self.missionViewModel.selectedTime2 = self.selectedTime2
+                           self.missionViewModel.createMission()
                     } label: {
-                        Text("앱 차단 시작!")
-                            .padding(10)
-                            .font(.system(size: 25, weight: .bold))
-                            .frame(width: UIScreen.main.bounds.width * 0.5)
-                            .background(Color(red: 242 / 255, green: 206 / 255, blue: 102 / 255))
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                    }
-                    
-                    Button {
-                        let currentStoreName = ManagedSettingsStore.Name(rawValue: vm.currentStore)
-                        let selectedList = ManagedSettingsStore(named: currentStoreName)
-                        selectedList.clearAllSettings()
-                        
-                    } label: {
-                        Text("앱 차단 종료!")
+                        Text("미션 등록")
                             .padding(10)
                             .font(.system(size: 25, weight: .bold))
                             .frame(width: UIScreen.main.bounds.width * 0.5)
@@ -110,8 +85,10 @@ struct TimeSettingView: View {
     }
 }
 
+
 struct TimeSettingView_Previews: PreviewProvider {
     static var previews: some View {
-        TimeSettingView(vm: MissionViewModel(), mission: missionData[0])
+        TimeSettingView(mission: missionData[0])
+            .environmentObject(MissionViewModel())
     }
 }
