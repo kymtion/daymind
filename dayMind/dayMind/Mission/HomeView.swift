@@ -5,6 +5,10 @@ struct HomeView: View {
     @EnvironmentObject var userInfoViewModel: UserInfoViewModel
     @EnvironmentObject var missionViewModel: MissionViewModel
     
+    let layout: [GridItem] = [
+        GridItem(.flexible()),
+    ]
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -21,16 +25,17 @@ struct HomeView: View {
                             .frame(width: 30, height: 30)
                     }
                     )
-                VStack {
-                    List {
+                ScrollView {
+                    LazyVGrid(columns: layout, spacing: 10) {
                         ForEach(missionViewModel.missions, id: \.id) { mission in
                             NavigationLink {
                                 ActionView(mission: mission)
                             }label: {
-                                Text("store: mission.currentStore")
-//                                HomeCell()
-                               
+                                HomeCell(missionType: mission.missionType)
+                                    .frame(width: UIScreen.main.bounds.width * 0.9)
+                                    .shadow(color: Color.gray.opacity(0.15), radius: 3, x: 0, y: 0)
                             }
+                            
                         }
                     }
                 }
@@ -38,8 +43,11 @@ struct HomeView: View {
         }
     }
 }
+
 struct homeView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView().environmentObject(UserInfoViewModel())
+        HomeView()
+            .environmentObject(MissionViewModel())
+            .environmentObject(UserInfoViewModel())
     }
 }

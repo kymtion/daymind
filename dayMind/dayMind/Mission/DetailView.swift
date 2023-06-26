@@ -145,16 +145,13 @@ struct DetailView: View {
                     
                 }
                 .foregroundColor(.black)
-
-
-                
-
             }
             .padding(.vertical)
         }
         
     }
 }
+
 struct DetailView_Previews: PreviewProvider {
     static var previews: some View {
         DetailView(mission: missionData[1])

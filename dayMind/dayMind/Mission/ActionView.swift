@@ -75,11 +75,11 @@ struct ActionView: View {
     }
 }
 
-struct ActionView_Previews: PreviewProvider {
-    static var previews: some View {
-        let missionViewModel = MissionViewModel()
-        let mission = MissionStorage(selectedTime1: Date(), selectedTime2: Date(), currentStore: "Test Store")
-        ActionView(mission: mission)
-                    .environmentObject(missionViewModel)
-    }
-}
+//struct ActionView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        let missionViewModel = MissionViewModel()
+//        let mission = MissionStorage(selectedTime1: Date(), selectedTime2: Date(), currentStore: "Test Store")
+//        ActionView(mission: mission)
+//                    .environmentObject(missionViewModel)
+//    }
+//}

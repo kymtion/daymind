@@ -238,14 +238,14 @@
 		A8F2CFB12A0A91C00030E175 /* Mission */ = {
 			isa = PBXGroup;
 			children = (
-				A8F2CFAD2A0A680B0030E175 /* MissionRow.swift */,
-				A8F2CFA42A08F20E0030E175 /* HomeCell.swift */,
 				A863AEC92A0D27C000407B6F /* MissionViewModel.swift */,
+				A8F2CFAD2A0A680B0030E175 /* MissionRow.swift */,
 				A8F2CFA62A0A2AC70030E175 /* MissionListView.swift */,
 				A863AECB2A0D300400407B6F /* DetailView.swift */,
 				A872019D2A384E6D0022099B /* TimeSettingView.swift */,
 				A8FD9F5B2A3B677900905352 /* AllowListView.swift */,
 				A806079A2A3F212400946A5E /* TextInputView.swift */,
+				A8F2CFA42A08F20E0030E175 /* HomeCell.swift */,
 				A8F2CFA22A08F1E00030E175 /* HomeView.swift */,
 				A80607962A3F1AAC00946A5E /* ActionView.swift */,
 			);

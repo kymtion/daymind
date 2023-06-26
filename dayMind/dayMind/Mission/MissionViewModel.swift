@@ -20,38 +20,44 @@ class MissionViewModel: ObservableObject {
         loadMissions()
     }
     
-    func createMission() {
+    func missionStorage(forType type: String) -> MissionStorage? {
+          return missions.first { $0.missionType == type }
+      }
+  
+    
+    func createMission(missionType: String) {
         let mission = MissionStorage(selectedTime1: self.selectedTime1,
                                      selectedTime2: self.selectedTime2,
-                                     currentStore: self.currentStore)
+                                     currentStore: self.currentStore,
+                                     missionType: missionType)
         
         missions.append(mission)
-                    
+        
         // Save the missions.
         saveMissions()
     }
     
     private func saveMissions() {
-              let encoder = JSONEncoder()
-              do {
-                  let data = try encoder.encode(missions)
-                  UserDefaults.standard.set(data, forKey: "missions")
-              } catch {
-                  print("Error encoding missions: \(error)")
-              }
-          }
-
+        let encoder = JSONEncoder()
+        do {
+            let data = try encoder.encode(missions)
+            UserDefaults.standard.set(data, forKey: "missions")
+        } catch {
+            print("Error encoding missions: \(error)")
+        }
+    }
+    
     
     private func loadMissions() {
-               let decoder = JSONDecoder()
-               if let savedData = UserDefaults.standard.data(forKey: "missions") {
-                   do {
-                       missions = try decoder.decode([MissionStorage].self, from: savedData)
-                   } catch {
-                       print("Error decoding missions: \(error)")
-                   }
-               }
-           }
+        let decoder = JSONDecoder()
+        if let savedData = UserDefaults.standard.data(forKey: "missions") {
+            do {
+                missions = try decoder.decode([MissionStorage].self, from: savedData)
+            } catch {
+                print("Error decoding missions: \(error)")
+            }
+        }
+    }
     
     func deleteMission(withId id: UUID) {
         if let index = missions.firstIndex(where: { $0.id == id }) {
@@ -59,20 +65,20 @@ class MissionViewModel: ObservableObject {
             saveMissions()
         }
     }
-       
+    
     func startBlockingApps(for missionId: UUID) {
         guard let mission = missions.first(where: { $0.id == missionId }) else { return }
         let currentStoreName = ManagedSettingsStore.Name(rawValue: mission.currentStore)
-          if let store = managedSettings[currentStoreName] {
-                  let selectedAppTokens = store.applicationTokens
-                  let selectedWebDomainTokens = store.webDomainTokens
-  
-                  let selectedList = ManagedSettingsStore(named: currentStoreName)
-                  selectedList.shield.applicationCategories = .all(except: selectedAppTokens)
-                  selectedList.shield.webDomainCategories = .all(except: selectedWebDomainTokens)
-              }
-          }
-  
+        if let store = managedSettings[currentStoreName] {
+            let selectedAppTokens = store.applicationTokens
+            let selectedWebDomainTokens = store.webDomainTokens
+            
+            let selectedList = ManagedSettingsStore(named: currentStoreName)
+            selectedList.shield.applicationCategories = .all(except: selectedAppTokens)
+            selectedList.shield.webDomainCategories = .all(except: selectedWebDomainTokens)
+        }
+    }
+    
           func stopBlockingApps(for missionId: UUID) {
               guard let mission = missions.first(where: { $0.id == missionId }) else { return }
               let currentStoreName = ManagedSettingsStore.Name(rawValue: mission.currentStore)

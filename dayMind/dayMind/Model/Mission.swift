@@ -4,9 +4,8 @@ import SwiftUI
 
 struct Mission: Identifiable {
     var id = UUID()
-    var name: String
+    var missionType: String
     var imageName: String
-    var color: Color
     var step1a: String
     var step1b: String
     var step1c: String
@@ -29,9 +28,8 @@ struct Mission: Identifiable {
     
 let missionData: [Mission] = [
     Mission(
-        name: "수면",
-        imageName: "moon.zzz",
-        color: Color(red: 242 / 255, green: 206 / 255, blue: 102 / 255),
+        missionType: "수면",
+        imageName: "alarm",
         step1a: "STEP 1",
         step1b: "취침시간과 기상시간을 설정하세요",
         step1c: "수면 설정은 하루 1회만 가능합니다. 1회 미션이 끝나면 새로 설정해야 합니다.",
@@ -52,9 +50,8 @@ let missionData: [Mission] = [
      
     ),
     Mission(
-        name: "집중",
-        imageName: "iphone.gen2.slash",
-        color: Color(red: 242 / 255, green: 206 / 255, blue: 102 / 255),
+        missionType: "집중",
+        imageName: "lock.iphone",
         step1a: "STEP 1",
         step1b: "앱 허용 리스트를 설정하세요",
         step1c: "이미 설정한 리스트가 있다면 해당 목록 선택! ex) 공부용, 업무용, 수면용",

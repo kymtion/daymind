@@ -69,7 +69,7 @@ struct TimeSettingView: View {
                     Button {
                            self.missionViewModel.selectedTime1 = self.selectedTime1
                            self.missionViewModel.selectedTime2 = self.selectedTime2
-                           self.missionViewModel.createMission()
+                           self.missionViewModel.createMission(missionType: mission.missionType)
                     } label: {
                         Text("미션 등록")
                             .padding(10)

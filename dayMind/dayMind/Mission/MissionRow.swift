@@ -8,13 +8,15 @@ struct MissionRow: View {
     var body: some View {
             VStack(spacing: 20) {
                 Image(systemName: mission.imageName)
+                    .symbolRenderingMode(.palette)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .foregroundColor(mission.color)
+                    .foregroundStyle(.blue, .green)
+                    .font(.system(size: 24, weight: .light))
                     .frame(width: UIScreen.main.bounds.width * 0.16)
 
                 
-                Text(mission.name)
+                Text(mission.missionType)
                     .font(.system(size: 22))
                     .foregroundColor(Color.black)
                 
@@ -32,6 +34,6 @@ struct MissionRow: View {
 
 struct MissionListCell_Previews: PreviewProvider {
     static var previews: some View {
-        MissionRow(mission: missionData[0])
+        MissionRow(mission: missionData[1])
     }
 }
