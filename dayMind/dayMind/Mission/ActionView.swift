@@ -14,6 +14,7 @@ struct ActionView: View {
         self.missionId = mission.id
     }
     
+    let deviceActivityCenter = DeviceActivityCenter()
     
     var body: some View {
         VStack {
@@ -28,42 +29,31 @@ struct ActionView: View {
                 .overlay(RoundedRectangle(cornerRadius: 10)
                     .stroke(Color.black, lineWidth: 1))
             
-            Button {
-                if let missionId = mission?.id {
-                    missionViewModel.startBlockingApps(for: missionId)
-                }
-                
-            } label: {
-                Text("시작하기")
-                    .padding(10)
-                    .font(.system(size: 25, weight: .bold))
-                    .frame(width: UIScreen.main.bounds.width * 0.5)
-                    .background(Color(red: 242 / 255, green: 206 / 255, blue: 102 / 255))
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-            }
-            
-            Button {
-                if let missionId = mission?.id {
-                    missionViewModel.stopBlockingApps(for: missionId)
-                }
-            } label: {
-                Text("그만하기")
-                    .padding(10)
-                    .font(.system(size: 25, weight: .bold))
-                    .frame(width: UIScreen.main.bounds.width * 0.5)
-                    .background(Color(red: 242 / 255, green: 206 / 255, blue: 102 / 255))
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-            }
+         
             
             Button {
                 if let missionId = mission?.id {
                     missionViewModel.deleteMission(withId: missionId)
+
                 }
                 
             } label: {
-                Text("미션 성공")
+                Text("미션 삭제")
+                    .padding(10)
+                    .font(.system(size: 25, weight: .bold))
+                    .frame(width: UIScreen.main.bounds.width * 0.5)
+                    .background(Color(red: 242 / 255, green: 206 / 255, blue: 102 / 255))
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+            
+            Button {
+
+                deviceActivityCenter.stopMonitoring([.focus])
+                
+                
+            } label: {
+                Text("모니터링 스탑")
                     .padding(10)
                     .font(.system(size: 25, weight: .bold))
                     .frame(width: UIScreen.main.bounds.width * 0.5)
@@ -78,7 +68,7 @@ struct ActionView: View {
 //struct ActionView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        let missionViewModel = MissionViewModel()
-//        let mission = MissionStorage(selectedTime1: Date(), selectedTime2: Date(), currentStore: "Test Store")
+//        let mission = MissionStorage(selectedTime1: Date(), selectedTime2: Date(), currentStore: "Test Store", missionType: "집중")
 //        ActionView(mission: mission)
 //                    .environmentObject(missionViewModel)
 //    }

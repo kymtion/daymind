@@ -89,15 +89,6 @@ struct AllowListView: View {
 }
 
 
-extension Dictionary {
-    func mapKeys<T>(_ transform: (Key) throws -> T) rethrows -> [T: Value] {
-        var dictionary: [T: Value] = [:]
-        for (key, value) in self {
-            dictionary[try transform(key)] = value
-        }
-        return dictionary
-    }
-}
 
 
 struct AllowListView_Previews: PreviewProvider {
