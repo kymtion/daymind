@@ -49,7 +49,7 @@ struct ActionView: View {
             
             Button {
 
-                deviceActivityCenter.stopMonitoring([.focus])
+                missionViewModel.stopMonitoring(missionId: missionId)
                 
                 
             } label: {

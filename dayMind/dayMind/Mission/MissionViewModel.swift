@@ -17,13 +17,13 @@ class MissionViewModel: ObservableObject {
     
     private let storage = Storage.storage()
     private let userDefaultsKey = "managedSettings"
+    private let deviceActivityCenter = DeviceActivityCenter()
     
     init() {
            self.managedSettings = ManagedSettings.loadManagedSettings()
            self.missions = MissionStorage.loadMissions()
     }
     
-//    let deviceActivityCenter = DeviceActivityCenter()
     
     
     func missionStorage(forType type: String) -> MissionStorage? {
@@ -31,16 +31,83 @@ class MissionViewModel: ObservableObject {
     }
     
     
-    func createMission(missionType: String) {
-        
+    func createMission(missionType: String) -> MissionStorage? {
+        guard let missionData = missionData.first(where: { $0.missionType == missionType }) else { return nil }
         let newMission = MissionStorage(selectedTime1: self.selectedTime1,
                                            selectedTime2: self.selectedTime2,
                                            currentStore: self.currentStore,
-                                           missionType: missionType)
+                                        missionType: missionData.missionType,
+                                            imageName: missionData.imageName)
         self.missions.append(newMission)
         // Save the missions.
         MissionStorage.saveMissions(missions: self.missions)
+        return newMission
+    }
+    
+    
+    func missionMonitoring(selectedTime1: Date, selectedTime2: Date, missionId: UUID) {
+        let time1 = Calendar.current.dateComponents([.hour, .minute], from: selectedTime1)
+        let time2 = Calendar.current.dateComponents([.hour, .minute], from: selectedTime2)
         
+        let activityName = DeviceActivityName(rawValue: missionId.uuidString)
+        do {
+            try deviceActivityCenter.startMonitoring(activityName, during: DeviceActivitySchedule(
+                intervalStart: DateComponents(hour: time1.hour, minute: time1.minute),
+                intervalEnd: DateComponents(hour: time2.hour, minute: time2.minute),
+                repeats: false
+            ))
+        } catch {
+            print("Error starting device activity monitoring: \(error)")
+        }
+    }
+    
+    func stopMonitoring(missionId: UUID) {
+        let activityName = DeviceActivityName(rawValue: missionId.uuidString)
+        deviceActivityCenter.stopMonitoring([activityName])
+        print("Stopping monitoring for \(missionId.uuidString)")
+    }
+    
+    func isOverlapWithExistingMissions(startTime: Date, endTime: Date) -> String? {
+        let updatedEndTime = endTime < startTime
+            ? Calendar.current.date(byAdding: .day, value: 1, to: endTime)!
+            : endTime
+        for existingMission in missions {
+            // Two intervals overlap if the start of one is less than the end of the other one and vice versa.
+            let existingMissionStartTime = existingMission.selectedTime1
+            let existingMissionEndTime = existingMission.selectedTime2 < existingMission.selectedTime1
+                ? Calendar.current.date(byAdding: .day, value: 1, to: existingMission.selectedTime2)!
+                : existingMission.selectedTime2
+            if max(startTime, existingMissionStartTime) < min(updatedEndTime, existingMissionEndTime) {
+                return "선택한 시간대에 이미 등록된 미션이 있습니다."
+            }
+        }
+
+        return nil
+    }
+
+    
+    func updateTimes(selectedTime1: Date, selectedTime2: Date) -> (Date, Date, String?) {
+        var newTime1 = selectedTime1
+        var newTime2 = selectedTime2
+        let minimumInterval = 900.0 // 900 seconds is 15 minutes
+
+        // 1. selectedTime1 은 항상 현재 시간보다 미래여야 한다
+        if newTime1 < Date() {
+            newTime1 = Calendar.current.date(byAdding: .day, value: 1, to: newTime1)!
+        }
+
+        // 2. selectedTime1은 selectedTime2 보다 항상 과거여야한다
+        if newTime2 < newTime1 {
+            newTime2 = Calendar.current.date(byAdding: .day, value: 1, to: newTime2)!
+        }
+
+        // 3. selectedTime1와 selectedTime2의 시간 차이는 15분 이상이어야 한다
+        let interval = newTime2.timeIntervalSince(newTime1)
+        if interval < minimumInterval {
+            return (newTime1, newTime2, "시간 간격이 너무 짧습니다. 최소한 15분이상 설정해야합니다.")
+        }
+
+        return (newTime1, newTime2, nil)
     }
 
     

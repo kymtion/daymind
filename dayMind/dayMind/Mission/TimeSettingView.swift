@@ -10,13 +10,19 @@ struct TimeSettingView: View {
     @State private var selectedTime1 = Date()
     @State private var selectedTime2 = Date()
     @State private var isPopupPresented = false
-    @State private var showingConfirmationAlert = false
-    @State private var intervalIsShort = false
+    @State private var showingConfirmation = false
+    @State private var showingIntervalError = false
+    @State private var showingOverlapError = false
     @State private var createdMission: MissionStorage?
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
+    @State private var alertType: AlertType?
     
     var mission: Mission
     
-    let deviceActivityCenter = DeviceActivityCenter()
+    enum AlertType {
+        case intervalError, overlapError, confirmation
+    }
     
     var body: some View {
         ZStack {
@@ -72,13 +78,23 @@ struct TimeSettingView: View {
                     }
                     Spacer()
                     Button {
-                        let interval = self.selectedTime2.timeIntervalSince(self.selectedTime1)
-                        if interval < 900 { // 900 seconds is 15 minutes
-                            self.intervalIsShort = true
+                        let (updatedTime1, updatedTime2, intervalErrorMessage) = self.missionViewModel.updateTimes(selectedTime1: self.selectedTime1, selectedTime2: self.selectedTime2)
+                        
+                        if let intervalErrorMessage = intervalErrorMessage {
+                            self.alertTitle = "오류"
+                            self.alertMessage = intervalErrorMessage
+                            self.alertType = .intervalError
+                        } else if let overlapErrorMessage = self.missionViewModel.isOverlapWithExistingMissions(startTime: self.selectedTime1, endTime: self.selectedTime2) {
+                            self.alertTitle = "오류"
+                            self.alertMessage = overlapErrorMessage
+                            self.alertType = .overlapError
                         } else {
-                            self.intervalIsShort = false
+                            self.selectedTime1 = updatedTime1
+                            self.selectedTime2 = updatedTime2
+                            self.alertTitle = "확인"
+                            self.alertMessage = "미션을 등록하시겠습니까?"
+                            self.alertType = .confirmation
                         }
-                        self.showingConfirmationAlert = true
                         
                     } label: {
                         Text("미션 등록")
@@ -89,27 +105,29 @@ struct TimeSettingView: View {
                             .foregroundColor(.white)
                             .cornerRadius(10)
                     }
-                    .alert(isPresented: $showingConfirmationAlert) {
-                        if intervalIsShort {
-                            return Alert(title: Text("오류"), message: Text("Interval이 너무 짧습니다. 최소한 15분이상 설정해야합니다."), dismissButton: .default(Text("확인")))
-                        } else {
+                    .alert(isPresented: Binding<Bool>(
+                        get: { self.alertType != nil },
+                        set: { if $0 == false { self.alertType = nil } }
+                    )) {
+                        switch alertType {
+                        case .intervalError, .overlapError:
+                            return Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("확인")))
+                        case .confirmation:
                             return Alert(
-                                title: Text("확인"),
-                                message: Text("미션을 등록하시겠습니까?"),
+                                title: Text(alertTitle),
+                                message: Text(alertMessage),
                                 primaryButton: .default(Text("예")) {
                                     self.missionViewModel.selectedTime1 = self.selectedTime1
                                     self.missionViewModel.selectedTime2 = self.selectedTime2
-                                    self.missionViewModel.createMission(missionType: mission.missionType)
                                     
-                                    try? deviceActivityCenter.startMonitoring(.focus, during: DeviceActivitySchedule(
-                                        intervalStart: DateComponents(hour: 13, minute: 06),
-                                        intervalEnd: DateComponents(hour: 23, minute: 59),
-                                        repeats: false
-                                    )
-                                    )
+                                    if let createdMission = self.missionViewModel.createMission(missionType: mission.missionType) {
+                                        self.missionViewModel.missionMonitoring(selectedTime1: self.selectedTime1, selectedTime2: self.selectedTime2, missionId: createdMission.id)
+                                    }
                                 },
                                 secondaryButton: .cancel()
                             )
+                        case .none:
+                            return Alert(title: Text("")) // This should never be shown
                         }
                     }
                 }
@@ -117,6 +135,7 @@ struct TimeSettingView: View {
         }
     }
 }
+
 struct TimeSettingView_Previews: PreviewProvider {
     static var previews: some View {
         TimeSettingView(mission: missionData[0])

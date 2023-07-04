@@ -4,21 +4,16 @@ import SwiftUI
 struct HomeCell: View {
     @EnvironmentObject var missionViewModel: MissionViewModel
     
-    var missionType: String
-    
-    var mission: Mission? {
-        missionData.first(where: { $0.missionType == missionType })
-    }
+    var mission: MissionStorage
     
     var missionTime: String {
-        guard let missionStorage = missionViewModel.missionStorage(forType: missionType) else { return "" }
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "hh:mm a"
-        return "\(dateFormatter.string(from: missionStorage.selectedTime1)) ~ \(dateFormatter.string(from: missionStorage.selectedTime2))"
+        dateFormatter.dateFormat = "a hh:mm"
+        return "\(dateFormatter.string(from: mission.selectedTime1)) ~ \(dateFormatter.string(from: mission.selectedTime2))"
     }
     
     var body: some View {
-        if let mission = mission {
+       
             HStack {
                 VStack {
                     Image(systemName: mission.imageName)
@@ -62,15 +57,15 @@ struct HomeCell: View {
             .background(Color.white)
             .cornerRadius(10)
             .frame(width: UIScreen.main.bounds.width * 0.9)
-        } else {
-            EmptyView()
+  
+
         }
     }
-}
+
 
 struct homeCell_Previews: PreviewProvider {
     static var previews: some View {
-        HomeCell(missionType: "집중")
-            .environmentObject(MissionViewModel())
+        HomeCell(mission: MissionStorage(selectedTime1: Date(), selectedTime2: Date(), currentStore: "", missionType: "집중", imageName: "lock.iphone"))
+                   .environmentObject(MissionViewModel())
     }
 }

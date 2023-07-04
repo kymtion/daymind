@@ -27,11 +27,11 @@ struct HomeView: View {
                     )
                 ScrollView {
                     LazyVGrid(columns: layout, spacing: 10) {
-                        ForEach(missionViewModel.missions, id: \.id) { mission in
+                        ForEach(missionViewModel.missions, id: \.id) { missionStorage in
                             NavigationLink {
-                                ActionView(mission: mission)
+                                ActionView(mission: missionStorage)
                             }label: {
-                                HomeCell(missionType: mission.missionType)
+                                HomeCell(mission: missionStorage)
                                     .frame(width: UIScreen.main.bounds.width * 0.9)
                                     .shadow(color: Color.gray.opacity(0.15), radius: 3, x: 0, y: 0)
                             }
