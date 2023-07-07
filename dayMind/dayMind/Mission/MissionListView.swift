@@ -5,6 +5,7 @@ struct MissionListView: View {
     @StateObject var vm = MissionViewModel()
     
     
+ 
     let layout: [GridItem] = [
         GridItem(.flexible()),
         GridItem(.flexible()),

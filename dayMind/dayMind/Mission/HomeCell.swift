@@ -32,17 +32,32 @@ struct HomeCell: View {
                 .frame(width: UIScreen.main.bounds.width * 0.27)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 
-                VStack(alignment: .leading, spacing: 15) {
+                VStack(alignment: .leading, spacing: 10) {
+                    
+                   
+                    
                     Text(missionTime)
-                        .font(.system(size: 17, weight: .bold))
+                        .font(.system(size: 17, weight: .semibold))
                         .foregroundColor(Color.black)
-                    Text("인증시간: 오전 9:30 ~ 10:00")
-                        .font(.system(size: 12))
-                        .foregroundColor(Color.black)
+                   
+                    HStack {
+                        Text(mission.status.description)
+                                .font(.system(size: 10))
+                                .foregroundColor(mission.status.color)
+                                .padding(5)
+                                .background(Color.white)
+                                .cornerRadius(10)
+                                .overlay(RoundedRectangle(cornerRadius: 10)
+                                    .stroke(mission.status.color, lineWidth: 1))
+                        Spacer()
+                        
+                    }
+                    .padding(.trailing, 22)
+                    
                     
                     HStack {
                         Text("예치금: 5,000원")
-                            .font(.system(size: 17, weight: .bold))
+                            .font(.system(size: 17, weight: .semibold))
                             .foregroundColor(.red)
                             .opacity(0.8)
                         Spacer()

@@ -1,19 +1,22 @@
-
 import Foundation
 import ManagedSettings
 import DeviceActivity
+import os.log
 
-// Optionally override any of the functions below.
-// Make sure that your class name matches the NSExtensionPrincipalClass in your Info.plist.
 class Monitor: DeviceActivityMonitor {
+    
 
     override func intervalDidStart(for activity: DeviceActivityName) {
-        print("intervalDidStart 함수가 호출되었습니다.")
+        os_log("intervalDidStart 함수가 호출되었습니다.", type: .default)
         super.intervalDidStart(for: activity)
 
-        let missions = MissionStorage.loadMissions()
-        guard let latestMission = missions.last else { return }
-        let currentStoreName = ManagedSettingsStore.Name(rawValue: latestMission.currentStore)
+        var missions = MissionStorage.loadMissions()
+        guard let index = missions.firstIndex(where: { $0.id.uuidString == activity.rawValue }) else { return }
+        missions[index].updateStatus(to: .inProgress)
+        MissionStorage.saveMissions(missions: missions)
+        
+        
+        let currentStoreName = ManagedSettingsStore.Name(rawValue: missions[index].currentStore)
         
         let managedSettings = ManagedSettings.loadManagedSettings()
         if let activitySelection = managedSettings[currentStoreName] {
@@ -29,12 +32,12 @@ class Monitor: DeviceActivityMonitor {
 
 
         override func intervalDidEnd(for activity: DeviceActivityName) {
-            print("intervalDidEnd 함수가 호출되었습니다.")
+            os_log("intervalDidEnd 함수가 호출되었습니다.", type: .default)
             super.intervalDidEnd(for: activity)
 
             let missions = MissionStorage.loadMissions()
-            guard let latestMission = missions.last else { return }
-            let currentStoreName = ManagedSettingsStore.Name(rawValue: latestMission.currentStore)
+            guard let mission = missions.first(where: { $0.id.uuidString == activity.rawValue }) else { return }
+            let currentStoreName = ManagedSettingsStore.Name(rawValue: mission.currentStore)
             let selectedList = ManagedSettingsStore(named: currentStoreName)
             selectedList.clearAllSettings()
         }
