@@ -32,26 +32,16 @@ class MissionViewModel: ObservableObject {
     
     func updateMissionStatuses() {
            print("Updating mission statuses...")
-
-           // Get the current date
            let currentDate = Date()
 
-           // Iterate over all missions
            for mission in missions {
-               // Get the mission status
                let missionStatus = missionStatusManager.status(for: mission.id) ?? .beforeStart
-               // Check if the current date is between the start and end time, and the status is .beforeStart
                if missionStatus == .beforeStart,
                   currentDate >= mission.selectedTime1 && currentDate <= mission.selectedTime2 {
-                   // If the current date is within the mission's timeframe, set the status to inProgress
                    missionStatusManager.updateStatus(for: mission.id, to: .inProgress)
                }
            }
-
-           // Save the mission statuses.
            MissionStatusManager.saveStatuses(statusManager: missionStatusManager)
-
-           // reload the missions
            self.missions = MissionStorage.loadMissions()
        }
    

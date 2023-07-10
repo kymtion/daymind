@@ -12,10 +12,24 @@ struct TimeSettingView: View {
     @State private var isPopupPresented = false
     @State private var showingConfirmation = false
     @State private var showingIntervalError = false
+    @State private var showingPastError = false
     @State private var showingOverlapError = false
     @State private var createdMission: MissionStorage?
+    @State private var activeAlert: AlertType?
     
         var mission: Mission
+    
+    enum AlertType: Int, Identifiable {
+        case intervalError
+        case pastError
+        case overlapError
+        case confirmation
+
+        var id: Int {
+            self.rawValue
+        }
+    }
+
     
     var body: some View {
         ZStack {
@@ -79,13 +93,19 @@ struct TimeSettingView: View {
                 }
                 Spacer()
                 Button {
-                    self.missionViewModel.selectedTime1 = self.selectedTime1
-                    self.missionViewModel.selectedTime2 = self.selectedTime2
-                    
-                    if let createdMission = self.missionViewModel.createMission(missionType: mission.missionType) {
-                        self.missionViewModel.missionMonitoring(selectedTime1: self.selectedTime1, selectedTime2: self.selectedTime2, missionId: createdMission.id)
-                        
-//                        self.missionViewModel.missions = MissionStorage.loadMissions()
+                    let interval = self.selectedTime2.timeIntervalSince(self.selectedTime1)
+                    if interval < 15 * 60 {
+                        self.activeAlert = .intervalError
+                    } else if self.selectedTime1 < Date() {
+                        self.activeAlert = .pastError
+                    } else if missionViewModel.missions.contains(where: { mission in
+                        let missionStatus = missionViewModel.missionStatusManager.status(for: mission.id)
+                        return (missionStatus == .beforeStart || missionStatus == .inProgress) &&
+                        (mission.selectedTime2 > self.selectedTime1 && mission.selectedTime1 < self.selectedTime2)
+                    }) {
+                        self.activeAlert = .overlapError
+                    } else {
+                        self.activeAlert = .confirmation
                     }
                     
                 } label: {
@@ -97,23 +117,41 @@ struct TimeSettingView: View {
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }
+                .alert(item: $activeAlert) { alertType in
+                    switch alertType {
+                    case .intervalError:
+                        return Alert(title: Text("경고"), message: Text("시간 간격이 너무 짧습니다. 최소한 15분이상 설정해야합니다."), dismissButton: .default(Text("확인")))
+                    case .pastError:
+                        return Alert(title: Text("경고"), message: Text("시작 시간이 현재 시간 이후로 설정 해야합니다."), dismissButton: .default(Text("확인")))
+                    case .overlapError:
+                        return Alert(title: Text("경고"), message: Text("선택한 시간대에 이미 등록된 미션이 있습니다."), dismissButton: .default(Text("확인")))
+                    case .confirmation:
+                        return Alert(title: Text("확인"), message: Text("미션을 등록하시겠습니까?"), primaryButton: .default(Text("예"), action: {
+                            self.missionViewModel.selectedTime1 = self.selectedTime1
+                            self.missionViewModel.selectedTime2 = self.selectedTime2
+                            if let createdMission = self.missionViewModel.createMission(missionType: mission.missionType) {
+                                self.missionViewModel.missionMonitoring(selectedTime1: self.selectedTime1, selectedTime2: self.selectedTime2, missionId: createdMission.id)
+                            }
+                        }), secondaryButton: .cancel())
+                    }
+                }
             }
         }
     }
     
-    func updateDate() {
-        let calendar = Calendar.current
-        let selectedTime1Components = calendar.dateComponents([.year, .month, .day], from: selectedTime1)
-        let selectedTime2Components = calendar.dateComponents([.hour, .minute], from: selectedTime2)
-        
-        var dateComponents = DateComponents()
-        dateComponents.year = selectedTime1Components.year
-        dateComponents.month = selectedTime1Components.month
-        dateComponents.day = selectedTime1Components.day
-        dateComponents.hour = selectedTime2Components.hour
-        dateComponents.minute = selectedTime2Components.minute
-        
-        let newDate = calendar.date(from: dateComponents)!
+func updateDate() {
+    let calendar = Calendar.current
+    let selectedTime1Components = calendar.dateComponents([.year, .month, .day], from: selectedTime1)
+    let selectedTime2Components = calendar.dateComponents([.hour, .minute], from: selectedTime2)
+    
+    var dateComponents = DateComponents()
+    dateComponents.year = selectedTime1Components.year
+    dateComponents.month = selectedTime1Components.month
+    dateComponents.day = selectedTime1Components.day
+    dateComponents.hour = selectedTime2Components.hour
+    dateComponents.minute = selectedTime2Components.minute
+    
+    let newDate = calendar.date(from: dateComponents)!
         
         if newDate < selectedTime1 {
             let nextDay = calendar.date(byAdding: .day, value: 1, to: newDate)!
