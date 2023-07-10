@@ -8,6 +8,7 @@ struct HomeCell: View {
     
     var missionTime: String {
         let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ko_KR")
         dateFormatter.dateFormat = "a hh:mm"
         return "\(dateFormatter.string(from: mission.selectedTime1)) ~ \(dateFormatter.string(from: mission.selectedTime2))"
     }
@@ -41,14 +42,15 @@ struct HomeCell: View {
                         .foregroundColor(Color.black)
                    
                     HStack {
-                        Text(mission.status.description)
+                        let missionStatus = missionViewModel.missionStatusManager.status(for: mission.id) ?? .beforeStart
+                        Text(missionStatus.description)
                                 .font(.system(size: 10))
-                                .foregroundColor(mission.status.color)
+                                .foregroundColor(missionStatus.color)
                                 .padding(5)
                                 .background(Color.white)
                                 .cornerRadius(10)
                                 .overlay(RoundedRectangle(cornerRadius: 10)
-                                    .stroke(mission.status.color, lineWidth: 1))
+                                    .stroke(missionStatus.color, lineWidth: 1))
                         Spacer()
                         
                     }
@@ -72,8 +74,6 @@ struct HomeCell: View {
             .background(Color.white)
             .cornerRadius(10)
             .frame(width: UIScreen.main.bounds.width * 0.9)
-  
-
         }
     }
 

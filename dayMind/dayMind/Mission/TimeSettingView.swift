@@ -84,6 +84,8 @@ struct TimeSettingView: View {
                     
                     if let createdMission = self.missionViewModel.createMission(missionType: mission.missionType) {
                         self.missionViewModel.missionMonitoring(selectedTime1: self.selectedTime1, selectedTime2: self.selectedTime2, missionId: createdMission.id)
+                        
+//                        self.missionViewModel.missions = MissionStorage.loadMissions()
                     }
                     
                 } label: {

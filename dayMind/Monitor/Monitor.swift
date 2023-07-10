@@ -11,12 +11,8 @@ class Monitor: DeviceActivityMonitor {
         super.intervalDidStart(for: activity)
 
         var missions = MissionStorage.loadMissions()
-        guard let index = missions.firstIndex(where: { $0.id.uuidString == activity.rawValue }) else { return }
-        missions[index].updateStatus(to: .inProgress)
-        MissionStorage.saveMissions(missions: missions)
-        
-        
-        let currentStoreName = ManagedSettingsStore.Name(rawValue: missions[index].currentStore)
+        guard let mission = missions.first(where: { $0.id.uuidString == activity.rawValue }) else { return }
+        let currentStoreName = ManagedSettingsStore.Name(rawValue: mission.currentStore)
         
         let managedSettings = ManagedSettings.loadManagedSettings()
         if let activitySelection = managedSettings[currentStoreName] {

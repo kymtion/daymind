@@ -16,40 +16,49 @@ class MissionViewModel: ObservableObject {
     private let userDefaultsKey = "managedSettings"
     private let deviceActivityCenter = DeviceActivityCenter()
     
+    @Published var missionStatusManager = MissionStatusManager()
+    
     init() {
         self.managedSettings = ManagedSettings.loadManagedSettings()
         self.missions = MissionStorage.loadMissions()
-              
+        setupObservation()
     }
-    func updateDate() {
-        let calendar = Calendar.current
-        let selectedTime1Components = calendar.dateComponents([.year, .month, .day], from: selectedTime1)
-        let selectedTime2Components = calendar.dateComponents([.hour, .minute], from: selectedTime2)
-        
-        var dateComponents = DateComponents()
-        dateComponents.year = selectedTime1Components.year
-        dateComponents.month = selectedTime1Components.month
-        dateComponents.day = selectedTime1Components.day
-        dateComponents.hour = selectedTime2Components.hour
-        dateComponents.minute = selectedTime2Components.minute
-
-        let newDate = calendar.date(from: dateComponents)!
-        
-        if newDate < selectedTime1 {
-            let nextDay = calendar.date(byAdding: .day, value: 1, to: newDate)!
-            selectedTime2 = nextDay
-        } else {
-            selectedTime2 = newDate
+    
+    private func setupObservation() {
+            _ = $missionStatusManager.sink { [weak self] _ in
+                self?.missions = MissionStorage.loadMissions()
+            }
         }
-    }
     
-    func formatDate(date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "EEEE, a hh:mm"
-        return formatter.string(from: date)
-    }
-    
+    func updateMissionStatuses() {
+           print("Updating mission statuses...")
+
+           // Get the current date
+           let currentDate = Date()
+
+           // Iterate over all missions
+           for mission in missions {
+               // Get the mission status
+               let missionStatus = missionStatusManager.status(for: mission.id) ?? .beforeStart
+               // Check if the current date is between the start and end time, and the status is .beforeStart
+               if missionStatus == .beforeStart,
+                  currentDate >= mission.selectedTime1 && currentDate <= mission.selectedTime2 {
+                   // If the current date is within the mission's timeframe, set the status to inProgress
+                   missionStatusManager.updateStatus(for: mission.id, to: .inProgress)
+               }
+           }
+
+           // Save the mission statuses.
+           MissionStatusManager.saveStatuses(statusManager: missionStatusManager)
+
+           // reload the missions
+           self.missions = MissionStorage.loadMissions()
+       }
+   
+
+
+
+
     func missionStorage(forType type: String) -> MissionStorage? {
         return missions.first { $0.missionType == type }
     }
@@ -62,8 +71,8 @@ class MissionViewModel: ObservableObject {
                                         missionType: missionData.missionType,
                                             imageName: missionData.imageName)
         self.missions.append(newMission)
-        // Save the missions.
         MissionStorage.saveMissions(missions: self.missions)
+        MissionStatusManager.saveStatuses(statusManager: self.missionStatusManager)
         return newMission
     }
     

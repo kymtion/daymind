@@ -45,6 +45,7 @@
 		A8A295472A30A0FB00F73B9D /* FirebaseInAppMessagingSwift-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = A8A295462A30A0FB00F73B9D /* FirebaseInAppMessagingSwift-Beta */; };
 		A8A295492A30A0FB00F73B9D /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = A8A295482A30A0FB00F73B9D /* FirebaseMessaging */; };
 		A8A2954B2A30A0FB00F73B9D /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = A8A2954A2A30A0FB00F73B9D /* FirebaseStorage */; };
+		A8A6DCC02A5BA4D700D5B341 /* MissionStatusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A6DCBF2A5BA4D700D5B341 /* MissionStatusManager.swift */; };
 		A8A7A6802A0FAF300058B407 /* UserProfileUpdateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A7A67F2A0FAF2F0058B407 /* UserProfileUpdateView.swift */; };
 		A8C0AEAF2A1BABEC00EE5C64 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A8C0AEAE2A1BABEC00EE5C64 /* GoogleService-Info.plist */; };
 		A8D61DDE2A1E6E2A00F30E5B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8D61DDD2A1E6E2A00F30E5B /* SceneDelegate.swift */; };
@@ -129,6 +130,7 @@
 		A890FBF52A1B9A5B00F44249 /* dayMindUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dayMindUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A89414F12A4DAE94008885C7 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		A894153B2A4E9724008885C7 /* ManagedSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedSettings.swift; sourceTree = "<group>"; };
+		A8A6DCBF2A5BA4D700D5B341 /* MissionStatusManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionStatusManager.swift; sourceTree = "<group>"; };
 		A8A7A67F2A0FAF2F0058B407 /* UserProfileUpdateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileUpdateView.swift; sourceTree = "<group>"; };
 		A8C0AEAE2A1BABEC00EE5C64 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A8D61DDD2A1E6E2A00F30E5B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -226,6 +228,7 @@
 			isa = PBXGroup;
 			children = (
 				A8DD56A22A45A72A0058E898 /* MissionStorage.swift */,
+				A8A6DCBF2A5BA4D700D5B341 /* MissionStatusManager.swift */,
 				A894153B2A4E9724008885C7 /* ManagedSettings.swift */,
 			);
 			path = Storage;
@@ -559,6 +562,7 @@
 				A8525A7C2A5068A5004F687B /* Dictionary.swift in Sources */,
 				A8229A882A13A9B600881C31 /* AccountSetting.swift in Sources */,
 				A8F2CFA32A08F1E00030E175 /* HomeView.swift in Sources */,
+				A8A6DCC02A5BA4D700D5B341 /* MissionStatusManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

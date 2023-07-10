@@ -4,6 +4,7 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var userInfoViewModel: UserInfoViewModel
     @EnvironmentObject var missionViewModel: MissionViewModel
+    @Environment(\.scenePhase) var scenePhase
     
     let layout: [GridItem] = [
         GridItem(.flexible()),
@@ -35,10 +36,17 @@ struct HomeView: View {
                                     .frame(width: UIScreen.main.bounds.width * 0.9)
                                     .shadow(color: Color.gray.opacity(0.15), radius: 3, x: 0, y: 0)
                             }
-                            
                         }
                     }
                 }
+                .onAppear {
+                    missionViewModel.updateMissionStatuses()
+                }
+            }
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                missionViewModel.updateMissionStatuses()
             }
         }
     }
