@@ -21,6 +21,9 @@ class MissionViewModel: ObservableObject {
     init() {
         self.managedSettings = ManagedSettings.loadManagedSettings()
         self.missions = MissionStorage.loadMissions()
+        if let loadedStatusManager = MissionStatusManager.loadStatuses() {
+            self.missionStatusManager = loadedStatusManager
+        }
         setupObservation()
     }
     
@@ -30,6 +33,7 @@ class MissionViewModel: ObservableObject {
             }
         }
     
+    // 미션 상태 (대기중 -> 진행중)
     func updateMissionStatuses() {
            print("Updating mission statuses...")
            let currentDate = Date()
@@ -45,6 +49,14 @@ class MissionViewModel: ObservableObject {
            self.missions = MissionStorage.loadMissions()
        }
    
+    // 미션 상태 -> 실패
+    func giveUpMission(missionId: UUID) {
+        // Change mission status to failure
+        self.missionStatusManager.updateStatus(for: missionId, to: .failure)
+        MissionStatusManager.saveStatuses(statusManager: missionStatusManager)
+        self.missions = MissionStorage.loadMissions()
+    }
+
 
 
 
@@ -67,7 +79,7 @@ class MissionViewModel: ObservableObject {
         return newMission
     }
     
-    
+    // 미션 모니터링 시작 함수
     func missionMonitoring(selectedTime1: Date, selectedTime2: Date, missionId: UUID) {
         let time1 = Calendar.current.dateComponents([.hour, .minute], from: selectedTime1)
         let time2 = Calendar.current.dateComponents([.hour, .minute], from: selectedTime2)
@@ -84,6 +96,7 @@ class MissionViewModel: ObservableObject {
         }
     }
     
+    // 모니터링 중단 함수
     func stopMonitoring(missionId: UUID) {
         let activityName = DeviceActivityName(rawValue: missionId.uuidString)
         deviceActivityCenter.stopMonitoring([activityName])

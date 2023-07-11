@@ -29,31 +29,16 @@ struct ActionView: View {
                 .overlay(RoundedRectangle(cornerRadius: 10)
                     .stroke(Color.black, lineWidth: 1))
             
-         
-            
-            Button {
-                if let missionId = mission?.id {
-                    missionViewModel.deleteMission(withId: missionId)
-
-                }
-                
-            } label: {
-                Text("미션 삭제")
-                    .padding(10)
-                    .font(.system(size: 25, weight: .bold))
-                    .frame(width: UIScreen.main.bounds.width * 0.5)
-                    .background(Color(red: 242 / 255, green: 206 / 255, blue: 102 / 255))
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-            }
+          
             
             Button {
 
                 missionViewModel.stopMonitoring(missionId: missionId)
+                missionViewModel.giveUpMission(missionId: missionId)
                 
                 
             } label: {
-                Text("모니터링 스탑")
+                Text("포기하기")
                     .padding(10)
                     .font(.system(size: 25, weight: .bold))
                     .frame(width: UIScreen.main.bounds.width * 0.5)

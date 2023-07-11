@@ -12,19 +12,18 @@ class UserInfoViewModel: ObservableObject {
     @Published var uid: String = ""
     @Published var displayName: String = ""
     
-//    //추가된 부분 9시 49분
-//    enum LoginType {
-//           case firebase
-//           case kakao
-//       }
-//       var currentLoginType: LoginType?
-//    //추가된 부분 9시 49분
+    @Published var missionStatusManager = MissionStatusManager()
+    
+    
 
     var handle: AuthStateDidChangeListenerHandle?
     
     var cancellables = Set<AnyCancellable>()
     
     init() {
+        
+        self.missionStatusManager = MissionStatusManager.loadStatuses() ?? MissionStatusManager()
+        
         handle = Auth.auth().addStateDidChangeListener { [weak self] (auth, user) in
             guard let self = self else { return }
             if let user = user {
@@ -44,6 +43,43 @@ class UserInfoViewModel: ObservableObject {
             Auth.auth().removeStateDidChangeListener(handle)
         }
     }
+    
+    
+    // 모든 미션들을 불러오는 메소드
+    func loadMissions() -> [MissionStorage] {
+        return MissionStorage.loadMissions()
+    }
+    
+    func loadMissionStatusManager() {
+            self.missionStatusManager = MissionStatusManager.loadStatuses() ?? MissionStatusManager()
+        }
+    
+    // 필터링, 그룹핑 및 정렬 작업을 수행하는 메소드
+    func getGroupedMissions() -> [String: [MissionStorage]] {
+        
+        var groupedMissions: [String: [MissionStorage]] = [:]
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy. MM"
+        
+        for mission in loadMissions() {
+            if let missionStatus = missionStatusManager.status(for: mission.id) {
+                if missionStatus == .success || missionStatus == .failure {
+                    let dateString = dateFormatter.string(from: mission.selectedTime2)
+                    if groupedMissions[dateString] == nil {
+                        groupedMissions[dateString] = []
+                    }
+                    groupedMissions[dateString]?.append(mission)
+                }
+            }
+        }
+        
+        for (date, missions) in groupedMissions {
+            groupedMissions[date] = missions.sorted { $0.selectedTime2 > $1.selectedTime2 }
+        }
+        
+        return groupedMissions
+    }
+    
     
     func signOut() -> Error? {
         do {
