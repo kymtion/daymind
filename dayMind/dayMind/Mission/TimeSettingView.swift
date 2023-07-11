@@ -98,16 +98,33 @@ struct TimeSettingView: View {
                         self.activeAlert = .intervalError
                     } else if self.selectedTime1 < Date() {
                         self.activeAlert = .pastError
-                    } else if missionViewModel.missions.contains(where: { mission in
-                        let missionStatus = missionViewModel.missionStatusManager.status(for: mission.id)
-                        return (missionStatus == .beforeStart || missionStatus == .inProgress) &&
-                        (mission.selectedTime2 > self.selectedTime1 && mission.selectedTime1 < self.selectedTime2)
-                    }) {
-                        self.activeAlert = .overlapError
                     } else {
-                        self.activeAlert = .confirmation
+                        let overlappingMissions = missionViewModel.missions.filter { mission in
+                            let missionStatus = missionViewModel.missionStatusManager.status(for: mission.id)
+                            return (missionStatus == .beforeStart || missionStatus == .inProgress)
+                        }
+                        
+                        let calendar = Calendar.current
+                        for mission in overlappingMissions {
+                        let currentStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime1)
+                        let currentEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime2)
+                        let missionStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime1)
+                        let missionEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
+                        
+                        let currentStartTime = calendar.date(from: currentStartTimeComponents)!
+                        let currentEndTime = calendar.date(from: currentEndTimeComponents)!
+                        let missionStartTime = calendar.date(from: missionStartTimeComponents)!
+                        let missionEndTime = calendar.date(from: missionEndTimeComponents)!
+                        
+                        if (missionEndTime >= currentStartTime && missionStartTime <= currentEndTime) {
+                            self.activeAlert = .overlapError
+                            return
+                        }
                     }
                     
+                    self.activeAlert = .confirmation
+                }
+            
                 } label: {
                     Text("미션 등록")
                         .padding(10)
@@ -167,6 +184,8 @@ func updateDate() {
         formatter.dateFormat = "EEEE, a hh:mm"
         return formatter.string(from: date)
     }
+    
+   
 }
 
 struct TimeSettingView_Previews: PreviewProvider {

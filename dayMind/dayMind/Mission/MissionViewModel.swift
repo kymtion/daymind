@@ -61,6 +61,7 @@ class MissionViewModel: ObservableObject {
                                         missionType: missionData.missionType,
                                             imageName: missionData.imageName)
         self.missions.append(newMission)
+        self.missionStatusManager.updateStatus(for: newMission.id, to: .beforeStart)
         MissionStorage.saveMissions(missions: self.missions)
         MissionStatusManager.saveStatuses(statusManager: self.missionStatusManager)
         return newMission
