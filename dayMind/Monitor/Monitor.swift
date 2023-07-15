@@ -10,7 +10,7 @@ class Monitor: DeviceActivityMonitor {
         os_log("intervalDidStart 함수가 호출되었습니다.", type: .default)
         super.intervalDidStart(for: activity)
 
-        var missions = MissionStorage.loadMissions()
+        let missions = MissionStorage.loadMissions()
         guard let mission = missions.first(where: { $0.id.uuidString == activity.rawValue }) else { return }
         let currentStoreName = ManagedSettingsStore.Name(rawValue: mission.currentStore)
         
@@ -28,13 +28,13 @@ class Monitor: DeviceActivityMonitor {
 
 
         override func intervalDidEnd(for activity: DeviceActivityName) {
-            os_log("intervalDidEnd 함수가 호출되었습니다.", type: .default)
             super.intervalDidEnd(for: activity)
+            os_log("intervalDidEnd 함수가 호출되었습니다.", type: .default)
 
-            let missions = MissionStorage.loadMissions()
-            guard let mission = missions.first(where: { $0.id.uuidString == activity.rawValue }) else { return }
-            let currentStoreName = ManagedSettingsStore.Name(rawValue: mission.currentStore)
-            let selectedList = ManagedSettingsStore(named: currentStoreName)
-            selectedList.clearAllSettings()
+//            let missions = MissionStorage.loadMissions()
+//            guard let mission = missions.first(where: { $0.id.uuidString == activity.rawValue }) else { return }
+//            let currentStoreName = ManagedSettingsStore.Name(rawValue: mission.currentStore)
+//            let selectedList = ManagedSettingsStore(named: currentStoreName)
+//            selectedList.clearAllSettings()
         }
     }

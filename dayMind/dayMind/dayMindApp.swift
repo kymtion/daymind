@@ -52,7 +52,7 @@ struct dayMindApp: App {
     @StateObject var loginViewModel = LoginViewModel()
     @StateObject var userInfoViewModel = UserInfoViewModel()
     @StateObject var missionViewModel = MissionViewModel()
-    let center = AuthorizationCenter.shared
+    @ObservedObject var center = AuthorizationCenter.shared
     
     var body: some Scene {
         WindowGroup {
@@ -73,6 +73,23 @@ struct dayMindApp: App {
             } else {
                 LoginView().environmentObject(loginViewModel)
             }
+            
+            VStack {
+                switch center.authorizationStatus {
+                case .notDetermined:
+                    Text("권한 상태: 결정되지 않음")
+                case .denied:
+                    Text("권한 상태: 거부됨")
+                case .approved:
+                    Text("권한 상태: 승인됨")
+                default:
+                    Text("권한 상태: 알 수 없음")
+                }
+            }
+            .onReceive(center.$authorizationStatus) { newStatus in
+                print("권한 상태 변경됨: \(newStatus)")
+            }
+            
         }
     }
 }

@@ -35,20 +35,22 @@ class MissionViewModel: ObservableObject {
     
     // 미션 상태 (대기중 -> 진행중)
     func updateMissionStatuses() {
-           print("Updating mission statuses...")
-           let currentDate = Date()
-
-           for mission in missions {
-               let missionStatus = missionStatusManager.status(for: mission.id) ?? .beforeStart
-               if missionStatus == .beforeStart,
-                  currentDate >= mission.selectedTime1 && currentDate <= mission.selectedTime2 {
-                   missionStatusManager.updateStatus(for: mission.id, to: .inProgress)
-               }
-           }
-           MissionStatusManager.saveStatuses(statusManager: missionStatusManager)
-           self.missions = MissionStorage.loadMissions()
-       }
-   
+        print("Updating mission statuses...")
+        var currentDate = Date()
+        
+        currentDate = Calendar.current.date(byAdding: .minute, value: 1, to: currentDate)!
+        
+        for mission in missions {
+            let missionStatus = missionStatusManager.status(for: mission.id) ?? .beforeStart
+            if missionStatus == .beforeStart,
+               currentDate >= mission.selectedTime1 && currentDate <= mission.selectedTime2 {
+                missionStatusManager.updateStatus(for: mission.id, to: .inProgress)
+            }
+        }
+        MissionStatusManager.saveStatuses(statusManager: missionStatusManager)
+        self.missions = MissionStorage.loadMissions()
+    }
+    
     // 미션 상태 -> 실패
     func giveUpMission(missionId: UUID) {
         // Change mission status to failure
@@ -56,7 +58,7 @@ class MissionViewModel: ObservableObject {
         MissionStatusManager.saveStatuses(statusManager: missionStatusManager)
         self.missions = MissionStorage.loadMissions()
     }
-
+    
 
 
 
@@ -91,6 +93,8 @@ class MissionViewModel: ObservableObject {
                 intervalEnd: DateComponents(hour: time2.hour, minute: time2.minute),
                 repeats: false
             ))
+        } catch DeviceActivityCenter.MonitoringError.unauthorized {
+            print("권한이 해제되었습니다.")
         } catch {
             print("Error starting device activity monitoring: \(error)")
         }
@@ -101,11 +105,17 @@ class MissionViewModel: ObservableObject {
         let activityName = DeviceActivityName(rawValue: missionId.uuidString)
         deviceActivityCenter.stopMonitoring([activityName])
         print("Stopping monitoring for \(missionId.uuidString)")
+        
+        if let mission = missions.first(where: { $0.id == missionId }) {
+            let currentStoreName = ManagedSettingsStore.Name(rawValue: mission.currentStore)
+            let selectedList = ManagedSettingsStore(named: currentStoreName)
+            selectedList.clearAllSettings()
+        }
     }
-    
-   
-   
-    
+        
+        
+        
+        
     // 저장된 미션 삭제 메소드
     func deleteMission(withId id: UUID) {
         if let index = missions.firstIndex(where: { $0.id == id }) {

@@ -21,7 +21,7 @@ class LoginViewModel: NSObject, ObservableObject {
     var sendPasswordResetSubject = PassthroughSubject<String, Never>()
     var handle: AuthStateDidChangeListenerHandle?
     var cancellables = Set<AnyCancellable>()
-    
+    var cancellable: AnyCancellable?//권한 관련 코드
     
     
     override init() {
