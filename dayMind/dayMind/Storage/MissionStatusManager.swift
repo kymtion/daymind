@@ -3,6 +3,7 @@ import Foundation
 import SwiftUI
 
 class MissionStatusManager: ObservableObject, Codable {
+    
     private var missionStatuses: [UUID: MissionStatus]
 
     init() {

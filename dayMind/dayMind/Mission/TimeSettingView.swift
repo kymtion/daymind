@@ -24,6 +24,7 @@ struct TimeSettingView: View {
         case pastError
         case overlapError
         case confirmation
+        case missionInProgressError
 
         var id: Int {
             self.rawValue
@@ -96,6 +97,7 @@ struct TimeSettingView: View {
                     let interval = self.selectedTime2.timeIntervalSince(self.selectedTime1)
                     if interval < 15 * 60 {
                         self.activeAlert = .intervalError
+                
                     } else {
                         let calendar = Calendar.current
                         let nowComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: Date())
@@ -105,12 +107,25 @@ struct TimeSettingView: View {
                         if selectedDateMinute < nowDateMinute {
                             self.activeAlert = .pastError
                         } else {
+                            let inProgressMissions = missionViewModel.missions.filter {
+                                    missionViewModel.missionStatusManager.status(for: $0.id) == .inProgress
+                                }
+                                for mission in inProgressMissions {
+                                    let missionEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
+                                    let missionEndTime = calendar.date(from: missionEndTimeComponents)!
+                                    if missionEndTime < nowDateMinute {
+                                        self.activeAlert = .missionInProgressError
+                                        return
+                                    }
+                                }
+                            
+                            
                             let overlappingMissions = missionViewModel.missions.filter { mission in
                                 let missionStatus = missionViewModel.missionStatusManager.status(for: mission.id)
                                 return (missionStatus == .beforeStart || missionStatus == .inProgress)
                             }
                         
-                            let calendar = Calendar.current
+                           
                             for mission in overlappingMissions {
                                 let currentStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime1)
                                 let currentEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime2)
@@ -146,6 +161,8 @@ struct TimeSettingView: View {
                         return Alert(title: Text("경고"), message: Text("시간 간격이 너무 짧습니다. 최소한 15분이상 설정해야합니다."), dismissButton: .default(Text("확인")))
                     case .pastError:
                         return Alert(title: Text("경고"), message: Text("시작 시간이 현재 시간 이후로 설정 해야합니다."), dismissButton: .default(Text("확인")))
+                    case .missionInProgressError:
+                            return Alert(title: Text("경고"), message: Text("기존 미션을 완료해야 미션 등록이 가능합니다."), dismissButton: .default(Text("확인")))
                     case .overlapError:
                         return Alert(title: Text("경고"), message: Text("선택한 시간대에 이미 등록된 미션이 있습니다."), dismissButton: .default(Text("확인")))
                     case .confirmation:

@@ -7,7 +7,7 @@
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.ManagedSettings.shield-action-service</string>
 		<key>NSExtensionPrincipalClass</key>
-		<string>$(PRODUCT_MODULE_NAME).ShieldAction</string>
+		<string>$(PRODUCT_MODULE_NAME).ShieldActionExtension</string>
 	</dict>
 </dict>
 </plist>

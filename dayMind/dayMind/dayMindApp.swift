@@ -46,53 +46,38 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     }
 }
 
+
+
 @main
 struct dayMindApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject var loginViewModel = LoginViewModel()
     @StateObject var userInfoViewModel = UserInfoViewModel()
     @StateObject var missionViewModel = MissionViewModel()
-    @ObservedObject var center = AuthorizationCenter.shared
+    let center = AuthorizationCenter.shared
     
     var body: some Scene {
         WindowGroup {
-            if loginViewModel.isLoggedin {
-                TapBarView()
-                    .environmentObject(loginViewModel)
-                    .environmentObject(userInfoViewModel)
-                    .environmentObject(missionViewModel)
-                    .onAppear {
-                        Task {
-                            do {
-                                try await center.requestAuthorization(for: .individual)
-                            } catch {
-                                print("Failed to request authorization with error: \(error)")
-                            }
-                        }
-                    }
-            } else {
-                LoginView().environmentObject(loginViewModel)
-            }
-            
-            VStack {
-                switch center.authorizationStatus {
-                case .notDetermined:
-                    Text("권한 상태: 결정되지 않음")
-                case .denied:
-                    Text("권한 상태: 거부됨")
-                case .approved:
-                    Text("권한 상태: 승인됨")
-                default:
-                    Text("권한 상태: 알 수 없음")
-                }
-            }
-            .onReceive(center.$authorizationStatus) { newStatus in
-                print("권한 상태 변경됨: \(newStatus)")
-            }
-            
-        }
-    }
-}
+              if loginViewModel.isLoggedin {
+                  TapBarView()
+                      .environmentObject(loginViewModel)
+                      .environmentObject(userInfoViewModel)
+                      .environmentObject(missionViewModel)
+                      .onAppear {
+                          Task {
+                              do {
+                                  try await center.requestAuthorization(for: .individual)
+                              } catch {
+                                  print("Failed to request authorization with error: \(error)")
+                              }
+                          }
+                      }
+              } else {
+                  LoginView().environmentObject(loginViewModel)
+              }
+          }
+      }
+  }
 
 
 

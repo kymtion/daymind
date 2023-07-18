@@ -33,6 +33,9 @@ class MissionViewModel: ObservableObject {
             }
         }
     
+    
+
+    
     // 미션 상태 (대기중 -> 진행중)
     func updateMissionStatuses() {
         print("Updating mission statuses...")
@@ -43,7 +46,7 @@ class MissionViewModel: ObservableObject {
         for mission in missions {
             let missionStatus = missionStatusManager.status(for: mission.id) ?? .beforeStart
             if missionStatus == .beforeStart,
-               currentDate >= mission.selectedTime1 && currentDate <= mission.selectedTime2 {
+               currentDate >= mission.selectedTime1 {
                 missionStatusManager.updateStatus(for: mission.id, to: .inProgress)
             }
         }

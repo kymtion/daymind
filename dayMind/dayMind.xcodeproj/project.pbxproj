@@ -14,6 +14,11 @@
 		A8229A862A13A8AE00881C31 /* DeleteAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8229A852A13A8AE00881C31 /* DeleteAccountView.swift */; };
 		A8229A882A13A9B600881C31 /* AccountSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8229A872A13A9B600881C31 /* AccountSetting.swift */; };
 		A8229A8A2A14B3CC00881C31 /* UserInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8229A892A14B3CC00881C31 /* UserInfoViewModel.swift */; };
+		A83A9B072A65936C0051E3B4 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8525A7B2A5068A5004F687B /* Dictionary.swift */; };
+		A83A9B0C2A65945C0051E3B4 /* MissionStatusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A6DCBF2A5BA4D700D5B341 /* MissionStatusManager.swift */; };
+		A83A9B0E2A65951F0051E3B4 /* MissionStatusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A6DCBF2A5BA4D700D5B341 /* MissionStatusManager.swift */; };
+		A83A9B162A662E5E0051E3B4 /* ShieldActionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FE776F2A611E3D008FC9CB /* ShieldActionExtension.swift */; };
+		A83A9B182A66E2C70051E3B4 /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83A9B172A66E2C70051E3B4 /* UserDefaultsManager.swift */; };
 		A8525A7C2A5068A5004F687B /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8525A7B2A5068A5004F687B /* Dictionary.swift */; };
 		A86233792A1C8E0700419120 /* KakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = A86233782A1C8E0700419120 /* KakaoSDKAuth */; };
 		A862337B2A1C8E0700419120 /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = A862337A2A1C8E0700419120 /* KakaoSDKCommon */; };
@@ -70,10 +75,9 @@
 		A8FE775E2A6116EB008FC9CB /* ShieldConfigurationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FE775D2A6116EB008FC9CB /* ShieldConfigurationExtension.swift */; };
 		A8FE77632A6116EB008FC9CB /* ShieldConfiguration.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A8FE77572A6116EB008FC9CB /* ShieldConfiguration.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A8FE776D2A611E3D008FC9CB /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8FE77582A6116EB008FC9CB /* ManagedSettings.framework */; };
-		A8FE77702A611E3D008FC9CB /* ShieldAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FE776F2A611E3D008FC9CB /* ShieldAction.swift */; };
+		A8FE77702A611E3D008FC9CB /* ShieldActionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FE776F2A611E3D008FC9CB /* ShieldActionExtension.swift */; };
 		A8FE77752A611E3D008FC9CB /* ShieldAction.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A8FE776C2A611E3D008FC9CB /* ShieldAction.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A8FE777B2A628358008FC9CB /* MissionStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8DD56A22A45A72A0058E898 /* MissionStorage.swift */; };
-		A8FE777C2A628367008FC9CB /* MissionStatusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A6DCBF2A5BA4D700D5B341 /* MissionStatusManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -140,6 +144,7 @@
 		A8229A852A13A8AE00881C31 /* DeleteAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountView.swift; sourceTree = "<group>"; };
 		A8229A872A13A9B600881C31 /* AccountSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSetting.swift; sourceTree = "<group>"; };
 		A8229A892A14B3CC00881C31 /* UserInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoViewModel.swift; sourceTree = "<group>"; };
+		A83A9B172A66E2C70051E3B4 /* UserDefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsManager.swift; sourceTree = "<group>"; };
 		A8525A7B2A5068A5004F687B /* Dictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
 		A863AEC72A0CB30D00407B6F /* Mission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mission.swift; sourceTree = "<group>"; };
 		A863AEC92A0D27C000407B6F /* MissionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionViewModel.swift; sourceTree = "<group>"; };
@@ -185,7 +190,7 @@
 		A8FE775F2A6116EB008FC9CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A8FE77602A6116EB008FC9CB /* ShieldConfiguration.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShieldConfiguration.entitlements; sourceTree = "<group>"; };
 		A8FE776C2A611E3D008FC9CB /* ShieldAction.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldAction.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		A8FE776F2A611E3D008FC9CB /* ShieldAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldAction.swift; sourceTree = "<group>"; };
+		A8FE776F2A611E3D008FC9CB /* ShieldActionExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldActionExtension.swift; sourceTree = "<group>"; };
 		A8FE77712A611E3D008FC9CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A8FE77722A611E3D008FC9CB /* ShieldAction.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShieldAction.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -289,6 +294,7 @@
 				A8DD56A22A45A72A0058E898 /* MissionStorage.swift */,
 				A8A6DCBF2A5BA4D700D5B341 /* MissionStatusManager.swift */,
 				A894153B2A4E9724008885C7 /* ManagedSettings.swift */,
+				A83A9B172A66E2C70051E3B4 /* UserDefaultsManager.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -415,7 +421,7 @@
 		A8FE776E2A611E3D008FC9CB /* ShieldAction */ = {
 			isa = PBXGroup;
 			children = (
-				A8FE776F2A611E3D008FC9CB /* ShieldAction.swift */,
+				A8FE776F2A611E3D008FC9CB /* ShieldActionExtension.swift */,
 				A8FE77712A611E3D008FC9CB /* Info.plist */,
 				A8FE77722A611E3D008FC9CB /* ShieldAction.entitlements */,
 			);
@@ -671,6 +677,7 @@
 				A86B56422A55743C0068D25E /* Dictionary.swift in Sources */,
 				A86B56372A5573E80068D25E /* Monitor.swift in Sources */,
 				A86B56412A5574390068D25E /* ManagedSettings.swift in Sources */,
+				A83A9B0C2A65945C0051E3B4 /* MissionStatusManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -682,6 +689,7 @@
 				A863AEC82A0CB30D00407B6F /* Mission.swift in Sources */,
 				A8DD56A32A45A72A0058E898 /* MissionStorage.swift in Sources */,
 				A8F2CFA92A0A2DB50030E175 /* TapBarView.swift in Sources */,
+				A83A9B162A662E5E0051E3B4 /* ShieldActionExtension.swift in Sources */,
 				A8229A842A139A1A00881C31 /* PasswordResetView.swift in Sources */,
 				A894153C2A4E9724008885C7 /* ManagedSettings.swift in Sources */,
 				A8E5A7FD2A5D2E2D0078D118 /* MissionRecordView.swift in Sources */,
@@ -703,6 +711,7 @@
 				A8229A8A2A14B3CC00881C31 /* UserInfoViewModel.swift in Sources */,
 				A8D61DDE2A1E6E2A00F30E5B /* SceneDelegate.swift in Sources */,
 				A806079B2A3F212400946A5E /* TextInputView.swift in Sources */,
+				A83A9B182A66E2C70051E3B4 /* UserDefaultsManager.swift in Sources */,
 				A8229A862A13A8AE00881C31 /* DeleteAccountView.swift in Sources */,
 				A863AED32A0F601200407B6F /* LoginViewModel.swift in Sources */,
 				A8525A7C2A5068A5004F687B /* Dictionary.swift in Sources */,
@@ -742,8 +751,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				A8FE777B2A628358008FC9CB /* MissionStorage.swift in Sources */,
-				A8FE77702A611E3D008FC9CB /* ShieldAction.swift in Sources */,
-				A8FE777C2A628367008FC9CB /* MissionStatusManager.swift in Sources */,
+				A83A9B072A65936C0051E3B4 /* Dictionary.swift in Sources */,
+				A83A9B0E2A65951F0051E3B4 /* MissionStatusManager.swift in Sources */,
+				A8FE77702A611E3D008FC9CB /* ShieldActionExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
