@@ -30,7 +30,7 @@ struct HomeView: View {
                     LazyVGrid(columns: layout, spacing: 10) {
                         ForEach(missionViewModel.missions.filter { mission in
                             let missionStatus = missionViewModel.missionStatusManager.status(for: mission.id) ?? .beforeStart
-                            return missionStatus == .beforeStart || missionStatus == .inProgress
+                            return missionStatus == .beforeStart || missionStatus == .inProgress || missionStatus == .verificationCompleted
                         }.sorted(by: { $0.selectedTime1 < $1.selectedTime1 }), id: \.id) { mission in
                             NavigationLink {
                                 ActionView(mission: mission)

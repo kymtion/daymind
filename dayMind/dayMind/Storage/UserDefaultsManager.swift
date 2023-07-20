@@ -9,6 +9,8 @@ import Foundation
 import Dispatch
 
 class UserDefaultsManager {
+    static let shared = UserDefaultsManager()
+    
     private let semaphore: DispatchSemaphore
     private let userDefaults: UserDefaults
     

@@ -19,28 +19,28 @@ struct MissionStorage: Identifiable, Codable {
         self.imageName = imageName
         self.id = UUID()
     }
-
     
     
-    static func saveMissions(missions: [MissionStorage]) {
-           let encoder = JSONEncoder()
-           do {
-               let data = try encoder.encode(missions)
-               UserDefaults(suiteName: "group.kr.co.daymind.daymind")?.set(data, forKey: "missions")
-           } catch {
-               print("Error encoding missions: \(error)")
-           }
-       }
-      
-    static func loadMissions() -> [MissionStorage] {
-              let decoder = JSONDecoder()
-              if let savedData = UserDefaults(suiteName: "group.kr.co.daymind.daymind")?.data(forKey: "missions") {
-                  do {
-                      return try decoder.decode([MissionStorage].self, from: savedData)
-                  } catch {
-                      print("Error decoding missions: \(error)")
-                  }
-              }
-              return []
-          }
-      }
+    
+    static func saveMissions(missions: [MissionStorage], userDefaultsManager: UserDefaultsManager) {
+        let encoder = JSONEncoder()
+        do {
+            let data = try encoder.encode(missions)
+            UserDefaultsManager.shared.set(data, forKey: "missions")
+        } catch {
+            print("Error encoding missions: \(error)")
+        }
+    }
+    
+    static func loadMissions(userDefaultsManager: UserDefaultsManager) -> [MissionStorage] {
+        let decoder = JSONDecoder()
+        if let savedData = UserDefaultsManager.shared.data(forKey: "missions") {
+            do {
+                return try decoder.decode([MissionStorage].self, from: savedData)
+            } catch {
+                print("Error decoding missions: \(error)")
+            }
+        }
+        return []
+    }
+}

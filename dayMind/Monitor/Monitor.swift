@@ -10,7 +10,7 @@ class Monitor: DeviceActivityMonitor {
         os_log("intervalDidStart 함수가 호출되었습니다.", type: .default)
         super.intervalDidStart(for: activity)
 
-        let missions = MissionStorage.loadMissions()
+        let missions = MissionStorage.loadMissions(userDefaultsManager: UserDefaultsManager.shared)
         guard let mission = missions.first(where: { $0.id.uuidString == activity.rawValue }) else { return }
         let currentStoreName = ManagedSettingsStore.Name(rawValue: mission.currentStore)
         

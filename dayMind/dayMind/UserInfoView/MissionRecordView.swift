@@ -23,9 +23,6 @@ struct MissionRecordView: View {
                 }
             }
         }
-        .onAppear {
-            userInfoViewModel.loadMissionStatusManager()
-        }
     }
 }
 

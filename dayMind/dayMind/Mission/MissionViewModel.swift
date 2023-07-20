@@ -18,20 +18,24 @@ class MissionViewModel: ObservableObject {
     
     @Published var missionStatusManager = MissionStatusManager()
     
+    private let userDefaultsManager = UserDefaultsManager.shared
+    
     init() {
         self.managedSettings = ManagedSettings.loadManagedSettings()
-        self.missions = MissionStorage.loadMissions()
-        if let loadedStatusManager = MissionStatusManager.loadStatuses() {
+        self.missions = MissionStorage.loadMissions(userDefaultsManager: userDefaultsManager)
+        if let loadedStatusManager = MissionStatusManager.loadStatuses(userDefaultsManager: userDefaultsManager) {
             self.missionStatusManager = loadedStatusManager
         }
         setupObservation()
     }
     
     private func setupObservation() {
-            _ = $missionStatusManager.sink { [weak self] _ in
-                self?.missions = MissionStorage.loadMissions()
-            }
+        _ = $missionStatusManager.sink { [weak self] _ in
+            guard let self = self else { return }
+            self.missions = MissionStorage.loadMissions(userDefaultsManager: self.userDefaultsManager)
         }
+    }
+
     
     
 
@@ -50,16 +54,26 @@ class MissionViewModel: ObservableObject {
                 missionStatusManager.updateStatus(for: mission.id, to: .inProgress)
             }
         }
-        MissionStatusManager.saveStatuses(statusManager: missionStatusManager)
-        self.missions = MissionStorage.loadMissions()
+        MissionStatusManager.saveStatuses(statusManager: missionStatusManager, userDefaultsManager: userDefaultsManager)
+        self.missions = MissionStorage.loadMissions(userDefaultsManager: userDefaultsManager)
     }
     
     // 미션 상태 -> 실패
     func giveUpMission(missionId: UUID) {
         // Change mission status to failure
         self.missionStatusManager.updateStatus(for: missionId, to: .failure)
-        MissionStatusManager.saveStatuses(statusManager: missionStatusManager)
-        self.missions = MissionStorage.loadMissions()
+        MissionStatusManager.saveStatuses(statusManager: missionStatusManager, userDefaultsManager: userDefaultsManager)
+        self.missions = MissionStorage.loadMissions(userDefaultsManager: userDefaultsManager)
+    }
+    
+    // 미션 완료 (verificationCompleted -> success)
+    func completeMission(missionId: UUID) {
+        if let missionStatus = self.missionStatusManager.status(for: missionId),
+           missionStatus == .verificationCompleted {
+            self.missionStatusManager.updateStatus(for: missionId, to: .success)
+            MissionStatusManager.saveStatuses(statusManager: missionStatusManager, userDefaultsManager: userDefaultsManager)
+            self.missions = MissionStorage.loadMissions(userDefaultsManager: userDefaultsManager)
+        }
     }
     
 
@@ -74,13 +88,13 @@ class MissionViewModel: ObservableObject {
         guard let missionData = missionData.first(where: { $0.missionType == missionType }) else { return nil }
         let newMission = MissionStorage(selectedTime1: self.selectedTime1,
                                            selectedTime2: self.selectedTime2,
-                                           currentStore: self.currentStore,
+                                        currentStore: self.currentStore,
                                         missionType: missionData.missionType,
-                                            imageName: missionData.imageName)
+                                        imageName: missionData.imageName)
         self.missions.append(newMission)
         self.missionStatusManager.updateStatus(for: newMission.id, to: .beforeStart)
-        MissionStorage.saveMissions(missions: self.missions)
-        MissionStatusManager.saveStatuses(statusManager: self.missionStatusManager)
+        MissionStorage.saveMissions(missions: self.missions, userDefaultsManager: userDefaultsManager)
+        MissionStatusManager.saveStatuses(statusManager: self.missionStatusManager, userDefaultsManager: userDefaultsManager)
         return newMission
     }
     
@@ -123,7 +137,7 @@ class MissionViewModel: ObservableObject {
     func deleteMission(withId id: UUID) {
         if let index = missions.firstIndex(where: { $0.id == id }) {
             missions.remove(at: index)
-            MissionStorage.saveMissions(missions: self.missions)
+            MissionStorage.saveMissions(missions: self.missions, userDefaultsManager: userDefaultsManager)
         }
     }
     

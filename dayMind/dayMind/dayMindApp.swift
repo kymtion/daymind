@@ -56,31 +56,43 @@ struct dayMindApp: App {
     @StateObject var missionViewModel = MissionViewModel()
     let center = AuthorizationCenter.shared
     
+    @State private var isLoading = true
+    
     var body: some Scene {
         WindowGroup {
-              if loginViewModel.isLoggedin {
-                  TapBarView()
-                      .environmentObject(loginViewModel)
-                      .environmentObject(userInfoViewModel)
-                      .environmentObject(missionViewModel)
-                      .onAppear {
-                          Task {
-                              do {
-                                  try await center.requestAuthorization(for: .individual)
-                              } catch {
-                                  print("Failed to request authorization with error: \(error)")
-                              }
-                          }
-                      }
-              } else {
-                  LoginView().environmentObject(loginViewModel)
-              }
-          }
-      }
-  }
-
-
-
+            Group {
+                if isLoading {
+                    LoadingView()
+                } else {
+                    if loginViewModel.isLoggedin {
+                        TapBarView()
+                            .environmentObject(loginViewModel)
+                            .environmentObject(userInfoViewModel)
+                            .environmentObject(missionViewModel)
+                            .onAppear {
+                                Task {
+                                    do {
+                                        try await center.requestAuthorization(for: .individual)
+                                    } catch {
+                                        print("Failed to request authorization with error: \(error)")
+                                    }
+                                }
+                            }
+                    } else {
+                        LoginView().environmentObject(loginViewModel)
+                    }
+                }
+            }
+            .onAppear {
+                // 로딩 작업을 비동기로 수행합니다.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    // 로딩 작업이 완료되면 isLoading을 false로 설정합니다.
+                    self.isLoading = false
+                }
+            }
+        }
+    }
+}
 
 // --------------------------------------------푸시 알람 관련 코드 시작 ---------------------------------------------------
 //    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {

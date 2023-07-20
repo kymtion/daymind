@@ -11,10 +11,9 @@ class UserInfoViewModel: ObservableObject {
     @Published var email = ""
     @Published var uid: String = ""
     @Published var displayName: String = ""
-    
     @Published var missionStatusManager = MissionStatusManager()
     
-    
+    private let userDefaultsManager = UserDefaultsManager.shared
 
     var handle: AuthStateDidChangeListenerHandle?
     
@@ -22,7 +21,8 @@ class UserInfoViewModel: ObservableObject {
     
     init() {
         
-        self.missionStatusManager = MissionStatusManager.loadStatuses() ?? MissionStatusManager()
+        self.missionStatusManager = MissionStatusManager.loadStatuses(userDefaultsManager: userDefaultsManager) ?? MissionStatusManager()
+        
         
         handle = Auth.auth().addStateDidChangeListener { [weak self] (auth, user) in
             guard let self = self else { return }
@@ -47,11 +47,11 @@ class UserInfoViewModel: ObservableObject {
     
     // 모든 미션들을 불러오는 메소드
     func loadMissions() -> [MissionStorage] {
-        return MissionStorage.loadMissions()
+        return MissionStorage.loadMissions(userDefaultsManager: userDefaultsManager)
     }
     
     func loadMissionStatusManager() {
-            self.missionStatusManager = MissionStatusManager.loadStatuses() ?? MissionStatusManager()
+        self.missionStatusManager = MissionStatusManager.loadStatuses(userDefaultsManager: userDefaultsManager) ?? MissionStatusManager()
         }
     
     // 필터링, 그룹핑 및 정렬 작업을 수행하는 메소드

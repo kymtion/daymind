@@ -12,8 +12,8 @@ class ShieldActionExtension: ShieldActionDelegate {
     func secondaryAction() -> Bool {
         os_log("함수 호출됨", type: .default)
         let now = Date()
-        let missions = MissionStorage.loadMissions()
-        let missionStatusManager = MissionStatusManager.loadStatuses()
+        let missions = MissionStorage.loadMissions(userDefaultsManager: UserDefaultsManager.shared)
+        let missionStatusManager = MissionStatusManager.loadStatuses(userDefaultsManager: UserDefaultsManager.shared)
         let calendar = Calendar.current
         os_log("함수 2번", type: .default)
         
@@ -31,17 +31,12 @@ class ShieldActionExtension: ShieldActionDelegate {
                 // Convert the missionTimeComponents back into a Date
                 let missionDate = calendar.date(from: missionTimeComponents)!
                 
-                if missionDate > nowDate {
-                    missionStatusManager?.updateStatus(for: mission.id, to: .success)
+                if missionDate < nowDate {
+                    missionStatusManager?.updateStatus(for: mission.id, to: .verificationCompleted)
                     os_log("함수 4번", type: .default)
                     
-                    let currentStoreName = ManagedSettingsStore.Name(rawValue: mission.currentStore)
-                    let selectedList = ManagedSettingsStore(named: currentStoreName)
-                    selectedList.clearAllSettings()
-                    os_log("함수 5번", type: .default)
-                    
                     if let missionStatusManager = missionStatusManager {
-                        MissionStatusManager.saveStatuses(statusManager: missionStatusManager)
+                        MissionStatusManager.saveStatuses(statusManager: missionStatusManager, userDefaultsManager: UserDefaultsManager.shared)
                         os_log("함수 6번", type: .default)
                     }
                     return true

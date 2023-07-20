@@ -18,19 +18,19 @@ class MissionStatusManager: ObservableObject, Codable {
         missionStatuses[missionID] = newStatus
     }
 
-    static func saveStatuses(statusManager: MissionStatusManager) {
+    static func saveStatuses(statusManager: MissionStatusManager, userDefaultsManager: UserDefaultsManager) {
         let encoder = JSONEncoder()
         do {
             let data = try encoder.encode(statusManager)
-            UserDefaults(suiteName: "group.kr.co.daymind.daymind")?.set(data, forKey: "missionStatuses")
+            UserDefaultsManager.shared.set(data, forKey: "missionStatuses")
         } catch {
             print("Error encoding mission statuses: \(error)")
         }
     }
 
-    static func loadStatuses() -> MissionStatusManager? {
+    static func loadStatuses(userDefaultsManager: UserDefaultsManager) -> MissionStatusManager? {
         let decoder = JSONDecoder()
-        if let savedData = UserDefaults(suiteName: "group.kr.co.daymind.daymind")?.data(forKey: "missionStatuses") {
+        if let savedData = UserDefaultsManager.shared.data(forKey: "missionStatuses") {
             do {
                 return try decoder.decode(MissionStatusManager.self, from: savedData)
             } catch {
@@ -49,7 +49,8 @@ enum MissionStatus: String, Codable {
     case inProgress
     case success
     case failure
-
+    case verificationCompleted
+    
     var description: String {
         switch self {
         case .beforeStart:
@@ -60,9 +61,11 @@ enum MissionStatus: String, Codable {
             return "성공"
         case .failure:
             return "실패"
+        case .verificationCompleted: // 이 부분이 추가된 부분입니다.
+            return "인증완료"
         }
     }
-
+    
     var color: Color {
         switch self {
         case .beforeStart:
@@ -73,6 +76,8 @@ enum MissionStatus: String, Codable {
             return Color.green
         case .failure:
             return Color.red
+        case .verificationCompleted: // 이 부분이 추가된 부분입니다.
+            return Color.purple
         }
     }
 }

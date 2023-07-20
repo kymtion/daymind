@@ -31,6 +31,8 @@
 		A863AECC2A0D300400407B6F /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A863AECB2A0D300400407B6F /* DetailView.swift */; };
 		A863AED32A0F601200407B6F /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A863AED22A0F601200407B6F /* LoginViewModel.swift */; };
 		A863AED52A0F60AC00407B6F /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A863AED42A0F60AC00407B6F /* LoginView.swift */; };
+		A865B5A02A66E897008A522D /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83A9B172A66E2C70051E3B4 /* UserDefaultsManager.swift */; };
+		A865B5A12A66E912008A522D /* UserDefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A83A9B172A66E2C70051E3B4 /* UserDefaultsManager.swift */; };
 		A86B56342A5573E80068D25E /* DeviceActivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A89414F12A4DAE94008885C7 /* DeviceActivity.framework */; };
 		A86B56372A5573E80068D25E /* Monitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86B56362A5573E80068D25E /* Monitor.swift */; };
 		A86B563C2A5573E80068D25E /* Monitor.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A86B56332A5573E80068D25E /* Monitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -39,6 +41,7 @@
 		A86B56422A55743C0068D25E /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8525A7B2A5068A5004F687B /* Dictionary.swift */; };
 		A872019E2A384E6D0022099B /* TimeSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A872019D2A384E6D0022099B /* TimeSettingView.swift */; };
 		A879EBA72A0F812100791AAC /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A879EBA62A0F812100791AAC /* SignUpView.swift */; };
+		A87A46402A69670F00B56036 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87A463F2A69670F00B56036 /* LoadingView.swift */; };
 		A880DAD02A37250500E3FD94 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = A880DACF2A37250500E3FD94 /* Kingfisher */; };
 		A894153C2A4E9724008885C7 /* ManagedSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A894153B2A4E9724008885C7 /* ManagedSettings.swift */; };
 		A8A2953D2A30A0FB00F73B9D /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A8A2953C2A30A0FB00F73B9D /* FirebaseAnalyticsSwift */; };
@@ -157,6 +160,7 @@
 		A86B56392A5573E80068D25E /* Monitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Monitor.entitlements; sourceTree = "<group>"; };
 		A872019D2A384E6D0022099B /* TimeSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSettingView.swift; sourceTree = "<group>"; };
 		A879EBA62A0F812100791AAC /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
+		A87A463F2A69670F00B56036 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		A88762992A15DFD2004376EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A890FBF42A1B9A5B00F44249 /* dayMindTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dayMindTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A890FBF52A1B9A5B00F44249 /* dayMindUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dayMindUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -332,6 +336,7 @@
 				A8229A832A139A1A00881C31 /* PasswordResetView.swift */,
 				A879EBA62A0F812100791AAC /* SignUpView.swift */,
 				A8F2CFA82A0A2DB50030E175 /* TapBarView.swift */,
+				A87A463F2A69670F00B56036 /* LoadingView.swift */,
 				A8F2CFB22A0A91F10030E175 /* UserInfoView */,
 				A8F2CFB12A0A91C00030E175 /* Mission */,
 				A8F2CFAC2A0A671F0030E175 /* Model */,
@@ -675,6 +680,7 @@
 			files = (
 				A86B56402A5574370068D25E /* MissionStorage.swift in Sources */,
 				A86B56422A55743C0068D25E /* Dictionary.swift in Sources */,
+				A865B5A12A66E912008A522D /* UserDefaultsManager.swift in Sources */,
 				A86B56372A5573E80068D25E /* Monitor.swift in Sources */,
 				A86B56412A5574390068D25E /* ManagedSettings.swift in Sources */,
 				A83A9B0C2A65945C0051E3B4 /* MissionStatusManager.swift in Sources */,
@@ -708,6 +714,7 @@
 				A8B585052A5F942A00973DED /* AuthorizationViewModel.swift in Sources */,
 				A80607972A3F1AAC00946A5E /* ActionView.swift in Sources */,
 				A8F2CFAE2A0A680B0030E175 /* MissionRow.swift in Sources */,
+				A87A46402A69670F00B56036 /* LoadingView.swift in Sources */,
 				A8229A8A2A14B3CC00881C31 /* UserInfoViewModel.swift in Sources */,
 				A8D61DDE2A1E6E2A00F30E5B /* SceneDelegate.swift in Sources */,
 				A806079B2A3F212400946A5E /* TextInputView.swift in Sources */,
@@ -751,6 +758,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A8FE777B2A628358008FC9CB /* MissionStorage.swift in Sources */,
+				A865B5A02A66E897008A522D /* UserDefaultsManager.swift in Sources */,
 				A83A9B072A65936C0051E3B4 /* Dictionary.swift in Sources */,
 				A83A9B0E2A65951F0051E3B4 /* MissionStatusManager.swift in Sources */,
 				A8FE77702A611E3D008FC9CB /* ShieldActionExtension.swift in Sources */,
