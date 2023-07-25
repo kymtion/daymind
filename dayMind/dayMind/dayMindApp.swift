@@ -85,7 +85,7 @@ struct dayMindApp: App {
             }
             .onAppear {
                 // 로딩 작업을 비동기로 수행합니다.
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     // 로딩 작업이 완료되면 isLoading을 false로 설정합니다.
                     self.isLoading = false
                 }

@@ -30,17 +30,44 @@ struct TimeSettingView: View {
             self.rawValue
         }
     }
-
+    
     
     var body: some View {
         ZStack {
             Color.white
                 .edgesIgnoringSafeArea(.all)
             ScrollView {
-                VStack(spacing: 20) {
-                    VStack(alignment: .leading) {
-                        Text(mission.timeSetting1)
-                            .font(.system(size: 25, weight: .bold))
+                VStack(spacing: 35) {
+                    Button {
+                        self.isPopupPresented = true
+                    } label: {
+                        Text("앱 허용 리스트 : \(missionViewModel.currentStore)")
+                            .foregroundColor(Color.black)
+                            .font(.system(size: 19, weight: .medium))
+                            .padding(EdgeInsets(top: 15, leading: 25, bottom: 15, trailing: 25))
+                            .background(Color.gray.opacity(0.1))
+                            .clipShape(Capsule())
+                    }
+                    .padding(.top, 30)
+                    .sheet(isPresented: $isPopupPresented) {
+                        AllowListView(isPopupPresented: $isPopupPresented)
+                            .environmentObject(missionViewModel)
+                    }
+                    
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.1))
+                        .frame(height: 10)
+                    
+                        
+                        HStack {
+                            Spacer()
+                            Text(mission.timeSetting1)
+                                .font(.system(size: 20, weight: .bold))
+                            Text(":  \(formatDate(date: selectedTime1))")
+                                .font(.system(size: 20, weight: .regular))
+                            Spacer()
+                        }
+                        .padding(.horizontal, 15)
                         
                         DatePicker("", selection: $selectedTime1,
                                    displayedComponents: .hourAndMinute)
@@ -49,16 +76,25 @@ struct TimeSettingView: View {
                         .onChange(of: selectedTime1, perform: { value in
                             updateDate()
                         })
-                    }
-                    Text("\(formatDate(date: selectedTime1))")
+                        .frame(height: 100)
+                        .clipped()
+                    
+                   
                     
                     Rectangle()
                         .fill(Color.gray.opacity(0.1))
                         .frame(height: 10)
                     
-                    VStack(alignment: .leading) {
-                        Text(mission.timeSetting2)
-                            .font(.system(size: 25, weight: .bold))
+                        
+                        HStack {
+                            Spacer()
+                            Text(mission.timeSetting2)
+                                .font(.system(size: 20, weight: .bold))
+                            Text(":  \(formatDate(date: selectedTime2))")
+                                .font(.system(size: 20, weight: .regular))
+                            Spacer()
+                        }
+                        .padding(.horizontal, 15)
                         
                         DatePicker("", selection: $selectedTime2,
                                    displayedComponents: .hourAndMinute)
@@ -67,47 +103,31 @@ struct TimeSettingView: View {
                         .onChange(of: selectedTime2, perform: { value in
                             updateDate()
                         })
-                    }
-                    Text("\(formatDate(date: selectedTime2))")
-                }
-                
-                Rectangle()
-                    .fill(Color.gray.opacity(0.1))
-                    .frame(height: 10)
-                Spacer()
-                Button {
-                    self.isPopupPresented = true
-                } label: {
-                    Text("현재 앱 허용 리스트: \(missionViewModel.currentStore)")
-                        .foregroundColor(Color.black)
-                        .font(.system(size: 19))
-                        .padding()
-                        .frame(width: UIScreen.main.bounds.width * 0.7)
-                        .background(Color.white)
-                        .cornerRadius(10)
-                        .overlay(RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.black, lineWidth: 1))
-                }
-                .sheet(isPresented: $isPopupPresented) {
-                    AllowListView(isPopupPresented: $isPopupPresented)
-                        .environmentObject(missionViewModel)
-                }
-                Spacer()
-                Button {
-                    let interval = self.selectedTime2.timeIntervalSince(self.selectedTime1)
-                    if interval < 15 * 60 {
-                        self.activeAlert = .intervalError
-                
-                    } else {
-                        let calendar = Calendar.current
-                        let nowComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: Date())
-                        let selectedTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime1)
-                        let nowDateMinute = calendar.date(from: nowComponents)!
-                        let selectedDateMinute = calendar.date(from: selectedTimeComponents)!
-                        if selectedDateMinute < nowDateMinute {
-                            self.activeAlert = .pastError
+                        .frame(height: 100)
+                        .clipped()
+                    
+                   
+                    
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.1))
+                        .frame(height: 10)
+                    
+             
+                    Button {
+                        let interval = self.selectedTime2.timeIntervalSince(self.selectedTime1)
+                        if interval < 15 * 60 {
+                            self.activeAlert = .intervalError
+                            
                         } else {
-                            let inProgressMissions = missionViewModel.missions.filter {
+                            let calendar = Calendar.current
+                            let nowComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: Date())
+                            let selectedTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime1)
+                            let nowDateMinute = calendar.date(from: nowComponents)!
+                            let selectedDateMinute = calendar.date(from: selectedTimeComponents)!
+                            if selectedDateMinute < nowDateMinute {
+                                self.activeAlert = .pastError
+                            } else {
+                                let inProgressMissions = missionViewModel.missions.filter {
                                     missionViewModel.missionStatusManager.status(for: $0.id) == .inProgress
                                 }
                                 for mission in inProgressMissions {
@@ -118,62 +138,64 @@ struct TimeSettingView: View {
                                         return
                                     }
                                 }
-                            
-                            
-                            let overlappingMissions = missionViewModel.missions.filter { mission in
-                                let missionStatus = missionViewModel.missionStatusManager.status(for: mission.id)
-                                return (missionStatus == .beforeStart || missionStatus == .inProgress)
-                            }
-                        
-                           
-                            for mission in overlappingMissions {
-                                let currentStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime1)
-                                let currentEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime2)
-                                let missionStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime1)
-                                let missionEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
                                 
-                                let currentStartTime = calendar.date(from: currentStartTimeComponents)!
-                                let currentEndTime = calendar.date(from: currentEndTimeComponents)!
-                                let missionStartTime = calendar.date(from: missionStartTimeComponents)!
-                                let missionEndTime = calendar.date(from: missionEndTimeComponents)!
                                 
-                                if (missionEndTime >= currentStartTime && missionStartTime <= currentEndTime) {
-                                    self.activeAlert = .overlapError
-                                    return
+                                let overlappingMissions = missionViewModel.missions.filter { mission in
+                                    let missionStatus = missionViewModel.missionStatusManager.status(for: mission.id)
+                                    return (missionStatus == .beforeStart || missionStatus == .inProgress)
                                 }
+                                
+                                
+                                for mission in overlappingMissions {
+                                    let currentStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime1)
+                                    let currentEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime2)
+                                    let missionStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime1)
+                                    let missionEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
+                                    
+                                    let currentStartTime = calendar.date(from: currentStartTimeComponents)!
+                                    let currentEndTime = calendar.date(from: currentEndTimeComponents)!
+                                    let missionStartTime = calendar.date(from: missionStartTimeComponents)!
+                                    let missionEndTime = calendar.date(from: missionEndTimeComponents)!
+                                    
+                                    if (missionEndTime >= currentStartTime && missionStartTime <= currentEndTime) {
+                                        self.activeAlert = .overlapError
+                                        return
+                                    }
+                                }
+                                
+                                self.activeAlert = .confirmation
                             }
-                            
-                            self.activeAlert = .confirmation
+                        }
+                    } label: {
+                        Text("미션 등록")
+                            .padding(10)
+                            .font(.system(size: 25, weight: .bold))
+                            .frame(width: UIScreen.main.bounds.width * 0.5)
+                            .background(.blue)
+                            .foregroundColor(.white)
+                            .clipShape(Capsule())
+                    }
+                    .alert(item: $activeAlert) { alertType in
+                        switch alertType {
+                        case .intervalError:
+                            return Alert(title: Text("경고"), message: Text("시간 간격이 너무 짧습니다. 최소한 15분이상 설정해야합니다."), dismissButton: .default(Text("확인")))
+                        case .pastError:
+                            return Alert(title: Text("경고"), message: Text("시작 시간이 현재 시간 이후로 설정 해야합니다."), dismissButton: .default(Text("확인")))
+                        case .missionInProgressError:
+                            return Alert(title: Text("경고"), message: Text("기존 미션을 완료해야 미션 등록이 가능합니다."), dismissButton: .default(Text("확인")))
+                        case .overlapError:
+                            return Alert(title: Text("경고"), message: Text("선택한 시간대에 이미 등록된 미션이 있습니다."), dismissButton: .default(Text("확인")))
+                        case .confirmation:
+                            return Alert(title: Text("확인"), message: Text("미션을 등록하시겠습니까?"), primaryButton: .default(Text("예"), action: {
+                                self.missionViewModel.selectedTime1 = self.selectedTime1
+                                self.missionViewModel.selectedTime2 = self.selectedTime2
+                                if let createdMission = self.missionViewModel.createMission(missionType: mission.missionType) {
+                                    self.missionViewModel.missionMonitoring(selectedTime1: self.selectedTime1, selectedTime2: self.selectedTime2, missionId: createdMission.id)
+                                }
+                            }), secondaryButton: .cancel())
                         }
                     }
-                } label: {
-                    Text("미션 등록")
-                        .padding(10)
-                        .font(.system(size: 25, weight: .bold))
-                        .frame(width: UIScreen.main.bounds.width * 0.5)
-                        .background(Color(red: 242 / 255, green: 206 / 255, blue: 102 / 255))
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
-                .alert(item: $activeAlert) { alertType in
-                    switch alertType {
-                    case .intervalError:
-                        return Alert(title: Text("경고"), message: Text("시간 간격이 너무 짧습니다. 최소한 15분이상 설정해야합니다."), dismissButton: .default(Text("확인")))
-                    case .pastError:
-                        return Alert(title: Text("경고"), message: Text("시작 시간이 현재 시간 이후로 설정 해야합니다."), dismissButton: .default(Text("확인")))
-                    case .missionInProgressError:
-                            return Alert(title: Text("경고"), message: Text("기존 미션을 완료해야 미션 등록이 가능합니다."), dismissButton: .default(Text("확인")))
-                    case .overlapError:
-                        return Alert(title: Text("경고"), message: Text("선택한 시간대에 이미 등록된 미션이 있습니다."), dismissButton: .default(Text("확인")))
-                    case .confirmation:
-                        return Alert(title: Text("확인"), message: Text("미션을 등록하시겠습니까?"), primaryButton: .default(Text("예"), action: {
-                            self.missionViewModel.selectedTime1 = self.selectedTime1
-                            self.missionViewModel.selectedTime2 = self.selectedTime2
-                            if let createdMission = self.missionViewModel.createMission(missionType: mission.missionType) {
-                                self.missionViewModel.missionMonitoring(selectedTime1: self.selectedTime1, selectedTime2: self.selectedTime2, missionId: createdMission.id)
-                            }
-                        }), secondaryButton: .cancel())
-                    }
+//                    Spacer()
                 }
             }
         }

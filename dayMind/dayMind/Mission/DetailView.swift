@@ -23,23 +23,21 @@ struct DetailView: View {
                             .frame(width: UIScreen.main.bounds.width * 0.9)
                             .background(Color.gray.opacity(0.1))
                             .cornerRadius(10)
-
                     }
                     .padding(.horizontal)
-
                     
                     VStack(alignment: .leading, spacing: 12) {
                         Text(mission.step2a)
                             .font(.system(size: 25, weight: .bold))
                         Text(mission.step2b)
                             .font(.system(size: 20))
-
+                        
                         Text(mission.step2c)
                             .padding()
                             .frame(width: UIScreen.main.bounds.width * 0.9)
                             .background(Color.gray.opacity(0.1))
                             .cornerRadius(10)
-
+                        
                     }
                     .padding(.horizontal)
                     
@@ -47,19 +45,17 @@ struct DetailView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text(mission.step3a)
                                 .font(.system(size: 25, weight: .bold))
-
+                            
                             Text(mission.step3b)
                                 .font(.system(size: 20))
-
+                            
                             Text(mission.step3c)
                                 .padding()
                                 .frame(width: UIScreen.main.bounds.width * 0.9)
                                 .background(Color.gray.opacity(0.1))
                                 .cornerRadius(10)
-
                         }
                     }
-                    
                     Rectangle()
                         .fill(Color.gray.opacity(0.1))
                         .frame(height: 10)
@@ -67,7 +63,6 @@ struct DetailView: View {
                     Text("인증 방법")
                         .font(.system(size: 25, weight: .bold))
                         .foregroundColor(.black)
-
                     
                     VStack(alignment: .leading, spacing: 30) {
                         HStack(spacing: 10) {
@@ -77,23 +72,18 @@ struct DetailView: View {
                                 .frame(width: UIScreen.main.bounds.width * 0.8)
                         }
                         
-
                         HStack(spacing: 10) {
                             Text("2")
                                 .font(.system(size: 30, weight: .bold))
                             Text(mission.confirmmethod2)
                                 .frame(width: UIScreen.main.bounds.width * 0.8)
                         }
-                        
-
                     }
                 }
                 .foregroundColor(.black)
-
                 
                 Spacer()
                     .frame(height: 50)
-                
                 
                 VStack(alignment: .center, spacing: 50) {
                     
@@ -120,11 +110,9 @@ struct DetailView: View {
                             
                         }.onAppear {
                             missionViewModel.fetchImageURL(from: mission.examplePhoto2)
-                            
-                            
                         }
-                        
                     }
+                    
                     Text(mission.description)
                         .padding(25)
                         .background(Color.gray.opacity(0.1))
@@ -132,23 +120,19 @@ struct DetailView: View {
                     NavigationLink {
                         TimeSettingView(mission: mission)
                     } label: {
-                        Text("시작 하기")
-                            .padding()
+                        Text("시 작")
+                            .padding(10)
                             .font(.system(size: 25, weight: .bold))
-                            .frame(width: UIScreen.main.bounds.width * 0.7)
-                            .background(Color(red: 242 / 255, green: 206 / 255, blue: 102 / 255))
+                            .frame(width: UIScreen.main.bounds.width * 0.5)
+                            .background(.blue)
                             .foregroundColor(.white)
-                            .cornerRadius(10)
+                            .clipShape(Capsule())
                     }
-                    
-
-                    
                 }
                 .foregroundColor(.black)
             }
             .padding(.vertical)
         }
-        
     }
 }
 
