@@ -15,6 +15,12 @@ struct ActionView: View {
         missionViewModel.missions.first { $0.id == missionId }
     }
     
+    // CameraView의 상태 변수들
+    @State private var showCamera = false
+    @State private var image: UIImage?
+    @State private var showConfirmButton = false
+    @State private var showConfirmation = false
+    
     init(mission: MissionStorage) {
         self.missionId = mission.id
     }
@@ -24,7 +30,6 @@ struct ActionView: View {
     var body: some View {
         
         ScrollView {
-            
             VStack(spacing: 35) {
                 Text("예치금: 5,000원")
                     .font(.system(size: 30, weight: .regular))
@@ -60,6 +65,92 @@ struct ActionView: View {
                         .font(.system(size: 12, weight: .light))
                     
                 }
+                
+                //미션 타입 -> 수면
+                VStack(spacing: 20) {
+                    if mission?.missionType == "수면" {
+                        let timeComponents = remainingTime.split(separator: ":").map { Int($0) }
+                        if timeComponents.count == 3,
+                           let hour = timeComponents[0],
+                           let minute = timeComponents[1],
+                           let second = timeComponents[2] {
+                            let totalSeconds = hour * 3600 + minute * 60 + second
+                            if totalSeconds > 0 && totalSeconds < 3600 {
+                                Button {
+                                    if missionViewModel.missionStatusManager.status(for: missionId) == .verificationCompleted {
+                                        self.showAlert = true
+                                    } else {
+                                        self.showCamera = true
+                                    }
+                                } label: {
+                                    Text("인 증")
+                                        .padding(10)
+                                        .font(.system(size: 25, weight: .bold))
+                                        .frame(width: UIScreen.main.bounds.width * 0.5)
+                                        .background(.green)
+                                        .foregroundColor(.white)
+                                        .clipShape(Capsule())
+                                }
+                                .alert(isPresented: $showAlert) {
+                                    Alert(title: Text("알림"), message: Text("이미 인증을 완료하셨습니다."), dismissButton: .default(Text("확인")))
+                                }
+                                .fullScreenCover(isPresented: $showCamera) {
+                                    ImagePicker(image: self.$image) { selectedImage in
+                                        self.image = selectedImage
+                                        self.showCamera = false
+                                        if selectedImage != nil {
+                                            DispatchQueue.main.async {
+                                                self.showConfirmation = true
+                                            }
+                                        }
+                                    }
+                                    .edgesIgnoringSafeArea(.all)  // Add this line
+                                    .background(Color.black) // Add this line
+                                }
+                                .fullScreenCover(isPresented: $showConfirmation) {
+                                    VStack {
+                                        if let img = self.image {
+                                            Image(uiImage: img)
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(width: UIScreen.main.bounds.width * 1)
+                                                .padding(.bottom, 30)
+                                            
+                                            Text("인증을 완료하시겠습니까?")
+                                                .font(.system(size: 20, weight: .medium))
+                                                .foregroundColor(.white)
+                                                .padding(.bottom, 20)
+                                            
+                                            Button {
+                                                // 이미지를 관리자 페이지에 업로드하는 코드를 넣으세요.
+                                                self.showConfirmation = false
+                                                missionViewModel.toVerification(missionId: self.missionId)
+                                            } label: {
+                                                Text("인 증")
+                                                    .padding(10)
+                                                    .font(.system(size: 25, weight: .bold))
+                                                    .frame(width: UIScreen.main.bounds.width * 0.5)
+                                                    .background(.green)
+                                                    .foregroundColor(.white)
+                                                    .clipShape(Capsule())
+                                            }
+                                        }
+                                    }
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .background(Color.black)
+                                }
+                            }
+                        }
+                    }
+                    
+                    if mission?.missionType == "수면" {
+                        Text("남은 시간이 1시간 이하일 때\n인증 버튼이 활성화됩니다.")
+                            .font(.system(size: 16))
+                            .multilineTextAlignment(.center)
+                            .opacity(0.7)
+                    }
+                }
+                
                 if missionViewModel.missionStatusManager.status(for: missionId) != .verificationCompleted {
                     Button {
                         showAlert = true
@@ -72,7 +163,6 @@ struct ActionView: View {
                             .foregroundColor(.white)
                             .clipShape(Capsule())
                     }
-                    .padding(.top)
                     .alert(isPresented: $showAlert) {
                         Alert(
                             title: Text("경고"),
@@ -86,7 +176,8 @@ struct ActionView: View {
                     }
                 }
                 
-                if missionViewModel.missionStatusManager.status(for: missionId) == .verificationCompleted {
+                //미션 타입 -> 집중
+                if missionViewModel.missionStatusManager.status(for: missionId) == .verificationCompleted && mission?.missionType == "집중" {
                     Button {
                         missionViewModel.stopMonitoring(missionId: missionId)
                         missionViewModel.completeMission(missionId: missionId)
@@ -100,16 +191,19 @@ struct ActionView: View {
                             .clipShape(Capsule())
                     }
                 }
-                
-                Text("차단된 앱을 클릭하여 '미션완료' 버튼을 \n누르면 '환급' 버튼이 생성됩니다.")
-                    .font(.system(size: 16))
-                    .multilineTextAlignment(.center)
-                    .opacity(0.7)
-                    .padding(.bottom, 30)
-                
-                
+                if mission?.missionType == "집중" {
+                    Text("차단된 앱을 클릭하여 '미션완료' 버튼을 \n누르면 '환급' 버튼이 생성됩니다.")
+                        .font(.system(size: 16))
+                        .multilineTextAlignment(.center)
+                        .opacity(0.7)
+                        .padding(.bottom, 30)
+                }
             }
+            .frame(maxWidth: .infinity)
         }
+    }
+    func didFinishPicking(_ image: UIImage?) {
+        self.showConfirmButton = (image != nil)
     }
     
     func formatMissionTime() -> String {
@@ -133,21 +227,28 @@ struct ActionView: View {
                 if hour <= 0 && minute <= 0 && second <= 0 {
                     remainingTime = "00:00:00"
                     timer.upstream.connect().cancel()
-                } else {
-                    remainingTime = String(format: "%02d:%02d:%02d", hour, minute, second)
+                    
+                    // 남은 시간이 00:00:00 이고, 미션 타입이 "수면"이며, 미션 상태가 inProgress일 경우
+                    if mission?.missionType == "수면" && missionViewModel.missionStatusManager.status(for: missionId) == .inProgress {
+                        // 자동으로 포기 버튼이 눌린것 처럼 작동됨.
+                        missionViewModel.stopMonitoring(missionId: missionId)
+                        missionViewModel.giveUpMission(missionId: missionId)
+                    }
+                    } else {
+                        remainingTime = String(format: "%02d:%02d:%02d", hour, minute, second)
+                    }
                 }
             }
         }
     }
-}
 
 
 
-        //struct ActionView_Previews: PreviewProvider {
-        //    static var previews: some View {
-        //        let missionViewModel = MissionViewModel()
-        //        let mission = MissionStorage(selectedTime1: Date(), selectedTime2: Date(), currentStore: "Test Store", missionType: "집중")
-        //        ActionView(mission: mission)
-        //                    .environmentObject(missionViewModel)
-        //    }
-        //}
+//struct ActionView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        let missionViewModel = MissionViewModel()
+//        let mission = MissionStorage(selectedTime1: Date(), selectedTime2: Date(), currentStore: "Test Store", missionType: "집중")
+//        ActionView(mission: mission)
+//                    .environmentObject(missionViewModel)
+//    }
+//}

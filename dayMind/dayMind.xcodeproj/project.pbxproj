@@ -80,6 +80,8 @@
 		A8FE77702A611E3D008FC9CB /* ShieldActionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FE776F2A611E3D008FC9CB /* ShieldActionExtension.swift */; };
 		A8FE77752A611E3D008FC9CB /* ShieldAction.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A8FE776C2A611E3D008FC9CB /* ShieldAction.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A8FE777B2A628358008FC9CB /* MissionStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8DD56A22A45A72A0058E898 /* MissionStorage.swift */; };
+		A8FFF5072A700C0B00E42723 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FFF5062A700C0B00E42723 /* ImagePicker.swift */; };
+		A8FFF5092A700C6900E42723 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FFF5082A700C6900E42723 /* Coordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -195,6 +197,8 @@
 		A8FE776F2A611E3D008FC9CB /* ShieldActionExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldActionExtension.swift; sourceTree = "<group>"; };
 		A8FE77712A611E3D008FC9CB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A8FE77722A611E3D008FC9CB /* ShieldAction.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShieldAction.entitlements; sourceTree = "<group>"; };
+		A8FFF5062A700C0B00E42723 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		A8FFF5082A700C6900E42723 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -391,6 +395,8 @@
 				A8F2CFA42A08F20E0030E175 /* HomeCell.swift */,
 				A8F2CFA22A08F1E00030E175 /* HomeView.swift */,
 				A80607962A3F1AAC00946A5E /* ActionView.swift */,
+				A8FFF5062A700C0B00E42723 /* ImagePicker.swift */,
+				A8FFF5082A700C6900E42723 /* Coordinator.swift */,
 			);
 			path = Mission;
 			sourceTree = "<group>";
@@ -713,6 +719,7 @@
 				A87A46402A69670F00B56036 /* LoadingView.swift in Sources */,
 				A8229A8A2A14B3CC00881C31 /* UserInfoViewModel.swift in Sources */,
 				A8D61DDE2A1E6E2A00F30E5B /* SceneDelegate.swift in Sources */,
+				A8FFF5092A700C6900E42723 /* Coordinator.swift in Sources */,
 				A806079B2A3F212400946A5E /* TextInputView.swift in Sources */,
 				A83A9B182A66E2C70051E3B4 /* UserDefaultsManager.swift in Sources */,
 				A8229A862A13A8AE00881C31 /* DeleteAccountView.swift in Sources */,
@@ -721,6 +728,7 @@
 				A8229A882A13A9B600881C31 /* AccountSetting.swift in Sources */,
 				A8F2CFA32A08F1E00030E175 /* HomeView.swift in Sources */,
 				A8A6DCC02A5BA4D700D5B341 /* MissionStatusManager.swift in Sources */,
+				A8FFF5072A700C0B00E42723 /* ImagePicker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -972,6 +980,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = dayMind/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 접근을 허용해주세요.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1004,6 +1013,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = dayMind/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 접근을 허용해주세요.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

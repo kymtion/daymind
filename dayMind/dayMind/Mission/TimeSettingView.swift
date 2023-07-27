@@ -25,6 +25,7 @@ struct TimeSettingView: View {
         case overlapError
         case confirmation
         case missionInProgressError
+        case storeNotSelected
 
         var id: Int {
             self.rawValue
@@ -112,58 +113,60 @@ struct TimeSettingView: View {
                         .fill(Color.gray.opacity(0.1))
                         .frame(height: 10)
                     
-             
+                    
                     Button {
-                        let interval = self.selectedTime2.timeIntervalSince(self.selectedTime1)
-                        if interval < 15 * 60 {
-                            self.activeAlert = .intervalError
-                            
+                        if missionViewModel.currentStore.isEmpty {
+                            self.activeAlert = .storeNotSelected
                         } else {
-                            let calendar = Calendar.current
-                            let nowComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: Date())
-                            let selectedTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime1)
-                            let nowDateMinute = calendar.date(from: nowComponents)!
-                            let selectedDateMinute = calendar.date(from: selectedTimeComponents)!
-                            if selectedDateMinute < nowDateMinute {
-                                self.activeAlert = .pastError
+                            
+                            let interval = self.selectedTime2.timeIntervalSince(self.selectedTime1)
+                            if interval < 15 * 60 {
+                                self.activeAlert = .intervalError
+                                
                             } else {
-                                let inProgressMissions = missionViewModel.missions.filter {
-                                    missionViewModel.missionStatusManager.status(for: $0.id) == .inProgress
-                                }
-                                for mission in inProgressMissions {
-                                    let missionEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
-                                    let missionEndTime = calendar.date(from: missionEndTimeComponents)!
-                                    if missionEndTime < nowDateMinute {
-                                        self.activeAlert = .missionInProgressError
-                                        return
+                                let calendar = Calendar.current
+                                let nowComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: Date())
+                                let selectedTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime1)
+                                let nowDateMinute = calendar.date(from: nowComponents)!
+                                let selectedDateMinute = calendar.date(from: selectedTimeComponents)!
+                                if selectedDateMinute < nowDateMinute {
+                                    self.activeAlert = .pastError
+                                } else {
+                                    let inProgressMissions = missionViewModel.missions.filter {
+                                        missionViewModel.missionStatusManager.status(for: $0.id) == .inProgress
                                     }
-                                }
-                                
-                                
-                                let overlappingMissions = missionViewModel.missions.filter { mission in
-                                    let missionStatus = missionViewModel.missionStatusManager.status(for: mission.id)
-                                    return (missionStatus == .beforeStart || missionStatus == .inProgress)
-                                }
-                                
-                                
-                                for mission in overlappingMissions {
-                                    let currentStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime1)
-                                    let currentEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime2)
-                                    let missionStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime1)
-                                    let missionEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
-                                    
-                                    let currentStartTime = calendar.date(from: currentStartTimeComponents)!
-                                    let currentEndTime = calendar.date(from: currentEndTimeComponents)!
-                                    let missionStartTime = calendar.date(from: missionStartTimeComponents)!
-                                    let missionEndTime = calendar.date(from: missionEndTimeComponents)!
-                                    
-                                    if (missionEndTime >= currentStartTime && missionStartTime <= currentEndTime) {
-                                        self.activeAlert = .overlapError
-                                        return
+                                    for mission in inProgressMissions {
+                                        let missionEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
+                                        let missionEndTime = calendar.date(from: missionEndTimeComponents)!
+                                        if missionEndTime < nowDateMinute {
+                                            self.activeAlert = .missionInProgressError
+                                            return
+                                        }
                                     }
+                                    
+                                    // 미션 상태가 진행중 또는 대기중인 미션들 중에서 미션 시간이 겹치는게 있는지 파악해줌
+                                    let overlappingMissions = missionViewModel.missions.filter { mission in
+                                        let missionStatus = missionViewModel.missionStatusManager.status(for: mission.id)
+                                        return (missionStatus == .beforeStart || missionStatus == .inProgress)
+                                    }
+                                    for mission in overlappingMissions {
+                                        let currentStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime1)
+                                        let currentEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime2)
+                                        let missionStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime1)
+                                        let missionEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
+                                        
+                                        let currentStartTime = calendar.date(from: currentStartTimeComponents)!
+                                        let currentEndTime = calendar.date(from: currentEndTimeComponents)!
+                                        let missionStartTime = calendar.date(from: missionStartTimeComponents)!
+                                        let missionEndTime = calendar.date(from: missionEndTimeComponents)!
+                                        
+                                        if (missionEndTime >= currentStartTime && missionStartTime <= currentEndTime) {
+                                            self.activeAlert = .overlapError
+                                            return
+                                        }
+                                    }
+                                    self.activeAlert = .confirmation
                                 }
-                                
-                                self.activeAlert = .confirmation
                             }
                         }
                     } label: {
@@ -177,6 +180,8 @@ struct TimeSettingView: View {
                     }
                     .alert(item: $activeAlert) { alertType in
                         switch alertType {
+                        case .storeNotSelected:
+                               return Alert(title: Text("알림"), message: Text("앱 허용 리스트를 선택하세요"), dismissButton: .default(Text("확인")))
                         case .intervalError:
                             return Alert(title: Text("경고"), message: Text("시간 간격이 너무 짧습니다. 최소한 15분이상 설정해야합니다."), dismissButton: .default(Text("확인")))
                         case .pastError:
@@ -195,7 +200,6 @@ struct TimeSettingView: View {
                             }), secondaryButton: .cancel())
                         }
                     }
-//                    Spacer()
                 }
             }
         }
@@ -229,8 +233,6 @@ func updateDate() {
         formatter.dateFormat = "EEEE, a hh:mm"
         return formatter.string(from: date)
     }
-    
-   
 }
 
 struct TimeSettingView_Previews: PreviewProvider {

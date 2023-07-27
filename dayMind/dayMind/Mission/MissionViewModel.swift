@@ -36,8 +36,12 @@ class MissionViewModel: ObservableObject {
         }
     }
 
-    
-    
+    // 미션 상태 (진행중 -> 인증완료)
+    func toVerification(missionId: UUID) {
+            guard missionStatusManager.status(for: missionId) == .inProgress else { return }
+            missionStatusManager.updateStatus(for: missionId, to: .verificationCompleted)
+            MissionStatusManager.saveStatuses(statusManager: missionStatusManager, userDefaultsManager: userDefaultsManager)
+        }
 
     
     // 미션 상태 (대기중 -> 진행중)
@@ -75,10 +79,6 @@ class MissionViewModel: ObservableObject {
             self.missions = MissionStorage.loadMissions(userDefaultsManager: userDefaultsManager)
         }
     }
-    
-
-
-
 
     func missionStorage(forType type: String) -> MissionStorage? {
         return missions.first { $0.missionType == type }
