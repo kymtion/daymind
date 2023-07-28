@@ -2,7 +2,6 @@
 
 import Foundation
 
-
 struct MissionStorage: Identifiable, Codable {
     var selectedTime1: Date
     var selectedTime2: Date
@@ -44,3 +43,4 @@ struct MissionStorage: Identifiable, Codable {
         return []
     }
 }
+

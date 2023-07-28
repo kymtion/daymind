@@ -22,6 +22,7 @@ struct ActionView: View {
     @State private var showConfirmButton = false
     @State private var showConfirmation = false // 촬영된 사진 인증 뷰
     @State private var showMidnightButton = false // 수면미션 환급 버튼
+    @State private var captureTime: Date?
     
     init(mission: MissionStorage) {
         self.missionId = mission.id
@@ -30,7 +31,6 @@ struct ActionView: View {
     let deviceActivityCenter = DeviceActivityCenter()
     
     var body: some View {
-        
         ScrollView {
             VStack(spacing: 35) {
                 Text("예치금: 5,000원")
@@ -51,10 +51,8 @@ struct ActionView: View {
                 .padding()
                 .background(Color.gray.opacity(0.1))
                 .clipShape(Capsule())
-                
                 Text("🌏")
                     .font(.system(size: 100))
-                
                 VStack {
                     Text(remainingTime)
                         .font(.system(size: 50, weight: .medium))
@@ -62,12 +60,9 @@ struct ActionView: View {
                         .onReceive(timer) { _ in
                             updateRemainingTime()
                         }
-                    
                     Text(formatMissionTime())
                         .font(.system(size: 12, weight: .light))
-                    
                 }
-                
                 //미션 타입 -> 수면
                 VStack(spacing: 20) {
                     if mission?.missionType == "수면" {
@@ -97,8 +92,9 @@ struct ActionView: View {
                                     Alert(title: Text("알림"), message: Text("이미 인증을 완료하셨습니다."), dismissButton: .default(Text("확인")))
                                 }
                                 .fullScreenCover(isPresented: $showCamera) {
-                                    ImagePicker(image: self.$image) { selectedImage in
+                                    ImagePicker(image: self.$image) { selectedImage, captureTime in
                                         self.image = selectedImage
+                                        self.captureTime = captureTime
                                         self.showCamera = false
                                         if selectedImage != nil {
                                             DispatchQueue.main.async {
@@ -124,7 +120,29 @@ struct ActionView: View {
                                                 .padding(.bottom, 20)
                                             
                                             Button {
-                                                // 이미지를 관리자 페이지에 업로드하는 코드를 넣으세요.
+                                                // Get an instance of the mission from your data model
+                                                   guard let mission = self.mission else {
+                                                       print("Mission not found")
+                                                       return
+                                                   }
+
+                                                   // Make sure there is an image to upload
+                                                   guard let img = self.image else {
+                                                       print("No image to upload")
+                                                       return
+                                                   }
+
+                                                   // Make sure the capture time is available
+                                                guard let captureTime = self.captureTime else {
+                                                    print("Capture time not available")
+                                                    return
+                                                }
+                                                
+                                                // Upload the image and metadata
+                                                missionViewModel.uploadImage(img, for: mission, captureTime: captureTime)
+
+                                                
+                                                
                                                 self.showConfirmation = false
                                                 missionViewModel.toVerification(missionId: self.missionId)
                                                 missionViewModel.stopMonitoring(missionId: missionId)
@@ -145,14 +163,12 @@ struct ActionView: View {
                             }
                         }
                     }
-                    
                     if mission?.missionType == "수면", missionViewModel.missionStatusManager.status(for: missionId) != .verificationCompleted {
                         Text("남은 시간이 1시간 이하일 때\n인증 버튼이 활성화됩니다.")
                             .font(.system(size: 16))
                             .multilineTextAlignment(.center)
                             .opacity(0.7)
                     }
-                    
                     if mission?.missionType == "수면", missionViewModel.missionStatusManager.status(for: missionId) == .verificationCompleted {
                         Text("인증사진이 관리자에게 승인되면,\n오늘 자정에 환급 버튼이 활성화됩니다.")
                             .font(.system(size: 16))
@@ -160,20 +176,20 @@ struct ActionView: View {
                             .opacity(0.7)
                     }
                 }
-                
+                // 자정 이후에 생기는 환급 버튼
                 if showMidnightButton {
-                        Button {
-                            missionViewModel.completeMission(missionId: missionId)
-                        } label: {
-                            Text("환 급")
-                                .padding(10)
-                                .font(.system(size: 25, weight: .bold))
-                                .frame(width: UIScreen.main.bounds.width * 0.5)
-                                .background(.green)
-                                .foregroundColor(.white)
-                                .clipShape(Capsule())
-                        }
+                    Button {
+                        missionViewModel.completeMission(missionId: missionId)
+                    } label: {
+                        Text("환 급")
+                            .padding(10)
+                            .font(.system(size: 25, weight: .bold))
+                            .frame(width: UIScreen.main.bounds.width * 0.5)
+                            .background(.green)
+                            .foregroundColor(.white)
+                            .clipShape(Capsule())
                     }
+                }
                 //미션 상태가 인증완료 일때만 포기 버튼이 사라짐
                 if missionViewModel.missionStatusManager.status(for: missionId) != .verificationCompleted {
                     Button {
@@ -199,7 +215,6 @@ struct ActionView: View {
                         )
                     }
                 }
-                
                 //미션 타입 -> 집중
                 if missionViewModel.missionStatusManager.status(for: missionId) == .verificationCompleted && mission?.missionType == "집중" {
                     Button {
@@ -230,7 +245,7 @@ struct ActionView: View {
             print("환급버튼생성!")
         }
     }
-
+    
     
     func formatMissionTime() -> String {
         let formatter = DateFormatter()
@@ -260,12 +275,12 @@ struct ActionView: View {
                         missionViewModel.stopMonitoring(missionId: missionId)
                         missionViewModel.giveUpMission(missionId: missionId)
                     }
-                    } else {
-                        remainingTime = String(format: "%02d:%02d:%02d", hour, minute, second)
-                    }
+                } else {
+                    remainingTime = String(format: "%02d:%02d:%02d", hour, minute, second)
                 }
             }
         }
+    }
     //수면 미션 환급 버튼 생성해주는 함수
     func midnightBackMoney() {
         guard let missionEndTime = mission?.selectedTime2,
@@ -284,10 +299,7 @@ struct ActionView: View {
             showMidnightButton = true
         }
     }
-
-
-    
-    }
+}
 
 
 

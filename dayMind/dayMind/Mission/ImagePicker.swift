@@ -3,7 +3,8 @@ import SwiftUI
 
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var image: UIImage?
-    let didFinishPicking: (UIImage?) -> Void
+    @State var captureTime: Date? = nil 
+    let didFinishPicking: (UIImage?, Date?) -> Void  // 촬영 시간을 추가
     
     func makeCoordinator() -> Coordinator {
         Coordinator(self)

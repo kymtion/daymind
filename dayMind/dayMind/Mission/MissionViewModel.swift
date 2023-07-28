@@ -3,6 +3,7 @@ import FirebaseStorage
 import FamilyControls
 import ManagedSettings
 import DeviceActivity
+import UIKit
 
 class MissionViewModel: ObservableObject {
     @Published var currentStore: String = ""
@@ -33,6 +34,48 @@ class MissionViewModel: ObservableObject {
         _ = $missionStatusManager.sink { [weak self] _ in
             guard let self = self else { return }
             self.missions = MissionStorage.loadMissions(userDefaultsManager: self.userDefaultsManager)
+        }
+    }
+    // 파이어베이스 사진 업로드
+    func uploadImage(_ image: UIImage?, for mission: MissionStorage, captureTime: Date) {
+        let storage = Storage.storage()
+        let storageRef = storage.reference().child("수면미션/\(mission.id.uuidString).jpg")
+        
+        if let uploadData = image?.jpegData(compressionQuality: 0.5) {
+            storageRef.putData(uploadData, metadata: nil) { (metadata, error) in
+                if let error = error {
+                    print("Error uploading image: \(error)")
+                } else {
+                    print("Upload successful!")
+                    
+                    // 메타데이터 생성
+                    let dateFormatter = ISO8601DateFormatter()
+                    let selectedTime1Str = dateFormatter.string(from: self.selectedTime1)
+                    let selectedTime2Str = dateFormatter.string(from: self.selectedTime2)
+                    let captureTimeStr = dateFormatter.string(from: captureTime)
+                    
+                    let missionData: [String: String] = [
+                        "selectedTime1": selectedTime1Str,
+                        "selectedTime2": selectedTime2Str,
+                        "missionType": mission.missionType,
+                        "id": mission.id.uuidString,
+                        "captureTime": captureTimeStr
+                        // 다른 필요한 메타데이터를 추가
+                    ]
+                    
+                    // 메타데이터 업데이트
+                    let newMetadata = StorageMetadata()
+                    newMetadata.customMetadata = missionData
+                    
+                    storageRef.updateMetadata(newMetadata) { (updatedMetadata, error) in
+                        if let error = error {
+                            print("Error updating metadata: \(error)")
+                        } else {
+                            print("Metadata update successful!")
+                        }
+                    }
+                }
+            }
         }
     }
 

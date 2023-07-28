@@ -100,7 +100,7 @@ struct DetailView: View {
                                             Text("Unable to load image")
                                         }
                                         .scaledToFit()
-                                        .frame(width: UIScreen.main.bounds.width * 0.7)
+                                        .frame(width: UIScreen.main.bounds.width * 0.5)
                                         .cornerRadius(10)
                                 } else {
                                     Text("Loading...")

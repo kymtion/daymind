@@ -39,36 +39,18 @@ struct TimeSettingView: View {
                 .edgesIgnoringSafeArea(.all)
             ScrollView {
                 VStack(spacing: 35) {
-                    Button {
-                        self.isPopupPresented = true
-                    } label: {
-                        Text("앱 허용 리스트 : \(missionViewModel.currentStore)")
-                            .foregroundColor(Color.black)
-                            .font(.system(size: 19, weight: .medium))
-                            .padding(EdgeInsets(top: 15, leading: 25, bottom: 15, trailing: 25))
-                            .background(Color.gray.opacity(0.1))
-                            .clipShape(Capsule())
-                    }
-                    .padding(.top, 30)
-                    .sheet(isPresented: $isPopupPresented) {
-                        AllowListView(isPopupPresented: $isPopupPresented)
-                            .environmentObject(missionViewModel)
-                    }
-                    
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.1))
-                        .frame(height: 10)
-                    
+                
                         
                         HStack {
                             Spacer()
                             Text(mission.timeSetting1)
-                                .font(.system(size: 20, weight: .bold))
+                                .font(.system(size: 23, weight: .bold))
                             Text(":  \(formatDate(date: selectedTime1))")
-                                .font(.system(size: 20, weight: .regular))
+                                .font(.system(size: 23, weight: .regular))
                             Spacer()
                         }
                         .padding(.horizontal, 15)
+                        .padding(.top, 30)
                         
                         DatePicker("", selection: $selectedTime1,
                                    displayedComponents: .hourAndMinute)
@@ -86,13 +68,34 @@ struct TimeSettingView: View {
                         .fill(Color.gray.opacity(0.1))
                         .frame(height: 10)
                     
+                    VStack(spacing: 20) {
+                        Button {
+                            self.isPopupPresented = true
+                        } label: {
+                            Text("앱 허용 리스트 : \(missionViewModel.currentStore)")
+                                .foregroundColor(Color.white)
+                                .font(.system(size: 19, weight: .medium))
+                                .padding(EdgeInsets(top: 15, leading: 25, bottom: 15, trailing: 25))
+                                .background(Color.green.opacity(1))
+                                .clipShape(Capsule())
+                        }
+                        .sheet(isPresented: $isPopupPresented) {
+                            AllowListView(isPopupPresented: $isPopupPresented)
+                                .environmentObject(missionViewModel)
+                        }
+                        Text("차단에서 제외할 앱 리스트를 설정하세요.")
+                            .opacity(0.7)
+                    }
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.1))
+                        .frame(height: 10)
                         
                         HStack {
                             Spacer()
                             Text(mission.timeSetting2)
-                                .font(.system(size: 20, weight: .bold))
+                                .font(.system(size: 23, weight: .bold))
                             Text(":  \(formatDate(date: selectedTime2))")
-                                .font(.system(size: 20, weight: .regular))
+                                .font(.system(size: 23, weight: .regular))
                             Spacer()
                         }
                         .padding(.horizontal, 15)
