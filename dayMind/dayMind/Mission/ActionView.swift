@@ -6,7 +6,8 @@ import DeviceActivity
 struct ActionView: View {
     
     @EnvironmentObject var missionViewModel: MissionViewModel
-    @State var showAlert: Bool = false
+    @State var showAlert1: Bool = false //이미 인증을 완료하셨습니다.
+    @State var showAlert2: Bool = false // 포기하면 예치금 환급이 불가능합니다. 포기하시겠습니까?
     @State var remainingTime: String = ""
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
@@ -16,10 +17,11 @@ struct ActionView: View {
     }
     
     // CameraView의 상태 변수들
-    @State private var showCamera = false
+    @State private var showCamera = false // 카메라 촬영뷰
     @State private var image: UIImage?
     @State private var showConfirmButton = false
-    @State private var showConfirmation = false
+    @State private var showConfirmation = false // 촬영된 사진 인증 뷰
+    @State private var showMidnightButton = false // 수면미션 환급 버튼
     
     init(mission: MissionStorage) {
         self.missionId = mission.id
@@ -78,7 +80,7 @@ struct ActionView: View {
                             if totalSeconds > 0 && totalSeconds < 3600 {
                                 Button {
                                     if missionViewModel.missionStatusManager.status(for: missionId) == .verificationCompleted {
-                                        self.showAlert = true
+                                        self.showAlert1 = true
                                     } else {
                                         self.showCamera = true
                                     }
@@ -91,7 +93,7 @@ struct ActionView: View {
                                         .foregroundColor(.white)
                                         .clipShape(Capsule())
                                 }
-                                .alert(isPresented: $showAlert) {
+                                .alert(isPresented: $showAlert1) {
                                     Alert(title: Text("알림"), message: Text("이미 인증을 완료하셨습니다."), dismissButton: .default(Text("확인")))
                                 }
                                 .fullScreenCover(isPresented: $showCamera) {
@@ -125,6 +127,7 @@ struct ActionView: View {
                                                 // 이미지를 관리자 페이지에 업로드하는 코드를 넣으세요.
                                                 self.showConfirmation = false
                                                 missionViewModel.toVerification(missionId: self.missionId)
+                                                missionViewModel.stopMonitoring(missionId: missionId)
                                             } label: {
                                                 Text("인 증")
                                                     .padding(10)
@@ -143,17 +146,38 @@ struct ActionView: View {
                         }
                     }
                     
-                    if mission?.missionType == "수면" {
+                    if mission?.missionType == "수면", missionViewModel.missionStatusManager.status(for: missionId) != .verificationCompleted {
                         Text("남은 시간이 1시간 이하일 때\n인증 버튼이 활성화됩니다.")
+                            .font(.system(size: 16))
+                            .multilineTextAlignment(.center)
+                            .opacity(0.7)
+                    }
+                    
+                    if mission?.missionType == "수면", missionViewModel.missionStatusManager.status(for: missionId) == .verificationCompleted {
+                        Text("인증사진이 관리자에게 승인되면,\n오늘 자정에 환급 버튼이 활성화됩니다.")
                             .font(.system(size: 16))
                             .multilineTextAlignment(.center)
                             .opacity(0.7)
                     }
                 }
                 
+                if showMidnightButton {
+                        Button {
+                            missionViewModel.completeMission(missionId: missionId)
+                        } label: {
+                            Text("환 급")
+                                .padding(10)
+                                .font(.system(size: 25, weight: .bold))
+                                .frame(width: UIScreen.main.bounds.width * 0.5)
+                                .background(.green)
+                                .foregroundColor(.white)
+                                .clipShape(Capsule())
+                        }
+                    }
+                //미션 상태가 인증완료 일때만 포기 버튼이 사라짐
                 if missionViewModel.missionStatusManager.status(for: missionId) != .verificationCompleted {
                     Button {
-                        showAlert = true
+                        showAlert2 = true
                     } label: {
                         Text("포 기")
                             .padding(10)
@@ -163,7 +187,7 @@ struct ActionView: View {
                             .foregroundColor(.white)
                             .clipShape(Capsule())
                     }
-                    .alert(isPresented: $showAlert) {
+                    .alert(isPresented: $showAlert2) {
                         Alert(
                             title: Text("경고"),
                             message: Text("포기하면 예치금 환급이 불가능합니다. 포기하시겠습니까?"),
@@ -201,10 +225,12 @@ struct ActionView: View {
             }
             .frame(maxWidth: .infinity)
         }
+        .onAppear {
+            midnightBackMoney()
+            print("환급버튼생성!")
+        }
     }
-    func didFinishPicking(_ image: UIImage?) {
-        self.showConfirmButton = (image != nil)
-    }
+
     
     func formatMissionTime() -> String {
         let formatter = DateFormatter()
@@ -240,6 +266,27 @@ struct ActionView: View {
                 }
             }
         }
+    //수면 미션 환급 버튼 생성해주는 함수
+    func midnightBackMoney() {
+        guard let missionEndTime = mission?.selectedTime2,
+              mission?.missionType == "수면",
+              missionViewModel.missionStatusManager.status(for: missionId) == .verificationCompleted else {
+            return
+        }
+        let calendar = Calendar.current
+        let nextDay = calendar.date(byAdding: .day, value: 1, to: missionEndTime)!
+        let midnight = calendar.startOfDay(for: nextDay)
+        
+        let now = Date()
+        if now >= midnight {
+            print("It's past midnight of the next day!")
+            // 현재 시간이 selectedTime2의 다음날 자정 이후일 때 실행하려는 코드를 여기에 작성
+            showMidnightButton = true
+        }
+    }
+
+
+    
     }
 
 
