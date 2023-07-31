@@ -15,11 +15,12 @@ struct DetailView: View {
                 VStack(spacing: 30) {
                     VStack(alignment: .leading, spacing: 12) {
                         Text(mission.step1a)
-                            .font(.system(size: 25, weight: .bold))
+                            .font(.system(size: 23, weight: .bold))
                         Text(mission.step1b)
-                            .font(.system(size: 20))
+                            .font(.system(size: 18))
                         Text(mission.step1c)
                             .padding()
+                            .font(.system(size: 15))
                             .frame(width: UIScreen.main.bounds.width * 0.9)
                             .background(Color.gray.opacity(0.1))
                             .cornerRadius(10)
@@ -28,12 +29,13 @@ struct DetailView: View {
                     
                     VStack(alignment: .leading, spacing: 12) {
                         Text(mission.step2a)
-                            .font(.system(size: 25, weight: .bold))
+                            .font(.system(size: 23, weight: .bold))
                         Text(mission.step2b)
-                            .font(.system(size: 20))
+                            .font(.system(size: 18))
                         
                         Text(mission.step2c)
                             .padding()
+                            .font(.system(size: 15))
                             .frame(width: UIScreen.main.bounds.width * 0.9)
                             .background(Color.gray.opacity(0.1))
                             .cornerRadius(10)
@@ -44,13 +46,14 @@ struct DetailView: View {
                     if !mission.step3a.isEmpty || !mission.step3b.isEmpty || !mission.step3c.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
                             Text(mission.step3a)
-                                .font(.system(size: 25, weight: .bold))
+                                .font(.system(size: 23, weight: .bold))
                             
                             Text(mission.step3b)
-                                .font(.system(size: 20))
+                                .font(.system(size: 18))
                             
                             Text(mission.step3c)
                                 .padding()
+                                .font(.system(size: 15))
                                 .frame(width: UIScreen.main.bounds.width * 0.9)
                                 .background(Color.gray.opacity(0.1))
                                 .cornerRadius(10)
@@ -61,7 +64,7 @@ struct DetailView: View {
                         .frame(height: 10)
                     
                     Text("인증 방법")
-                        .font(.system(size: 25, weight: .bold))
+                        .font(.system(size: 23, weight: .bold))
                         .foregroundColor(.black)
                     
                     VStack(alignment: .leading, spacing: 30) {
@@ -70,6 +73,7 @@ struct DetailView: View {
                                 .font(.system(size: 30, weight: .bold))
                             Text(mission.confirmmethod1)
                                 .frame(width: UIScreen.main.bounds.width * 0.8)
+                                .font(.system(size: 15))
                         }
                         
                         HStack(spacing: 10) {
@@ -77,6 +81,7 @@ struct DetailView: View {
                                 .font(.system(size: 30, weight: .bold))
                             Text(mission.confirmmethod2)
                                 .frame(width: UIScreen.main.bounds.width * 0.8)
+                                .font(.system(size: 15))
                         }
                     }
                 }
@@ -91,7 +96,7 @@ struct DetailView: View {
                         
                         VStack(alignment: .center, spacing: 12) {
                             Text(mission.examplePhoto1)
-                                .font(.system(size: 25, weight: .bold))
+                                .font(.system(size: 23, weight: .bold))
                             Group {
                                 if let url = missionViewModel.imageURL {
                                     KFImage(url)
@@ -107,6 +112,7 @@ struct DetailView: View {
                                 }
                             }
                             Text(mission.examplePhoto3)
+                                .font(.system(size: 15))
                             
                         }.onAppear {
                             missionViewModel.fetchImageURL(from: mission.examplePhoto2)
@@ -115,6 +121,7 @@ struct DetailView: View {
                     
                     Text(mission.description)
                         .padding(25)
+                        .font(.system(size: 15))
                         .background(Color.gray.opacity(0.1))
                     
                     NavigationLink {
@@ -122,8 +129,8 @@ struct DetailView: View {
                     } label: {
                         Text("시 작")
                             .padding(10)
-                            .font(.system(size: 25, weight: .bold))
-                            .frame(width: UIScreen.main.bounds.width * 0.5)
+                            .font(.system(size: 23, weight: .bold))
+                            .frame(width: UIScreen.main.bounds.width * 0.4)
                             .background(.blue)
                             .foregroundColor(.white)
                             .clipShape(Capsule())

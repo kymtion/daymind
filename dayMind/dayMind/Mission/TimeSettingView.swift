@@ -44,9 +44,9 @@ struct TimeSettingView: View {
                         HStack {
                             Spacer()
                             Text(mission.timeSetting1)
-                                .font(.system(size: 23, weight: .bold))
+                                .font(.system(size: 20, weight: .bold))
                             Text(":  \(formatDate(date: selectedTime1))")
-                                .font(.system(size: 23, weight: .regular))
+                                .font(.system(size: 20, weight: .regular))
                             Spacer()
                         }
                         .padding(.horizontal, 15)
@@ -74,7 +74,7 @@ struct TimeSettingView: View {
                         } label: {
                             Text("앱 허용 리스트 : \(missionViewModel.currentStore)")
                                 .foregroundColor(Color.white)
-                                .font(.system(size: 19, weight: .medium))
+                                .font(.system(size: 18, weight: .medium))
                                 .padding(EdgeInsets(top: 15, leading: 25, bottom: 15, trailing: 25))
                                 .background(Color.green.opacity(1))
                                 .clipShape(Capsule())
@@ -85,6 +85,7 @@ struct TimeSettingView: View {
                         }
                         Text("차단에서 제외할 앱 리스트를 설정하세요.")
                             .opacity(0.7)
+                            .font(.system(size: 15, weight: .regular))
                     }
                     Rectangle()
                         .fill(Color.gray.opacity(0.1))
@@ -93,9 +94,9 @@ struct TimeSettingView: View {
                         HStack {
                             Spacer()
                             Text(mission.timeSetting2)
-                                .font(.system(size: 23, weight: .bold))
+                                .font(.system(size: 20, weight: .bold))
                             Text(":  \(formatDate(date: selectedTime2))")
-                                .font(.system(size: 23, weight: .regular))
+                                .font(.system(size: 20, weight: .regular))
                             Spacer()
                         }
                         .padding(.horizontal, 15)
@@ -175,8 +176,8 @@ struct TimeSettingView: View {
                     } label: {
                         Text("미션 등록")
                             .padding(10)
-                            .font(.system(size: 25, weight: .bold))
-                            .frame(width: UIScreen.main.bounds.width * 0.5)
+                            .font(.system(size: 23, weight: .bold))
+                            .frame(width: UIScreen.main.bounds.width * 0.4)
                             .background(.blue)
                             .foregroundColor(.white)
                             .clipShape(Capsule())
