@@ -13,7 +13,7 @@ struct MissionRecordView: View {
                         .font(.system(size: 17, weight: .semibold))
                     ) {
                         ForEach(missions) { mission in
-                            RecordCell(mission: mission)
+                            RecordCell(firestoreMission: mission)
                                 .environmentObject(userInfoViewModel)
                                 .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
                                 .listRowSeparator(.hidden)

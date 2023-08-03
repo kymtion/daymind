@@ -5,25 +5,19 @@ import KakaoSDKUser
 import KakaoSDKAuth
 import KakaoSDKCommon
 import Alamofire
-
+import FirebaseFirestore
 
 class UserInfoViewModel: ObservableObject {
     @Published var email = ""
     @Published var uid: String = ""
     @Published var displayName: String = ""
-    @Published var missionStatusManager = MissionStatusManager()
+    @Published var missions: [FirestoreMission] = []
     
-    private let userDefaultsManager = UserDefaultsManager.shared
-
+    private let db = Firestore.firestore()
     var handle: AuthStateDidChangeListenerHandle?
-    
     var cancellables = Set<AnyCancellable>()
     
     init() {
-        
-        self.missionStatusManager = MissionStatusManager.loadStatuses(userDefaultsManager: userDefaultsManager) ?? MissionStatusManager()
-        
-        
         handle = Auth.auth().addStateDidChangeListener { [weak self] (auth, user) in
             guard let self = self else { return }
             if let user = user {
@@ -36,6 +30,9 @@ class UserInfoViewModel: ObservableObject {
                 self.displayName = ""
             }
         }
+        FirestoreMission.loadFirestoreMissions { missions in
+            self.missions = missions
+        }
     }
     
     deinit {
@@ -44,42 +41,29 @@ class UserInfoViewModel: ObservableObject {
         }
     }
     
-    
-    // 모든 미션들을 불러오는 메소드
-    func loadMissions() -> [MissionStorage] {
-        return MissionStorage.loadMissions(userDefaultsManager: userDefaultsManager)
-    }
-    
-    func loadMissionStatusManager() {
-        self.missionStatusManager = MissionStatusManager.loadStatuses(userDefaultsManager: userDefaultsManager) ?? MissionStatusManager()
-        }
-    
     // 필터링, 그룹핑 및 정렬 작업을 수행하는 메소드
-    func getGroupedMissions() -> [String: [MissionStorage]] {
+    func getGroupedMissions() -> [String: [FirestoreMission]] {
         
-        var groupedMissions: [String: [MissionStorage]] = [:]
+        var groupedMissions: [String: [FirestoreMission]] = [:]
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy. MM"
         
-        for mission in loadMissions() {
-            if let missionStatus = missionStatusManager.status(for: mission.id) {
-                if missionStatus == .success || missionStatus == .failure {
-                    let dateString = dateFormatter.string(from: mission.selectedTime2)
-                    if groupedMissions[dateString] == nil {
-                        groupedMissions[dateString] = []
-                    }
-                    groupedMissions[dateString]?.append(mission)
-                }
-            }
-        }
-        
-        for (date, missions) in groupedMissions {
-            groupedMissions[date] = missions.sorted { $0.selectedTime2 > $1.selectedTime2 }
-        }
-        
-        return groupedMissions
-    }
-    
+        for mission in missions {
+                   if mission.missionStatus == .success || mission.missionStatus == .failure {
+                       let dateString = dateFormatter.string(from: mission.selectedTime2)
+                       if groupedMissions[dateString] == nil {
+                           groupedMissions[dateString] = []
+                       }
+                       groupedMissions[dateString]?.append(mission)
+                   }
+               }
+               
+               for (date, missions) in groupedMissions {
+                   groupedMissions[date] = missions.sorted { $0.selectedTime2 > $1.selectedTime2 }
+               }
+               
+               return groupedMissions
+           }
     
     func signOut() -> Error? {
         do {

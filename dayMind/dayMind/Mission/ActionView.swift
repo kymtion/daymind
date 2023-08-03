@@ -12,7 +12,7 @@ struct ActionView: View {
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     let missionId: UUID
-    var mission: MissionStorage? {
+    var mission: FirestoreMission? {
         missionViewModel.missions.first { $0.id == missionId }
     }
     
@@ -24,7 +24,7 @@ struct ActionView: View {
     @State private var showMidnightButton = false // 수면미션 환급 버튼
     @State private var captureTime: Date?
     
-    init(mission: MissionStorage) {
+    init(mission: FirestoreMission) {
         self.missionId = mission.id
     }
     
@@ -74,7 +74,7 @@ struct ActionView: View {
                             let totalSeconds = hour * 3600 + minute * 60 + second
                             if totalSeconds > 0 && totalSeconds < 3600 {
                                 Button {
-                                    if missionViewModel.missionStatusManager.status(for: missionId) == .verificationCompleted {
+                                    if mission?.missionStatus == .verificationCompleted {
                                         self.showAlert1 = true
                                     } else {
                                         self.showCamera = true
@@ -163,13 +163,13 @@ struct ActionView: View {
                             }
                         }
                     }
-                    if mission?.missionType == "수면", missionViewModel.missionStatusManager.status(for: missionId) != .verificationCompleted {
+                    if mission?.missionType == "수면", mission?.missionStatus != .verificationCompleted {
                         Text("남은 시간이 1시간 이하일 때\n인증 버튼이 활성화됩니다.")
                             .font(.system(size: 16))
                             .multilineTextAlignment(.center)
                             .opacity(0.7)
                     }
-                    if mission?.missionType == "수면", missionViewModel.missionStatusManager.status(for: missionId) == .verificationCompleted {
+                    if mission?.missionType == "수면", mission?.missionStatus == .verificationCompleted {
                         Text("인증사진이 관리자에게 승인되면,\n오늘 자정에 환급 버튼이 활성화됩니다.")
                             .font(.system(size: 16))
                             .multilineTextAlignment(.center)
@@ -191,7 +191,8 @@ struct ActionView: View {
                     }
                 }
                 //미션 상태가 인증완료 일때만 포기 버튼이 사라짐
-                if missionViewModel.missionStatusManager.status(for: missionId) != .verificationCompleted {
+                if mission?.missionStatus != .verificationCompleted {
+
                     Button {
                         showAlert2 = true
                     } label: {
@@ -216,7 +217,7 @@ struct ActionView: View {
                     }
                 }
                 //미션 타입 -> 집중
-                if missionViewModel.missionStatusManager.status(for: missionId) == .verificationCompleted && mission?.missionType == "집중" {
+                if mission?.missionStatus == .verificationCompleted && mission?.missionType == "집중" {
                     Button {
                         missionViewModel.stopMonitoring(missionId: missionId)
                         missionViewModel.completeMission(missionId: missionId)
@@ -270,7 +271,7 @@ struct ActionView: View {
                     timer.upstream.connect().cancel()
                     
                     // 남은 시간이 00:00:00 이고, 미션 타입이 "수면"이며, 미션 상태가 inProgress일 경우
-                    if mission?.missionType == "수면" && missionViewModel.missionStatusManager.status(for: missionId) == .inProgress {
+                    if mission?.missionType == "수면" && mission?.missionStatus == .inProgress {
                         // 자동으로 포기 버튼이 눌린것 처럼 작동됨.
                         missionViewModel.stopMonitoring(missionId: missionId)
                         missionViewModel.giveUpMission(missionId: missionId)
@@ -285,7 +286,7 @@ struct ActionView: View {
     func midnightBackMoney() {
         guard let missionEndTime = mission?.selectedTime2,
               mission?.missionType == "수면",
-              missionViewModel.missionStatusManager.status(for: missionId) == .verificationCompleted else {
+              mission?.missionStatus == .verificationCompleted else {
             return
         }
         let calendar = Calendar.current

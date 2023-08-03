@@ -29,8 +29,7 @@ struct HomeView: View {
                 ScrollView {
                     LazyVGrid(columns: layout, spacing: 10) {
                         let filteredMissions = missionViewModel.missions.filter { mission in
-                            let missionStatus = missionViewModel.missionStatusManager.status(for: mission.id) ?? .beforeStart
-                            return missionStatus == .beforeStart || missionStatus == .inProgress || missionStatus == .verificationCompleted
+                            return mission.missionStatus == .beforeStart || mission.missionStatus == .inProgress || mission.missionStatus == .verificationCompleted
                         }.sorted(by: { $0.selectedTime1 < $1.selectedTime1 })
                         
                         if filteredMissions.isEmpty {
@@ -42,7 +41,7 @@ struct HomeView: View {
                                 NavigationLink {
                                     ActionView(mission: mission)
                                 } label: {
-                                    HomeCell(mission: mission)
+                                    HomeCell(firestoreMission: mission)
                                         .frame(width: UIScreen.main.bounds.width * 0.9)
                                         .shadow(color: Color.gray.opacity(0.15), radius: 3, x: 0, y: 0)
                                 }

@@ -12,41 +12,33 @@ class ShieldActionExtension: ShieldActionDelegate {
     func secondaryAction() -> Bool {
         os_log("함수 호출됨", type: .default)
         let now = Date()
-        let missions = MissionStorage.loadMissions(userDefaultsManager: UserDefaultsManager.shared)
-        let missionStatusManager = MissionStatusManager.loadStatuses(userDefaultsManager: UserDefaultsManager.shared)
+        var missions = AppGroupMission.loadMissionAppGroup()
         let calendar = Calendar.current
         os_log("함수 2번", type: .default)
         
-        for mission in missions {
-            if let missionStatus = missionStatusManager?.status(for: mission.id), missionStatus == .inProgress {
+        for (index, mission) in missions.enumerated() {
+            if mission.missionStatus == .inProgress {
                 os_log("함수 3번", type: .default)
                 
-                // Create date components for now
                 let nowComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: now)
-                // Convert the nowComponents back into a Date
                 let nowDate = calendar.date(from: nowComponents)!
                 
-                // Create date components for mission's selectedTime2
                 let missionTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
-                // Convert the missionTimeComponents back into a Date
                 let missionDate = calendar.date(from: missionTimeComponents)!
                 
-                if missionDate < nowDate {
-                    missionStatusManager?.updateStatus(for: mission.id, to: .verificationCompleted)
+                if missionDate > nowDate { // 테스트하고 원래대로 < 로 바꿔야함
+                    missions[index].missionStatus = .verificationCompleted
                     os_log("함수 4번", type: .default)
+                    AppGroupMission.saveMissionAppGroup(missions: missions)
+                    os_log("함수 6번", type: .default)
                     
-                    if let missionStatusManager = missionStatusManager {
-                        MissionStatusManager.saveStatuses(statusManager: missionStatusManager, userDefaultsManager: UserDefaultsManager.shared)
-                        os_log("함수 6번", type: .default)
-                    }
                     return true
                 }
             }
         }
-        
         return false
     }
-    
+
     
     override func handle(action: ShieldAction, for application: ApplicationToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {
         switch action {

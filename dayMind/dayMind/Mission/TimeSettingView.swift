@@ -14,7 +14,7 @@ struct TimeSettingView: View {
     @State private var showingIntervalError = false
     @State private var showingPastError = false
     @State private var showingOverlapError = false
-    @State private var createdMission: MissionStorage?
+    @State private var createdMission: FirestoreMission?
     @State private var activeAlert: AlertType?
     
         var mission: Mission
@@ -137,7 +137,7 @@ struct TimeSettingView: View {
                                     self.activeAlert = .pastError
                                 } else {
                                     let inProgressMissions = missionViewModel.missions.filter {
-                                        missionViewModel.missionStatusManager.status(for: $0.id) == .inProgress
+                                        $0.missionStatus == .inProgress
                                     }
                                     for mission in inProgressMissions {
                                         let missionEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
@@ -150,8 +150,7 @@ struct TimeSettingView: View {
                                     
                                     // 미션 상태가 진행중 또는 대기중인 미션들 중에서 미션 시간이 겹치는게 있는지 파악해줌
                                     let overlappingMissions = missionViewModel.missions.filter { mission in
-                                        let missionStatus = missionViewModel.missionStatusManager.status(for: mission.id)
-                                        return (missionStatus == .beforeStart || missionStatus == .inProgress)
+                                        return (mission.missionStatus == .beforeStart || mission.missionStatus == .inProgress)
                                     }
                                     for mission in overlappingMissions {
                                         let currentStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self.selectedTime1)
@@ -198,7 +197,8 @@ struct TimeSettingView: View {
                             return Alert(title: Text("확인"), message: Text("미션을 등록하시겠습니까?"), primaryButton: .default(Text("예"), action: {
                                 self.missionViewModel.selectedTime1 = self.selectedTime1
                                 self.missionViewModel.selectedTime2 = self.selectedTime2
-                                if let createdMission = self.missionViewModel.createMission(missionType: mission.missionType) {
+                                self.createdMission = self.missionViewModel.createMission(missionType: mission.missionType)
+                                if let createdMission = self.createdMission {
                                     self.missionViewModel.missionMonitoring(selectedTime1: self.selectedTime1, selectedTime2: self.selectedTime2, missionId: createdMission.id)
                                 }
                             }), secondaryButton: .cancel())

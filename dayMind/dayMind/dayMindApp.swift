@@ -27,11 +27,20 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         
         application.registerForRemoteNotifications()
         
+        // 앱그룹에 저장된 미션들을 Firestore에 저장합니다.
+            let appGroupMissions = AppGroupMission.loadMissionAppGroup()
+            for appGroupMission in appGroupMissions {
+                let firestoreMission = MissionTransformer.transformToFirestore(appGroupMission: appGroupMission)
+                FirestoreMission.saveFirestoreMission(mission: firestoreMission)
+            }
+        
+        FirestoreMission.initializeMissions()
+        
         return true
     }
     
-
-
+    
+    
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         if (AuthApi.isKakaoTalkLoginUrl(url)) {
             return AuthController.handleOpenUrl(url: url)
@@ -45,6 +54,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         return sceneConfiguration
     }
 }
+    
 
 
 

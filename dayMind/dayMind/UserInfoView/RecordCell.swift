@@ -5,20 +5,20 @@ struct RecordCell: View {
     
     @EnvironmentObject var userInfoViewModel: UserInfoViewModel
     
-    var mission: MissionStorage
+    var firestoreMission: FirestoreMission
     
     var missionTime: String {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ko_KR")
         dateFormatter.dateFormat = "a hh:mm"
-        return "\(dateFormatter.string(from: mission.selectedTime1)) ~ \(dateFormatter.string(from: mission.selectedTime2))"
+        return "\(dateFormatter.string(from: firestoreMission.selectedTime1)) ~ \(dateFormatter.string(from: firestoreMission.selectedTime2))"
     }
     
     var missionDate: String {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ko_KR")
         dateFormatter.dateFormat = "MM.dd (E)"
-        return dateFormatter.string(from: mission.selectedTime2)
+        return dateFormatter.string(from: firestoreMission.selectedTime2)
     }
     
     var body: some View {
@@ -26,7 +26,7 @@ struct RecordCell: View {
             HStack {
 
                 VStack {
-                    Image(systemName: mission.imageName)
+                    Image(systemName: firestoreMission.imageName)
                         .symbolRenderingMode(.palette)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -34,7 +34,7 @@ struct RecordCell: View {
                         .font(.system(size: 999, weight: .light))
                         .frame(width: UIScreen.main.bounds.width * 0.12, height: UIScreen.main.bounds.width * 0.12)
                     
-                    Text(mission.missionType)
+                    Text(firestoreMission.missionType)
                         .font(.system(size: 17, weight: .regular))
                         .foregroundColor(.black)
                 }
@@ -47,8 +47,8 @@ struct RecordCell: View {
                         .foregroundColor(Color.black)
                         .padding(.trailing)
                     HStack {
-                        let missionStatus = userInfoViewModel.missionStatusManager.status(for: mission.id) ?? .beforeStart
-                        Text(missionStatus.description)
+                        let missionStatus = firestoreMission.missionStatus
+                        Text(missionStatus.rawValue)
                             .font(.system(size: 10))
                             .foregroundColor(missionStatus.color)
                             .padding(5)
@@ -79,7 +79,8 @@ struct RecordCell: View {
 
 struct RecordCell_Previews: PreviewProvider {
     static var previews: some View {
-        RecordCell(mission: MissionStorage(selectedTime1: Date(), selectedTime2: Date(), currentStore: "", missionType: "집중", imageName: "lock.iphone"))
-            .environmentObject(UserInfoViewModel())
+        RecordCell(firestoreMission: FirestoreMission(id: UUID(), selectedTime1: Date(), selectedTime2: Date(), currentStore: "", missionType: "집중", imageName: "lock.iphone", missionStatus: .beforeStart))
+                 .environmentObject(UserInfoViewModel())
+        
     }
 }

@@ -11,34 +11,27 @@ class MissionViewModel: ObservableObject {
     @Published var selectedTime1: Date = Date()
     @Published var selectedTime2: Date = Date()
     @Published var managedSettings: [ManagedSettingsStore.Name: FamilyActivitySelection] = [:]
-    @Published var missions: [MissionStorage] = []
+    @Published var missions: [FirestoreMission] = []
     
     private let storage = Storage.storage()
     private let userDefaultsKey = "managedSettings"
     private let deviceActivityCenter = DeviceActivityCenter()
     
-    @Published var missionStatusManager = MissionStatusManager()
     
-    private let userDefaultsManager = UserDefaultsManager.shared
     
     init() {
         self.managedSettings = ManagedSettings.loadManagedSettings()
-        self.missions = MissionStorage.loadMissions(userDefaultsManager: userDefaultsManager)
-        if let loadedStatusManager = MissionStatusManager.loadStatuses(userDefaultsManager: userDefaultsManager) {
-            self.missionStatusManager = loadedStatusManager
+        FirestoreMission.loadFirestoreMissions { missions in
+            DispatchQueue.main.async {
+                self.missions = missions
+            }
         }
-        setupObservation()
     }
+
     
-    private func setupObservation() {
-        _ = $missionStatusManager.sink { [weak self] _ in
-            guard let self = self else { return }
-            self.missions = MissionStorage.loadMissions(userDefaultsManager: self.userDefaultsManager)
-        }
-    }
+  
     // 파이어베이스 사진 업로드
-    func uploadImage(_ image: UIImage?, for mission: MissionStorage, captureTime: Date) {
-        let storage = Storage.storage()
+    func uploadImage(_ image: UIImage?, for mission: FirestoreMission, captureTime: Date) {
         let storageRef = storage.reference().child("수면미션/\(mission.id.uuidString).jpg")
         
         if let uploadData = image?.jpegData(compressionQuality: 0.5) {
@@ -81,10 +74,11 @@ class MissionViewModel: ObservableObject {
 
     // 미션 상태 (진행중 -> 인증완료)
     func toVerification(missionId: UUID) {
-            guard missionStatusManager.status(for: missionId) == .inProgress else { return }
-            missionStatusManager.updateStatus(for: missionId, to: .verificationCompleted)
-            MissionStatusManager.saveStatuses(statusManager: missionStatusManager, userDefaultsManager: userDefaultsManager)
+        if let mission = missions.first(where: { $0.id == missionId }),
+           mission.missionStatus == .inProgress {
+            FirestoreMission.updateMissionStatus(missionId: mission.id, newStatus: .verificationCompleted)
         }
+    }
 
     
     // 미션 상태 (대기중 -> 진행중)
@@ -95,49 +89,51 @@ class MissionViewModel: ObservableObject {
         currentDate = Calendar.current.date(byAdding: .minute, value: 1, to: currentDate)!
         
         for mission in missions {
-            let missionStatus = missionStatusManager.status(for: mission.id) ?? .beforeStart
-            if missionStatus == .beforeStart,
+            if mission.missionStatus == .beforeStart,
                currentDate >= mission.selectedTime1 {
-                missionStatusManager.updateStatus(for: mission.id, to: .inProgress)
+                FirestoreMission.updateMissionStatus(missionId: mission.id, newStatus: .inProgress)
             }
         }
-        MissionStatusManager.saveStatuses(statusManager: missionStatusManager, userDefaultsManager: userDefaultsManager)
-        self.missions = MissionStorage.loadMissions(userDefaultsManager: userDefaultsManager)
+        FirestoreMission.loadFirestoreMissions { fetchedMissions in
+            self.missions = fetchedMissions
+        }
     }
     
     // 미션 상태 -> 실패
     func giveUpMission(missionId: UUID) {
-        // Change mission status to failure
-        self.missionStatusManager.updateStatus(for: missionId, to: .failure)
-        MissionStatusManager.saveStatuses(statusManager: missionStatusManager, userDefaultsManager: userDefaultsManager)
-        self.missions = MissionStorage.loadMissions(userDefaultsManager: userDefaultsManager)
+        FirestoreMission.updateMissionStatus(missionId: missionId, newStatus: .failure)
+        FirestoreMission.loadFirestoreMissions { fetchedMissions in
+            self.missions = fetchedMissions
+        }
     }
     
     // 미션 완료 (verificationCompleted -> success)
     func completeMission(missionId: UUID) {
-        if let missionStatus = self.missionStatusManager.status(for: missionId),
-           missionStatus == .verificationCompleted {
-            self.missionStatusManager.updateStatus(for: missionId, to: .success)
-            MissionStatusManager.saveStatuses(statusManager: missionStatusManager, userDefaultsManager: userDefaultsManager)
-            self.missions = MissionStorage.loadMissions(userDefaultsManager: userDefaultsManager)
+        if let mission = missions.first(where: { $0.id == missionId }),
+           mission.missionStatus == .verificationCompleted {
+            FirestoreMission.updateMissionStatus(missionId: mission.id, newStatus: .success)
+            FirestoreMission.loadFirestoreMissions { fetchedMissions in
+                self.missions = fetchedMissions
+            }
         }
     }
 
-    func missionStorage(forType type: String) -> MissionStorage? {
+    func missionStorage(forType type: String) -> FirestoreMission? {
         return missions.first { $0.missionType == type }
     }
     
-    func createMission(missionType: String) -> MissionStorage? {
+    func createMission(missionType: String) -> FirestoreMission? {
         guard let missionData = missionData.first(where: { $0.missionType == missionType }) else { return nil }
-        let newMission = MissionStorage(selectedTime1: self.selectedTime1,
-                                           selectedTime2: self.selectedTime2,
-                                        currentStore: self.currentStore,
-                                        missionType: missionData.missionType,
-                                        imageName: missionData.imageName)
+        let newMission = FirestoreMission(id: UUID(),
+                                          selectedTime1: self.selectedTime1,
+                                          selectedTime2: self.selectedTime2,
+                                          currentStore: self.currentStore,
+                                          missionType: missionData.missionType,
+                                          imageName: missionData.imageName,
+                                          missionStatus: MissionStatus.beforeStart)
         self.missions.append(newMission)
-        self.missionStatusManager.updateStatus(for: newMission.id, to: .beforeStart)
-        MissionStorage.saveMissions(missions: self.missions, userDefaultsManager: userDefaultsManager)
-        MissionStatusManager.saveStatuses(statusManager: self.missionStatusManager, userDefaultsManager: userDefaultsManager)
+        FirestoreMission.saveFirestoreMission(mission: newMission)
+        AppGroupMission.saveMissionAppGroup(missions: self.missions.map { MissionTransformer.transform(firestoreMission: $0) })
         return newMission
     }
     
@@ -176,13 +172,13 @@ class MissionViewModel: ObservableObject {
         
         
         
-    // 저장된 미션 삭제 메소드
-    func deleteMission(withId id: UUID) {
-        if let index = missions.firstIndex(where: { $0.id == id }) {
-            missions.remove(at: index)
-            MissionStorage.saveMissions(missions: self.missions, userDefaultsManager: userDefaultsManager)
-        }
-    }
+//    // 저장된 미션 삭제 메소드 // 딱히 필요없을것 같은데....?
+//    func deleteMission(withId id: UUID) {
+//        if let index = missions.firstIndex(where: { $0.id == id }) {
+//            missions.remove(at: index)
+//            MissionStorage.saveMissions(missions: self.missions, userDefaultsManager: userDefaultsManager)
+//        }
+//    }
     
     // 사진 업로드
     func fetchImageURL(from path: String) {
