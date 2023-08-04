@@ -52,7 +52,8 @@ class MissionViewModel: ObservableObject {
                         "selectedTime2": selectedTime2Str,
                         "missionType": mission.missionType,
                         "id": mission.id.uuidString,
-                        "captureTime": captureTimeStr
+                        "captureTime": captureTimeStr,
+                        "missionStatus": mission.missionStatus.rawValue
                         // 다른 필요한 메타데이터를 추가
                     ]
                     
