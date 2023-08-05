@@ -5,6 +5,7 @@ struct HomeView: View {
     @EnvironmentObject var userInfoViewModel: UserInfoViewModel
     @EnvironmentObject var missionViewModel: MissionViewModel
     @Environment(\.scenePhase) var scenePhase
+    @State var selectedMissionId: UUID?
     
     let layout: [GridItem] = [
         GridItem(.flexible()),
@@ -38,12 +39,13 @@ struct HomeView: View {
                                 .padding(.top)
                         } else {
                             ForEach(filteredMissions, id: \.id) { mission in
-                                NavigationLink {
-                                    ActionView(mission: mission)
-                                } label: {
+                                NavigationLink(destination: ActionView(mission: mission, selectedMissionId: $selectedMissionId), tag: mission.id, selection: $selectedMissionId) {
                                     HomeCell(firestoreMission: mission)
                                         .frame(width: UIScreen.main.bounds.width * 0.9)
                                         .shadow(color: Color.gray.opacity(0.15), radius: 3, x: 0, y: 0)
+                                }
+                                .onTapGesture {
+                                    self.selectedMissionId = mission.id
                                 }
                             }
                         }

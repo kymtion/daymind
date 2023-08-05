@@ -64,6 +64,7 @@
 		A879EBA72A0F812100791AAC /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A879EBA62A0F812100791AAC /* SignUpView.swift */; };
 		A87A46402A69670F00B56036 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87A463F2A69670F00B56036 /* LoadingView.swift */; };
 		A880DAD02A37250500E3FD94 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = A880DACF2A37250500E3FD94 /* Kingfisher */; };
+		A88943F42A7E67A900D3342E /* PaymentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88943F32A7E67A800D3342E /* PaymentView.swift */; };
 		A894153C2A4E9724008885C7 /* ManagedSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A894153B2A4E9724008885C7 /* ManagedSettings.swift */; };
 		A8A7A6802A0FAF300058B407 /* UserProfileUpdateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A7A67F2A0FAF2F0058B407 /* UserProfileUpdateView.swift */; };
 		A8C0AEAF2A1BABEC00EE5C64 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A8C0AEAE2A1BABEC00EE5C64 /* GoogleService-Info.plist */; };
@@ -179,6 +180,7 @@
 		A879EBA62A0F812100791AAC /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		A87A463F2A69670F00B56036 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		A88762992A15DFD2004376EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		A88943F32A7E67A800D3342E /* PaymentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentView.swift; sourceTree = "<group>"; };
 		A890FBF42A1B9A5B00F44249 /* dayMindTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dayMindTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A890FBF52A1B9A5B00F44249 /* dayMindUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dayMindUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A89414F12A4DAE94008885C7 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
@@ -428,6 +430,7 @@
 				A8F2CFA62A0A2AC70030E175 /* MissionListView.swift */,
 				A863AECB2A0D300400407B6F /* DetailView.swift */,
 				A872019D2A384E6D0022099B /* TimeSettingView.swift */,
+				A88943F32A7E67A800D3342E /* PaymentView.swift */,
 				A8FD9F5B2A3B677900905352 /* AllowListView.swift */,
 				A806079A2A3F212400946A5E /* TextInputView.swift */,
 				A8F2CFA42A08F20E0030E175 /* HomeCell.swift */,
@@ -751,6 +754,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A8F2CFAB2A0A41790030E175 /* UserInfoView.swift in Sources */,
+				A88943F42A7E67A900D3342E /* PaymentView.swift in Sources */,
 				A863AEC82A0CB30D00407B6F /* Mission.swift in Sources */,
 				A8F2CFA92A0A2DB50030E175 /* TapBarView.swift in Sources */,
 				A8229A842A139A1A00881C31 /* PasswordResetView.swift in Sources */,

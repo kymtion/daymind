@@ -16,8 +16,11 @@ struct TimeSettingView: View {
     @State private var showingOverlapError = false
     @State private var createdMission: FirestoreMission?
     @State private var activeAlert: AlertType?
+    @State private var navigateToPaymentView = false
     
-        var mission: Mission
+    
+    var mission: Mission
+    
     
     enum AlertType: Int, Identifiable {
         case intervalError
@@ -26,7 +29,7 @@ struct TimeSettingView: View {
         case confirmation
         case missionInProgressError
         case storeNotSelected
-
+        
         var id: Int {
             self.rawValue
         }
@@ -38,46 +41,65 @@ struct TimeSettingView: View {
             Color.white
                 .edgesIgnoringSafeArea(.all)
             ScrollView {
-                VStack(spacing: 35) {
-                
-                        
-                        HStack {
-                            Spacer()
-                            Text(mission.timeSetting1)
-                                .font(.system(size: 20, weight: .bold))
-                            Text(":  \(formatDate(date: selectedTime1))")
-                                .font(.system(size: 20, weight: .regular))
-                            Spacer()
-                        }
-                        .padding(.horizontal, 15)
-                        .padding(.top, 30)
-                        
-                        DatePicker("", selection: $selectedTime1,
-                                   displayedComponents: .hourAndMinute)
-                        .datePickerStyle(WheelDatePickerStyle())
-                        .labelsHidden()
-                        .onChange(of: selectedTime1, perform: { value in
-                            updateDate()
-                        })
-                        .frame(height: 100)
-                        .clipped()
+                VStack(spacing: 40) {
                     
-                   
+                    HStack {
+                        Spacer()
+                        Text(mission.timeSetting1)
+                            .font(.system(size: 20, weight: .bold))
+                        Text(":  \(formatDate(date: selectedTime1))")
+                            .font(.system(size: 20, weight: .regular))
+                        Spacer()
+                    }
+                    .padding(.horizontal, 15)
+                    .padding(.top, 40)
                     
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.1))
-                        .frame(height: 10)
+                    DatePicker("", selection: $selectedTime1,
+                               displayedComponents: .hourAndMinute)
+                    .datePickerStyle(WheelDatePickerStyle())
+                    .labelsHidden()
+                    .onChange(of: selectedTime1, perform: { value in
+                        updateDate()
+                    })
+                    .frame(height: 100)
+                    .clipped()
+                    
+                    HStack {
+                        Spacer()
+                        Text(mission.timeSetting2)
+                            .font(.system(size: 20, weight: .bold))
+                        Text(":  \(formatDate(date: selectedTime2))")
+                            .font(.system(size: 20, weight: .regular))
+                        Spacer()
+                    }
+                    .padding(.horizontal, 15)
+                    
+                    DatePicker("", selection: $selectedTime2,
+                               displayedComponents: .hourAndMinute)
+                    .datePickerStyle(WheelDatePickerStyle())
+                    .labelsHidden()
+                    .onChange(of: selectedTime2, perform: { value in
+                        updateDate()
+                    })
+                    .frame(height: 100)
+                    .clipped()
+                    
+                    
                     
                     VStack(spacing: 20) {
                         Button {
                             self.isPopupPresented = true
                         } label: {
                             Text("앱 허용 리스트 : \(missionViewModel.currentStore)")
-                                .foregroundColor(Color.white)
+                                .foregroundColor(Color.black)
                                 .font(.system(size: 18, weight: .medium))
-                                .padding(EdgeInsets(top: 15, leading: 25, bottom: 15, trailing: 25))
-                                .background(Color.green.opacity(1))
-                                .clipShape(Capsule())
+                                .padding(EdgeInsets(top: 10, leading: 25, bottom: 10, trailing: 25))
+                                .background(Color.white)
+                                .cornerRadius(10)
+                                .overlay(RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.black.opacity(0.5), lineWidth: 0.3))
+                                .shadow(color: Color.gray.opacity(0.15), radius: 2, x: 0, y: 0)
+                                
                         }
                         .sheet(isPresented: $isPopupPresented) {
                             AllowListView(isPopupPresented: $isPopupPresented)
@@ -87,35 +109,11 @@ struct TimeSettingView: View {
                             .opacity(0.7)
                             .font(.system(size: 15, weight: .regular))
                     }
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.1))
-                        .frame(height: 10)
-                        
-                        HStack {
-                            Spacer()
-                            Text(mission.timeSetting2)
-                                .font(.system(size: 20, weight: .bold))
-                            Text(":  \(formatDate(date: selectedTime2))")
-                                .font(.system(size: 20, weight: .regular))
-                            Spacer()
-                        }
-                        .padding(.horizontal, 15)
-                        
-                        DatePicker("", selection: $selectedTime2,
-                                   displayedComponents: .hourAndMinute)
-                        .datePickerStyle(WheelDatePickerStyle())
-                        .labelsHidden()
-                        .onChange(of: selectedTime2, perform: { value in
-                            updateDate()
-                        })
-                        .frame(height: 100)
-                        .clipped()
                     
-                   
                     
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.1))
-                        .frame(height: 10)
+                    
+                    
+                    
                     
                     
                     Button {
@@ -175,16 +173,17 @@ struct TimeSettingView: View {
                     } label: {
                         Text("미션 등록")
                             .padding(10)
-                            .font(.system(size: 23, weight: .bold))
+                            .font(.system(size: 22, weight: .semibold))
                             .frame(width: UIScreen.main.bounds.width * 0.4)
-                            .background(.blue)
+                            .background(.blue.opacity(0.8))
                             .foregroundColor(.white)
                             .clipShape(Capsule())
+                            
                     }
                     .alert(item: $activeAlert) { alertType in
                         switch alertType {
                         case .storeNotSelected:
-                               return Alert(title: Text("알림"), message: Text("앱 허용 리스트를 선택하세요"), dismissButton: .default(Text("확인")))
+                            return Alert(title: Text("알림"), message: Text("앱 허용 리스트를 선택하세요"), dismissButton: .default(Text("확인")))
                         case .intervalError:
                             return Alert(title: Text("경고"), message: Text("시간 간격이 너무 짧습니다. 최소한 15분이상 설정해야합니다."), dismissButton: .default(Text("확인")))
                         case .pastError:
@@ -195,33 +194,32 @@ struct TimeSettingView: View {
                             return Alert(title: Text("경고"), message: Text("선택한 시간대에 이미 등록된 미션이 있습니다."), dismissButton: .default(Text("확인")))
                         case .confirmation:
                             return Alert(title: Text("확인"), message: Text("미션을 등록하시겠습니까?"), primaryButton: .default(Text("예"), action: {
-                                self.missionViewModel.selectedTime1 = self.selectedTime1
-                                self.missionViewModel.selectedTime2 = self.selectedTime2
-                                self.createdMission = self.missionViewModel.createMission(missionType: mission.missionType)
-                                if let createdMission = self.createdMission {
-                                    self.missionViewModel.missionMonitoring(selectedTime1: self.selectedTime1, selectedTime2: self.selectedTime2, missionId: createdMission.id)
-                                }
+                                self.navigateToPaymentView = true
+                                
                             }), secondaryButton: .cancel())
                         }
+                    }
+                    NavigationLink(destination: PaymentView(), isActive: $navigateToPaymentView) {
+                        EmptyView()
                     }
                 }
             }
         }
     }
     
-func updateDate() {
-    let calendar = Calendar.current
-    let selectedTime1Components = calendar.dateComponents([.year, .month, .day], from: selectedTime1)
-    let selectedTime2Components = calendar.dateComponents([.hour, .minute], from: selectedTime2)
-    
-    var dateComponents = DateComponents()
-    dateComponents.year = selectedTime1Components.year
-    dateComponents.month = selectedTime1Components.month
-    dateComponents.day = selectedTime1Components.day
-    dateComponents.hour = selectedTime2Components.hour
-    dateComponents.minute = selectedTime2Components.minute
-    
-    let newDate = calendar.date(from: dateComponents)!
+    func updateDate() {
+        let calendar = Calendar.current
+        let selectedTime1Components = calendar.dateComponents([.year, .month, .day], from: selectedTime1)
+        let selectedTime2Components = calendar.dateComponents([.hour, .minute], from: selectedTime2)
+        
+        var dateComponents = DateComponents()
+        dateComponents.year = selectedTime1Components.year
+        dateComponents.month = selectedTime1Components.month
+        dateComponents.day = selectedTime1Components.day
+        dateComponents.hour = selectedTime2Components.hour
+        dateComponents.minute = selectedTime2Components.minute
+        
+        let newDate = calendar.date(from: dateComponents)!
         
         if newDate < selectedTime1 {
             let nextDay = calendar.date(byAdding: .day, value: 1, to: newDate)!

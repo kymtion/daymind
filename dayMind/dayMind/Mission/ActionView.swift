@@ -9,6 +9,8 @@ struct ActionView: View {
     @State var showAlert1: Bool = false //이미 인증을 완료하셨습니다.
     @State var showAlert2: Bool = false // 포기하면 예치금 환급이 불가능합니다. 포기하시겠습니까?
     @State var remainingTime: String = ""
+    @Binding var selectedMissionId: UUID?
+    
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     let missionId: UUID
@@ -24,9 +26,12 @@ struct ActionView: View {
     @State private var showMidnightButton = false // 수면미션 환급 버튼
     @State private var captureTime: Date?
     
-    init(mission: FirestoreMission) {
+    init(mission: FirestoreMission, selectedMissionId: Binding<UUID?>) {
         self.missionId = mission.id
+        self._selectedMissionId = selectedMissionId
     }
+
+
     
     let deviceActivityCenter = DeviceActivityCenter()
     
@@ -144,6 +149,7 @@ struct ActionView: View {
                                                 
                                                 
                                                 self.showConfirmation = false
+                                                self.selectedMissionId = nil
                                                 missionViewModel.toVerification(missionId: self.missionId)
                                                 missionViewModel.stopMonitoring(missionId: missionId)
                                             } label: {

@@ -30,8 +30,8 @@ class UserInfoViewModel: ObservableObject {
                 self.displayName = ""
             }
         }
-        FirestoreMission.loadFirestoreMissions { missions in
-            self.missions = missions
+        FirestoreMission.listenForChanges { missions in
+               self.missions = missions
         }
     }
     

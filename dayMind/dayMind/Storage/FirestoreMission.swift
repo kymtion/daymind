@@ -69,7 +69,7 @@ struct FirestoreMission: Identifiable, Codable {
     }
 //이 함수는 Firestore 데이터베이스의 "missions" 컬렉션에 어떤 변화가 생기면 즉시 호출되므로, 앱이 Firestore 데이터베이스의 최신 상태를 실시간으로 반영하도록 할 수 있습니다.
 //이 함수가 필요한 이유는 어드민 페이지에서 데이터를 변경할 경우 앱이 바로 알아차릴 수 있도록 도와줌!
-    static func listenForChanges() {
+    static func listenForChanges(completion: @escaping ([FirestoreMission]) -> Void) {
         db.collection("missions").addSnapshotListener { querySnapshot, error in
             guard let documents = querySnapshot?.documents else {
                 print("Error fetching documents: \(error!)")
@@ -83,6 +83,8 @@ struct FirestoreMission: Identifiable, Codable {
                 return mission
             }
             self.missions = missions
+            completion(missions)
         }
     }
+
 }
