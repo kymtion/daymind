@@ -12,6 +12,12 @@ class MissionViewModel: ObservableObject {
     @Published var selectedTime2: Date = Date()
     @Published var managedSettings: [ManagedSettingsStore.Name: FamilyActivitySelection] = [:]
     @Published var missions: [FirestoreMission] = []
+    @Published var actualAmount: Int = 0
+    @Published var showDetailView: Bool = false
+    @Published var showTimeSettingView: Bool = false
+    @Published var showPaymentView: Bool = false
+    @Published var selectedMission: Mission?
+    
     
     private let storage = Storage.storage()
     private let userDefaultsKey = "managedSettings"
@@ -27,8 +33,13 @@ class MissionViewModel: ObservableObject {
             }
         }
     }
-
     
+
+    func closeAllModals() {
+            showDetailView = false
+            showTimeSettingView = false
+            showPaymentView = false
+        }
   
     // 파이어베이스 사진 업로드
     func uploadImage(_ image: UIImage?, for mission: FirestoreMission, captureTime: Date) {
@@ -123,20 +134,22 @@ class MissionViewModel: ObservableObject {
         return missions.first { $0.missionType == type }
     }
     
-    func createMission(missionType: String) -> FirestoreMission? {
-        guard let missionData = missionData.first(where: { $0.missionType == missionType }) else { return nil }
+    func createMission() -> FirestoreMission? {
+        guard let selectedMission = selectedMission else { return nil }
         let newMission = FirestoreMission(id: UUID(),
                                           selectedTime1: self.selectedTime1,
                                           selectedTime2: self.selectedTime2,
                                           currentStore: self.currentStore,
-                                          missionType: missionData.missionType,
-                                          imageName: missionData.imageName,
-                                          missionStatus: MissionStatus.beforeStart)
+                                          missionType: selectedMission.missionType,
+                                          imageName: selectedMission.imageName,
+                                          missionStatus: MissionStatus.beforeStart,
+                                          actualAmount: self.actualAmount)
         self.missions.append(newMission)
         FirestoreMission.saveFirestoreMission(mission: newMission)
         AppGroupMission.saveMissionAppGroup(missions: self.missions.map { MissionTransformer.transform(firestoreMission: $0) })
         return newMission
     }
+
     
     // 미션 모니터링 시작 함수
     func missionMonitoring(selectedTime1: Date, selectedTime2: Date, missionId: UUID) {

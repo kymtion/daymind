@@ -85,6 +85,7 @@ struct AllowListView: View {
                 isPopupPresented = false
             })
         }
+        .foregroundColor(.blue)
     }
 }
 

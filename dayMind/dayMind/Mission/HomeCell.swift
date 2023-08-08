@@ -13,6 +13,12 @@ struct HomeCell: View {
         return "\(dateFormatter.string(from: firestoreMission.selectedTime1)) ~ \(dateFormatter.string(from: firestoreMission.selectedTime2))"
     }
     
+    var formattedAmount: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: firestoreMission.actualAmount)) ?? ""
+    }
+    
     var body: some View {
        
             HStack {
@@ -57,7 +63,7 @@ struct HomeCell: View {
                     
                     
                     HStack {
-                        Text("예치금: 5,000원")
+                        Text("예치금: \(formattedAmount)원")
                             .font(.system(size: 17, weight: .semibold))
                             .foregroundColor(.red)
                             .opacity(0.8)
@@ -77,9 +83,9 @@ struct HomeCell: View {
     }
 
 
-struct homeCell_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeCell(firestoreMission: FirestoreMission(id: UUID(), selectedTime1: Date(), selectedTime2: Date(), currentStore: "", missionType: "집중", imageName: "lock.iphone", missionStatus: .beforeStart))  // 이 부분을 수정해주었습니다.
-            .environmentObject(MissionViewModel())
-    }
-}
+//struct homeCell_Previews: PreviewProvider {
+//    static var previews: some View {
+//        HomeCell(firestoreMission: FirestoreMission(id: UUID(), selectedTime1: Date(), selectedTime2: Date(), currentStore: "", missionType: "집중", imageName: "lock.iphone", missionStatus: .beforeStart))  // 이 부분을 수정해주었습니다.
+//            .environmentObject(MissionViewModel())
+//    }
+//}

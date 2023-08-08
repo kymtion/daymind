@@ -18,6 +18,7 @@ struct ActionView: View {
         missionViewModel.missions.first { $0.id == missionId }
     }
     
+    
     // CameraView의 상태 변수들
     @State private var showCamera = false // 카메라 촬영뷰
     @State private var image: UIImage?
@@ -30,15 +31,23 @@ struct ActionView: View {
         self.missionId = mission.id
         self._selectedMissionId = selectedMissionId
     }
-
-
     
     let deviceActivityCenter = DeviceActivityCenter()
+    
+    var formattedAmount: String {
+        guard let mission = mission else {
+            return ""
+        }
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: mission.actualAmount)) ?? ""
+    }
+
     
     var body: some View {
         ScrollView {
             VStack(spacing: 35) {
-                Text("예치금: 5,000원")
+                Text("예치금: \(formattedAmount)원")
                     .font(.system(size: 30, weight: .regular))
                     .foregroundColor(.red)
                     .opacity(0.8)

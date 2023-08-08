@@ -11,7 +11,8 @@ struct MissionTransformer {
                                currentStore: firestoreMission.currentStore,
                                missionType: firestoreMission.missionType,
                                imageName: firestoreMission.imageName,
-                               missionStatus: firestoreMission.missionStatus)
+                               missionStatus: firestoreMission.missionStatus,
+                               actualAmount: firestoreMission.actualAmount)
     }
     
     static func transformToFirestore(appGroupMission: AppGroupMission) -> FirestoreMission {
@@ -21,6 +22,7 @@ struct MissionTransformer {
                                 currentStore: appGroupMission.currentStore,
                                 missionType: appGroupMission.missionType,
                                 imageName: appGroupMission.imageName,
-                                missionStatus: appGroupMission.missionStatus)
+                                missionStatus: appGroupMission.missionStatus,
+                                actualAmount: appGroupMission.actualAmount)
     }
 }

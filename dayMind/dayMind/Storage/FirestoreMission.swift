@@ -10,6 +10,7 @@ struct FirestoreMission: Identifiable, Codable {
     var missionType: String
     var imageName: String
     var missionStatus: MissionStatus
+    var actualAmount: Int
 
   
 

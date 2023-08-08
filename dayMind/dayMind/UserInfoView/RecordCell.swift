@@ -77,10 +77,10 @@ struct RecordCell: View {
         }
     }
 
-struct RecordCell_Previews: PreviewProvider {
-    static var previews: some View {
-        RecordCell(firestoreMission: FirestoreMission(id: UUID(), selectedTime1: Date(), selectedTime2: Date(), currentStore: "", missionType: "집중", imageName: "lock.iphone", missionStatus: .beforeStart))
-                 .environmentObject(UserInfoViewModel())
-        
-    }
-}
+//struct RecordCell_Previews: PreviewProvider {
+//    static var previews: some View {
+//        RecordCell(firestoreMission: FirestoreMission(id: UUID(), selectedTime1: Date(), selectedTime2: Date(), currentStore: "", missionType: "집중", imageName: "lock.iphone", missionStatus: .beforeStart))
+//                 .environmentObject(UserInfoViewModel())
+//        
+//    }
+//}

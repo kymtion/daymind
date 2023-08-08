@@ -9,7 +9,7 @@ struct TextInputView: View {
     
     var body: some View {
         VStack(spacing: 30) {
-            Text("앱 제한 리스트 이름")
+            Text("앱 허용 리스트 이름")
                 .font(.system(size: 25))
             
             TextField("리스트 이름을 입력하세요. ex) 업무용", text: $storeName)
@@ -27,7 +27,7 @@ struct TextInputView: View {
                         .padding(10)
                         .font(.system(size: 20, weight: .bold))
                         .frame(width: UIScreen.main.bounds.width * 0.3)
-                        .background(Color.gray.opacity(0.75))
+                        .background(Color.gray.opacity(0.6))
                         .foregroundColor(.white)
                         .cornerRadius(10)
                     
@@ -40,10 +40,10 @@ struct TextInputView: View {
                         .padding(10)
                         .font(.system(size: 20, weight: .bold))
                         .frame(width: UIScreen.main.bounds.width * 0.3)
-                        .background(Color(red: 242 / 255, green: 206 / 255, blue: 102 / 255))
+                        .background(Color.blue.opacity(storeName.isEmpty ? 0.5 : 0.8))
                         .foregroundColor(.white)
                         .cornerRadius(10)
-                        .opacity(storeName.isEmpty ? 0.5 : 1)
+                        
 
                 }
                 .disabled(storeName.isEmpty)

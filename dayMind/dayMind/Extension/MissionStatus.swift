@@ -1,9 +1,4 @@
-//
-//  MissionStatus.swift
-//  dayMind
-//
-//  Created by 강영민 on 2023/08/03.
-//
+
 
 import Foundation
 import SwiftUI
