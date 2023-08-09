@@ -131,7 +131,7 @@ const Admin = () => {
   return (
     <div>
       <Logout />
-      <h1>Admin Page</h1>
+      <h1>인증사진</h1>
       <div className="tabs">
         <button onClick={() => handleTabChange(0)} className="tab-button">전체</button>
         <button onClick={() => handleTabChange(1)} className="tab-button">실패</button>

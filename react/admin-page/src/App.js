@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Admin from './components/Admin';
 import Login from './components/Login'; 
+import MissionList from './components/MissionList'; // MissionList 컴포넌트를 가져옵니다.
+import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+import './App.css';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -23,11 +26,27 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      {user ? <Admin /> : <Login />}
-    </div>
+    <Router>
+      <div className="App">
+        {user && (
+          <nav>
+           <ul style={{ display: 'flex', listStyle: 'none' }}>
+              <li>
+                <Link to="/admin" className="nav-link">인증사진</Link>  
+              </li>
+              <li>
+                <Link to="/missionlist" className="nav-link">미션리스트</Link>  
+              </li>
+            </ul>
+          </nav>
+        )}
+        <Routes>
+          <Route path="/admin" element={user ? <Admin /> : <Login />} />
+          <Route path="/missionlist" element={user ? <MissionList /> : <Login />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
 export default App;
-

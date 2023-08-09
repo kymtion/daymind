@@ -4,6 +4,7 @@ import FamilyControls
 import ManagedSettings
 import DeviceActivity
 import UIKit
+import FirebaseAuth
 
 class MissionViewModel: ObservableObject {
     @Published var currentStore: String = ""
@@ -143,13 +144,14 @@ class MissionViewModel: ObservableObject {
                                           missionType: selectedMission.missionType,
                                           imageName: selectedMission.imageName,
                                           missionStatus: MissionStatus.beforeStart,
-                                          actualAmount: self.actualAmount)
+                                          actualAmount: self.actualAmount,
+                                          userId: Auth.auth().currentUser?.uid ?? "")
         self.missions.append(newMission)
         FirestoreMission.saveFirestoreMission(mission: newMission)
         AppGroupMission.saveMissionAppGroup(missions: self.missions.map { MissionTransformer.transform(firestoreMission: $0) })
         return newMission
     }
-
+    
     
     // 미션 모니터링 시작 함수
     func missionMonitoring(selectedTime1: Date, selectedTime2: Date, missionId: UUID) {

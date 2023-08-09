@@ -21,6 +21,12 @@ struct RecordCell: View {
         return dateFormatter.string(from: firestoreMission.selectedTime2)
     }
     
+    var formattedAmount: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: firestoreMission.actualAmount)) ?? ""
+    }
+    
     var body: some View {
        
             HStack {
@@ -63,7 +69,7 @@ struct RecordCell: View {
                     }
                     
                     HStack {
-                        Text("+ 5,000원")
+                        Text("예치금: \(formattedAmount)원")
                             .font(.system(size: 17, weight: .semibold))
                             .foregroundColor(.red)
                             .opacity(0.8)

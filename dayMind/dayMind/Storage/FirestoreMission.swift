@@ -11,8 +11,49 @@ struct FirestoreMission: Identifiable, Codable {
     var imageName: String
     var missionStatus: MissionStatus
     var actualAmount: Int
+    var userId: String
 
-  
+    init(id: UUID, selectedTime1: Date, selectedTime2: Date, currentStore: String, missionType: String, imageName: String, missionStatus: MissionStatus, actualAmount: Int, userId: String) {
+          self.id = id
+          self.selectedTime1 = selectedTime1
+          self.selectedTime2 = selectedTime2
+          self.currentStore = currentStore
+          self.missionType = missionType
+          self.imageName = imageName
+          self.missionStatus = missionStatus
+          self.actualAmount = actualAmount
+          self.userId = userId
+      }
+
+        enum CodingKeys: String, CodingKey {
+            case id
+            case selectedTime1 = "selectedTime1" // Firestore 필드 이름과 일치해야 합니다.
+            case selectedTime2 = "selectedTime2" // Firestore 필드 이름과 일치해야 합니다.
+            case currentStore
+            case missionType
+            case imageName
+            case missionStatus
+            case actualAmount
+            case userId
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            id = try container.decode(UUID.self, forKey: .id)
+            let selectedTime1Milliseconds = try container.decode(Double.self, forKey: .selectedTime1)
+            let selectedTime2Milliseconds = try container.decode(Double.self, forKey: .selectedTime2)
+            selectedTime1 = Date(timeIntervalSince1970: selectedTime1Milliseconds / 1000)
+            selectedTime2 = Date(timeIntervalSince1970: selectedTime2Milliseconds / 1000)
+            currentStore = try container.decode(String.self, forKey: .currentStore)
+            missionType = try container.decode(String.self, forKey: .missionType)
+            imageName = try container.decode(String.self, forKey: .imageName)
+            missionStatus = try container.decode(MissionStatus.self, forKey: .missionStatus)
+            actualAmount = try container.decode(Int.self, forKey: .actualAmount)
+            userId = try container.decode(String.self, forKey: .userId)
+        }
+
+    
+
 
     static let db = Firestore.firestore()
     
@@ -33,14 +74,21 @@ struct FirestoreMission: Identifiable, Codable {
         do {
             let encoder = JSONEncoder()
             let data = try encoder.encode(mission)
-            guard let missionData = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
+            guard var missionData = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
                 throw NSError()
             }
+            
+            // selectedTime1 및 selectedTime2를 밀리초로 변환합니다.
+            missionData["selectedTime1"] = mission.selectedTime1.timeIntervalSince1970 * 1000
+            missionData["selectedTime2"] = mission.selectedTime2.timeIntervalSince1970 * 1000
+
             db.collection("missions").document(mission.id.uuidString).setData(missionData)
         } catch let error {
             print("Error writing mission to Firestore: \(error)")
         }
     }
+
+
 
     static func updateMissionStatus(missionId: UUID, newStatus: MissionStatus) {
         db.collection("missions").document(missionId.uuidString).updateData([

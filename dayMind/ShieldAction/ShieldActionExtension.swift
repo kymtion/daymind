@@ -26,7 +26,7 @@ class ShieldActionExtension: ShieldActionDelegate {
                 let missionTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
                 let missionDate = calendar.date(from: missionTimeComponents)!
                 
-                if missionDate > nowDate { // 테스트하고 원래대로 < 로 바꿔야함
+                if missionDate < nowDate { // 테스트하고 원래대로 < 로 바꿔야함
                     missions[index].missionStatus = .verificationCompleted
                     os_log("함수 4번", type: .default)
                     AppGroupMission.saveMissionAppGroup(missions: missions)
