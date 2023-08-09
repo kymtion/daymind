@@ -3,11 +3,16 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import MissionDetailModal from './MissionDetailModal';
 
+
+
 const MissionList = () => {
   const [missions, setMissions] = useState([]);
   const [currentMission, setCurrentMission] = useState(null);
   const [search, setSearch] = useState('');
   const [searchField, setSearchField] = useState('missionType');
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [timeField, setTimeField] = useState('selectedTime1');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,23 +59,48 @@ const MissionList = () => {
   
 
   const filteredMissions = missions.filter(mission => {
+    // 시작 날짜와 종료 날짜 사이에 미션의 시작 또는 종료가 포함되는지 확인
+    if (startDate && mission[timeField] < startDate) return false;
+    if (endDate && mission[timeField] > endDate) return false;
+
     if (searchField === 'selectedTime1' || searchField === 'selectedTime2') {
-      // 날짜 형식을 문자열로 변환하여 검색
       const dateString = convertTimestampToDate(mission[searchField]);
       return dateString.toLowerCase().includes(search.toLowerCase());
     } else {
       return mission[searchField] && mission[searchField].toString().toLowerCase().includes(search.toLowerCase());
     }
   });
+
+  const totalDeposit = filteredMissions.reduce((sum, mission) => sum + mission.actualAmount, 0);
+  
+  const formattedTotalDeposit = totalDeposit.toLocaleString('ko-KR') + '원';
   
 
-  
-
-  return (
+   return (
     <div>
       <h1>미션리스트</h1>
-      <div>
-        <select value={searchField} onChange={handleFieldChange}>
+      <div style={{ textAlign: 'center', marginBottom: '10px', fontSize: '20px', fontWeight: 'bold' }}>
+        총 예치금: {formattedTotalDeposit}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '10px' }}>
+        <div style={{ margin: '0 5px' }}>
+          <label>시작 날짜:</label>
+          <input type="date" style={{ margin: '0 10px', width: '160px' }} onChange={e => setStartDate(new Date(e.target.value).getTime())} />
+        </div>
+        <div style={{ margin: '0 5px' }}>
+          <label>종료 날짜:</label>
+          <input type="date" style={{ margin: '0 10px', width: '160px' }} onChange={e => setEndDate(new Date(e.target.value).getTime())} />
+        </div>
+        <div style={{ margin: '0 5px' }}>
+          <label>기준 시간:</label>
+          <select value={timeField} style={{ margin: '0 10px', width: '100px' }} onChange={e => setTimeField(e.target.value)}>
+            <option value="selectedTime1">시작시간</option>
+            <option value="selectedTime2">종료시간</option>
+          </select>
+        </div>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '10px' }}>
+        <select value={searchField} style={{ width: '100px' }} onChange={handleFieldChange}>
           <option value="missionType">미션 타입</option>
           <option value="missionStatus">미션 상태</option>
           <option value="userId">사용자UID</option>
