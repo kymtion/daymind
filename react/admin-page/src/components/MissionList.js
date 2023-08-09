@@ -13,6 +13,9 @@ const MissionList = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [timeField, setTimeField] = useState('selectedTime1');
+  const [searchConditions, setSearchConditions] = useState({});
+
+ 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,6 +47,8 @@ const MissionList = () => {
     setSearchField(e.target.value);
   };
 
+ 
+
   const convertTimestampToDate = (timestamp) => {
     const date = new Date(timestamp);
     const year = date.getFullYear();
@@ -56,18 +61,23 @@ const MissionList = () => {
     return `${year}.${month}.${day} (${weekday}) ${hours}:${minutes}`;
   };
   
-  
+  const handleSearch = () => {
+    setSearchConditions({ search, searchField, startDate, endDate, timeField });
+  };
 
   const filteredMissions = missions.filter(mission => {
-    // 시작 날짜와 종료 날짜 사이에 미션의 시작 또는 종료가 포함되는지 확인
-    if (startDate && mission[timeField] < startDate) return false;
-    if (endDate && mission[timeField] > endDate) return false;
+    // 검색 조건이 존재하지 않으면 필터링하지 않음
+    if (Object.keys(searchConditions).length === 0) return false;
 
-    if (searchField === 'selectedTime1' || searchField === 'selectedTime2') {
-      const dateString = convertTimestampToDate(mission[searchField]);
-      return dateString.toLowerCase().includes(search.toLowerCase());
+    // 검색 조건에 따라 필터링
+    if (searchConditions.startDate && mission[searchConditions.timeField] < searchConditions.startDate) return false;
+    if (searchConditions.endDate && mission[searchConditions.timeField] > searchConditions.endDate) return false;
+
+    if (searchConditions.searchField === 'selectedTime1' || searchConditions.searchField === 'selectedTime2') {
+      const dateString = convertTimestampToDate(mission[searchConditions.searchField]);
+      return dateString.toLowerCase().includes(searchConditions.search.toLowerCase());
     } else {
-      return mission[searchField] && mission[searchField].toString().toLowerCase().includes(search.toLowerCase());
+      return mission[searchConditions.searchField] && mission[searchConditions.searchField].toString().toLowerCase().includes(searchConditions.search.toLowerCase());
     }
   });
 
@@ -109,6 +119,7 @@ const MissionList = () => {
           {/* 필요한 필드를 여기에 추가하세요 */}
         </select>
         <input type="text" value={search} onChange={handleSearchChange} placeholder="검색..." />
+        <button onClick={handleSearch}>검색</button>
       </div>
       <div style={{ width: '50%', margin: 'auto' }}>
         <table style={{ borderCollapse: 'collapse', width: '100%' }}>
