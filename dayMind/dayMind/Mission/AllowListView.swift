@@ -91,12 +91,12 @@ struct AllowListView: View {
 
 
 
-
-struct AllowListView_Previews: PreviewProvider {
-    @State static var isPopupPresented = false
-    static var previews: some View {
-        AllowListView(isPopupPresented: $isPopupPresented)
-                    .environmentObject(MissionViewModel())
-        
-    }
-}
+//
+//struct AllowListView_Previews: PreviewProvider {
+//    @State static var isPopupPresented = false
+//    static var previews: some View {
+//        AllowListView(isPopupPresented: $isPopupPresented)
+//                    .environmentObject(MissionViewModel())
+//        
+//    }
+//}

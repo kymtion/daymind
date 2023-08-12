@@ -66,6 +66,7 @@
 		A880DAD02A37250500E3FD94 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = A880DACF2A37250500E3FD94 /* Kingfisher */; };
 		A88943F42A7E67A900D3342E /* PaymentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88943F32A7E67A800D3342E /* PaymentView.swift */; };
 		A894153C2A4E9724008885C7 /* ManagedSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A894153B2A4E9724008885C7 /* ManagedSettings.swift */; };
+		A8A530702A83D82300C5FFAE /* UserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A5306F2A83D82300C5FFAE /* UserManager.swift */; };
 		A8A7A6802A0FAF300058B407 /* UserProfileUpdateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A7A67F2A0FAF2F0058B407 /* UserProfileUpdateView.swift */; };
 		A8C0AEAF2A1BABEC00EE5C64 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A8C0AEAE2A1BABEC00EE5C64 /* GoogleService-Info.plist */; };
 		A8CF3C942A7BB55400C38FA0 /* MissionTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8CF3C932A7BB55400C38FA0 /* MissionTransformer.swift */; };
@@ -185,6 +186,7 @@
 		A890FBF52A1B9A5B00F44249 /* dayMindUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dayMindUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A89414F12A4DAE94008885C7 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		A894153B2A4E9724008885C7 /* ManagedSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedSettings.swift; sourceTree = "<group>"; };
+		A8A5306F2A83D82300C5FFAE /* UserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserManager.swift; sourceTree = "<group>"; };
 		A8A7A67F2A0FAF2F0058B407 /* UserProfileUpdateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileUpdateView.swift; sourceTree = "<group>"; };
 		A8C0AEAE2A1BABEC00EE5C64 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A8CF3C932A7BB55400C38FA0 /* MissionTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionTransformer.swift; sourceTree = "<group>"; };
@@ -314,6 +316,18 @@
 			path = Extension;
 			sourceTree = "<group>";
 		};
+		A86270682A8610800038E882 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				A8F2CFA42A08F20E0030E175 /* HomeCell.swift */,
+				A8F2CFA22A08F1E00030E175 /* HomeView.swift */,
+				A80607962A3F1AAC00946A5E /* ActionView.swift */,
+				A8FFF5062A700C0B00E42723 /* ImagePicker.swift */,
+				A8FFF5082A700C6900E42723 /* Coordinator.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
 		A86B56352A5573E80068D25E /* Monitor */ = {
 			isa = PBXGroup;
 			children = (
@@ -339,6 +353,7 @@
 			children = (
 				A894153B2A4E9724008885C7 /* ManagedSettings.swift */,
 				A8FEAD602A78F59200174335 /* FirestoreMission.swift */,
+				A8A5306F2A83D82300C5FFAE /* UserManager.swift */,
 				A8DD4B342A7AACDF00A7B3B2 /* AppGroupMission.swift */,
 				A8CF3C932A7BB55400C38FA0 /* MissionTransformer.swift */,
 			);
@@ -380,6 +395,7 @@
 				A87A463F2A69670F00B56036 /* LoadingView.swift */,
 				A8F2CFB22A0A91F10030E175 /* UserInfoView */,
 				A8F2CFB12A0A91C00030E175 /* Mission */,
+				A86270682A8610800038E882 /* Home */,
 				A8F2CFAC2A0A671F0030E175 /* Model */,
 				A8DD56A12A4592F50058E898 /* Storage */,
 				A8525A7A2A506829004F687B /* Extension */,
@@ -433,11 +449,6 @@
 				A88943F32A7E67A800D3342E /* PaymentView.swift */,
 				A8FD9F5B2A3B677900905352 /* AllowListView.swift */,
 				A806079A2A3F212400946A5E /* TextInputView.swift */,
-				A8F2CFA42A08F20E0030E175 /* HomeCell.swift */,
-				A8F2CFA22A08F1E00030E175 /* HomeView.swift */,
-				A80607962A3F1AAC00946A5E /* ActionView.swift */,
-				A8FFF5062A700C0B00E42723 /* ImagePicker.swift */,
-				A8FFF5082A700C6900E42723 /* Coordinator.swift */,
 			);
 			path = Mission;
 			sourceTree = "<group>";
@@ -771,6 +782,7 @@
 				A863AECC2A0D300400407B6F /* DetailView.swift in Sources */,
 				A879EBA72A0F812100791AAC /* SignUpView.swift in Sources */,
 				A8FEAD612A78F59200174335 /* FirestoreMission.swift in Sources */,
+				A8A530702A83D82300C5FFAE /* UserManager.swift in Sources */,
 				A8F2CF792A08F1600030E175 /* dayMindApp.swift in Sources */,
 				A8A7A6802A0FAF300058B407 /* UserProfileUpdateView.swift in Sources */,
 				A8DD4B352A7AACDF00A7B3B2 /* AppGroupMission.swift in Sources */,

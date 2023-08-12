@@ -24,7 +24,7 @@ struct MissionListView: View {
                         LazyVGrid(columns: layout) {
                             ForEach(missionData) { mission in
                                 Button {
-                                    vm.selectedMission = mission 
+                                    vm.selectedMission = mission
                                     vm.showDetailView = true
                                 } label: {
                                     MissionRow(mission: mission)

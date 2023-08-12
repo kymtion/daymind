@@ -6,8 +6,8 @@ import DeviceActivity
 struct ActionView: View {
     
     @EnvironmentObject var missionViewModel: MissionViewModel
-    @State var showAlert1: Bool = false //이미 인증을 완료하셨습니다.
     @State var showAlert2: Bool = false // 포기하면 예치금 환급이 불가능합니다. 포기하시겠습니까?
+    @State private var alertType: AlertType?
     @State var remainingTime: String = ""
     @Binding var selectedMissionId: UUID?
     
@@ -18,6 +18,15 @@ struct ActionView: View {
         missionViewModel.missions.first { $0.id == missionId }
     }
     
+    enum AlertType: Identifiable {
+        case alreadyVerified
+        case beforeStart
+        // 다른 유형...
+        
+        var id: Int {
+            hashValue
+        }
+    }
     
     // CameraView의 상태 변수들
     @State private var showCamera = false // 카메라 촬영뷰
@@ -42,7 +51,7 @@ struct ActionView: View {
         formatter.numberStyle = .decimal
         return formatter.string(from: NSNumber(value: mission.actualAmount)) ?? ""
     }
-
+    
     
     var body: some View {
         ScrollView {
@@ -89,9 +98,11 @@ struct ActionView: View {
                             if totalSeconds > 0 && totalSeconds < 3600 {
                                 Button {
                                     if mission?.missionStatus == .verificationCompleted {
-                                        self.showAlert1 = true
-                                    } else {
+                                        alertType = .alreadyVerified
+                                    } else if mission?.missionStatus == .inProgress {
                                         self.showCamera = true
+                                    } else if mission?.missionStatus == .beforeStart {
+                                        alertType = .beforeStart
                                     }
                                 } label: {
                                     Text("인 증")
@@ -102,8 +113,15 @@ struct ActionView: View {
                                         .foregroundColor(.white)
                                         .clipShape(Capsule())
                                 }
-                                .alert(isPresented: $showAlert1) {
-                                    Alert(title: Text("알림"), message: Text("이미 인증을 완료하셨습니다."), dismissButton: .default(Text("확인")))
+                                .alert(item: $alertType) { alertType in
+                                    switch alertType {
+                                    case .alreadyVerified:
+                                        return Alert(title: Text("알림"), message: Text("이미 인증을 완료하셨습니다."), dismissButton: .default(Text("확인")))
+                                    case .beforeStart:
+                                        return Alert(title: Text("알림"), message: Text("미션 상태가 진행 중일 때 인증이 가능합니다."), dismissButton: .default(Text("확인")))
+                                        // 다른 알림 유형 처리
+                                    }
+                                    
                                 }
                                 .fullScreenCover(isPresented: $showCamera) {
                                     ImagePicker(image: self.$image) { selectedImage, captureTime in
@@ -135,18 +153,18 @@ struct ActionView: View {
                                             
                                             Button {
                                                 // Get an instance of the mission from your data model
-                                                   guard let mission = self.mission else {
-                                                       print("Mission not found")
-                                                       return
-                                                   }
-
-                                                   // Make sure there is an image to upload
-                                                   guard let img = self.image else {
-                                                       print("No image to upload")
-                                                       return
-                                                   }
-
-                                                   // Make sure the capture time is available
+                                                guard let mission = self.mission else {
+                                                    print("Mission not found")
+                                                    return
+                                                }
+                                                
+                                                // Make sure there is an image to upload
+                                                guard let img = self.image else {
+                                                    print("No image to upload")
+                                                    return
+                                                }
+                                                
+                                                // Make sure the capture time is available
                                                 guard let captureTime = self.captureTime else {
                                                     print("Capture time not available")
                                                     return
@@ -154,7 +172,7 @@ struct ActionView: View {
                                                 
                                                 // Upload the image and metadata
                                                 missionViewModel.uploadImage(img, for: mission, captureTime: captureTime)
-
+                                                
                                                 
                                                 
                                                 self.showConfirmation = false
@@ -207,7 +225,7 @@ struct ActionView: View {
                 }
                 //미션 상태가 인증완료 일때만 포기 버튼이 사라짐
                 if mission?.missionStatus != .verificationCompleted {
-
+                    
                     Button {
                         showAlert2 = true
                     } label: {
