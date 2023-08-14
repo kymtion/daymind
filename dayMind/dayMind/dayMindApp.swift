@@ -29,14 +29,14 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         application.registerForRemoteNotifications()
         
         // 앱그룹에 저장된 미션들을 Firestore에 저장합니다.
-            let appGroupMissions = AppGroupMission.loadMissionAppGroup()
-            for appGroupMission in appGroupMissions {
-                let firestoreMission = MissionTransformer.transformToFirestore(appGroupMission: appGroupMission)
-                FirestoreMission.saveFirestoreMission(mission: firestoreMission)
-            }
+        let appGroupMissions = AppGroupMission.loadMissionAppGroup()
+        for appGroupMission in appGroupMissions {
+            let firestoreMission = MissionTransformer.transformToFirestore(appGroupMission: appGroupMission)
+            FirestoreMission.saveFirestoreMission(mission: firestoreMission)
+        }
         
-        FirestoreMission.initializeMissions()
-        
+        FirestoreMission.loadUserMissions { loadedMissions in
+        }
         return true
     }
     

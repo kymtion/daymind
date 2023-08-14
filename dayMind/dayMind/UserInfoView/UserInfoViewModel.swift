@@ -12,6 +12,7 @@ class UserInfoViewModel: ObservableObject {
     @Published var uid: String = ""
     @Published var displayName: String = ""
     @Published var missions: [FirestoreMission] = []
+    @Published var balance: Int = 0
     
     private let db = Firestore.firestore()
     var handle: AuthStateDidChangeListenerHandle?
@@ -38,6 +39,12 @@ class UserInfoViewModel: ObservableObject {
     deinit {
         if let handle = handle {
             Auth.auth().removeStateDidChangeListener(handle)
+        }
+    }
+    
+    func loadUserBalance(userId: String) {
+        UserManager.shared.loadUser(userId: userId) { user in
+            self.balance = user?.balance ?? 0
         }
     }
     

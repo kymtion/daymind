@@ -27,22 +27,25 @@ class MissionViewModel: ObservableObject {
     
     
     init() {
-        self.managedSettings = ManagedSettings.loadManagedSettings()
-        FirestoreMission.loadFirestoreMissions { missions in
-            DispatchQueue.main.async {
-                self.missions = missions
+            self.managedSettings = ManagedSettings.loadManagedSettings()
+            
+            FirestoreMission.loadUserMissions { missions in
+                DispatchQueue.main.async {
+                    self.missions = missions
+                }
             }
         }
-    }
-    
 
+    
+    
+    // 미션 등록되면 모든 모달이 닫혀서 초기 뷰로 돌아오게함
     func closeAllModals() {
             showDetailView = false
             showTimeSettingView = false
             showPaymentView = false
         }
   
-    // 파이어베이스 사진 업로드
+    // 파이어베이스 인증사진(메타데이터) 업로드
     func uploadImage(_ image: UIImage?, for mission: FirestoreMission, captureTime: Date) {
         let storageRef = storage.reference().child("수면미션/\(mission.id.uuidString).jpg")
         
@@ -107,17 +110,17 @@ class MissionViewModel: ObservableObject {
                 FirestoreMission.updateMissionStatus(missionId: mission.id, newStatus: .inProgress)
             }
         }
-        FirestoreMission.loadFirestoreMissions { fetchedMissions in
-            self.missions = fetchedMissions
-        }
+        FirestoreMission.loadUserMissions { fetchedMissions in
+                self.missions = fetchedMissions
+            }
     }
     
     // 미션 상태 -> 실패
     func giveUpMission(missionId: UUID) {
         FirestoreMission.updateMissionStatus(missionId: missionId, newStatus: .failure)
-        FirestoreMission.loadFirestoreMissions { fetchedMissions in
-            self.missions = fetchedMissions
-        }
+        FirestoreMission.loadUserMissions { fetchedMissions in
+               self.missions = fetchedMissions
+           }
     }
     
     // 미션 완료 (verificationCompleted -> success)
@@ -125,16 +128,13 @@ class MissionViewModel: ObservableObject {
         if let mission = missions.first(where: { $0.id == missionId }),
            mission.missionStatus == .verificationCompleted {
             FirestoreMission.updateMissionStatus(missionId: mission.id, newStatus: .success)
-            FirestoreMission.loadFirestoreMissions { fetchedMissions in
-                self.missions = fetchedMissions
-            }
+            FirestoreMission.loadUserMissions { fetchedMissions in
+                     self.missions = fetchedMissions
+                 }
         }
     }
 
-    func missionStorage(forType type: String) -> FirestoreMission? {
-        return missions.first { $0.missionType == type }
-    }
-    
+    // 미션 데이터 등록(생성)
     func createMission() -> FirestoreMission? {
         guard let selectedMission = selectedMission else { return nil }
         let newMission = FirestoreMission(id: UUID(),
@@ -185,18 +185,8 @@ class MissionViewModel: ObservableObject {
         }
     }
         
-        
-        
-        
-//    // 저장된 미션 삭제 메소드 // 딱히 필요없을것 같은데....?
-//    func deleteMission(withId id: UUID) {
-//        if let index = missions.firstIndex(where: { $0.id == id }) {
-//            missions.remove(at: index)
-//            MissionStorage.saveMissions(missions: self.missions, userDefaultsManager: userDefaultsManager)
-//        }
-//    }
     
-    // 사진 업로드
+    // 디테일뷰 설명에 쓰일 사진 업로드
     func fetchImageURL(from path: String) {
         let storageRef = Storage.storage().reference()
         let imageRef = storageRef.child(path)

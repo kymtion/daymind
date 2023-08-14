@@ -143,6 +143,7 @@ struct TimeSettingView: View {
                                             self.activeAlert = .intervalError
                                             
                                         } else {
+                                            //시작 시간이 현재 시간보다 과거일 경우 오류메시지 뜸
                                             let calendar = Calendar.current
                                             let nowComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: Date())
                                             let selectedTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: missionViewModel.selectedTime1)
@@ -151,6 +152,7 @@ struct TimeSettingView: View {
                                             if selectedDateMinute < nowDateMinute {
                                                 self.activeAlert = .pastError
                                             } else {
+                                                // 만약 현재 미션을 완료하지 않은상태에서 새로운 미션을 생성하게되면
                                                 let inProgressMissions = missionViewModel.missions.filter {
                                                     $0.missionStatus == .inProgress
                                                 }
@@ -168,8 +170,8 @@ struct TimeSettingView: View {
                                                     return (mission.missionStatus == .beforeStart || mission.missionStatus == .inProgress)
                                                 }
                                                 for mission in overlappingMissions {
-                                                    let currentStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime1)
-                                                    let currentEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
+                                                    let currentStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: missionViewModel.selectedTime1)
+                                                    let currentEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: missionViewModel.selectedTime2)
                                                     let missionStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime1)
                                                     let missionEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
                                                     
@@ -233,6 +235,7 @@ struct TimeSettingView: View {
         }
     }
     
+    // 시간을 입력하면 알맞은 날짜로 시간을 변환시켜줌(하루를 더해주거나 빼줌)
     func updateDate() {
         let calendar = Calendar.current
         let selectedTime1Components = calendar.dateComponents([.year, .month, .day], from: missionViewModel.selectedTime1)
@@ -254,7 +257,7 @@ struct TimeSettingView: View {
             missionViewModel.selectedTime2 = newDate
         }
     }
-    
+    // 날짜를 사용자가 이해하기 쉽게 포맷을 변경해줌
     func formatDate(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")

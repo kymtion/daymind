@@ -2,6 +2,7 @@ import SwiftUI
 
 struct PaymentView: View {
     @EnvironmentObject var missionViewModel: MissionViewModel
+    @EnvironmentObject var userInfoViewModel: UserInfoViewModel
     @State private var displayAmount: String = ""
     @State private var showAlertForEmptyAmount: Bool = false // 예치금 입력 알림을 표시할지 여부
     @State private var showAlertForConfirmation: Bool = false // 미션 등록 확인 알림을 표시할지 여부
@@ -66,7 +67,6 @@ struct PaymentView: View {
                                     displayAmount = newValue.filter { $0.isNumber || $0 == ","
                                     }
                                 }
-                                    
                             Spacer()
                             Text("원")
                                 .font(.system(size: 20, weight: .semibold))
@@ -74,7 +74,6 @@ struct PaymentView: View {
                             
                         }
                         .frame(width: UIScreen.main.bounds.width * 0.7)
-                        
                         
                         VStack{
                             Rectangle()
@@ -94,7 +93,6 @@ struct PaymentView: View {
                                 formatAndRoundAmount()
                                 alertType = .confirmMission // 미션 등록 확인 알림 표시
                             }
-                            
                         } label: {
                             Text("미션등록")
                                 .padding(10)
@@ -123,12 +121,17 @@ struct PaymentView: View {
                                 )
                             }
                         }
+                        
+                        Text("현재 잔액: \(userInfoViewModel.balance)원") // 잔액 표시
                     }
                     .padding(.vertical, 40)
                 }
                 .onTapGesture {
                     formatAndRoundAmount()
                     hideKeyboard()
+                }
+                .onAppear {
+                    userInfoViewModel.loadUserBalance(userId: userInfoViewModel.uid)
                 }
             }
         }

@@ -6,6 +6,7 @@ import KakaoSDKUser
 import KakaoSDKAuth
 import KakaoSDKCommon
 import FirebaseFunctions
+import FirebaseFirestore
 
 class LoginViewModel: NSObject, ObservableObject {
     
@@ -132,13 +133,37 @@ class LoginViewModel: NSObject, ObservableObject {
                             return
                         }
                         
-                        // Send token to your backend via HTTPS
-                        // ...
+                        // Create user account
+                        if let uid = authResult?.user.uid {
+                            self.createUserAccount(uid: uid)
+                        }
+                        
                     }
                 }
             }
         }
     }
+    // 로그인할때 계정 데이터를 파이어스토어에 저장해줌 단, 데이터가 기존에 있다면 저장하지 않음
+    private func createUserAccount(uid: String) {
+        let userDocument = Firestore.firestore().collection("users").document(uid)
+        userDocument.getDocument { (documentSnapshot, error) in
+            if let error = error {
+                print("Error fetching user: \(error)")
+                return
+            }
+            
+            // 사용자 데이터가 존재하지 않을 경우 생성
+            if let documentSnapshot = documentSnapshot, !documentSnapshot.exists {
+                let initialUser = User(uid: uid, balance: 0, missions: [])
+                UserManager.shared.saveUser(user: initialUser)
+            } else {
+                print("User already exists, no need to create")
+            }
+        }
+    }
+
+
+    
     //----------------------------------------------------------------------------------------------------------------------------------------파이어베이스 로그인 부분
     
     func attachAuthListener() {
@@ -156,18 +181,24 @@ class LoginViewModel: NSObject, ObservableObject {
     }
     
     func loginWithEmail() -> Future<Void, Error> {
-            return Future { promise in
-                Auth.auth().signIn(withEmail: self.email, password: self.password) { authResult, error in
-                    if let error = error {
-                        print("Error signing in with Firebase: \(error.localizedDescription)")
-                        promise(.failure(error))
-                    } else {
-                        print("Signed in to Firebase successfully")
-                        promise(.success(()))
+        return Future { promise in
+            Auth.auth().signIn(withEmail: self.email, password: self.password) { authResult, error in
+                if let error = error {
+                    print("Error signing in with Firebase: \(error.localizedDescription)")
+                    promise(.failure(error))
+                } else {
+                    print("Signed in to Firebase successfully")
+                    
+                    // Create user account
+                    if let uid = authResult?.user.uid {
+                        self.createUserAccount(uid: uid)
                     }
+                    
+                    promise(.success(()))
                 }
             }
         }
+    }
     
     func signUpWithEmail() -> Future<Void, Error> {
         return Future { [weak self] promise in

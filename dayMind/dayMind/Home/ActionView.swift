@@ -280,7 +280,7 @@ struct ActionView: View {
         }
     }
     
-    
+    // 토요일 오후 06:38 ~ 토요일 오후 07:38 표현해주는 함수임
     func formatMissionTime() -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
@@ -289,7 +289,7 @@ struct ActionView: View {
         let endTimeString = formatter.string(from: mission?.selectedTime2 ?? Date())
         return "\(startTimeString) ~ \(endTimeString)"
     }
-    
+    // 남은 시간이 0초가 되면 자동으로 미션상태가 실패로 되고 앱차단이 풀림
     func updateRemainingTime() {
         if let missionEndTime = mission?.selectedTime2 {
             let currentDate = Date()
@@ -315,7 +315,7 @@ struct ActionView: View {
             }
         }
     }
-    //수면 미션 환급 버튼 생성해주는 함수
+    //오늘밤 자정이 되면 수면미션 환급 버튼 생성해주는 함수
     func midnightBackMoney() {
         guard let missionEndTime = mission?.selectedTime2,
               mission?.missionType == "수면",
