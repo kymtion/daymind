@@ -9,6 +9,7 @@ struct UserInfoView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             VStack(alignment: .leading, spacing: 20) {
+                Text("남은 잔고: \(userInfoViewModel.balance)원")
                 Text("UID: \(userInfoViewModel.uid)")
                 Text("이메일: \(userInfoViewModel.email)")
                 Text("이름(닉네임): \(userInfoViewModel.displayName)")

@@ -1,12 +1,11 @@
 
 import Foundation
 import FirebaseFirestore
-
+import FirebaseAuth
 
 struct User: Codable {
     var uid: String
     var balance: Int
-    var missions: [String] // 미션 ID 목록
 }
 
 
@@ -27,56 +26,29 @@ class UserManager {
         }
     }
     
-    // 사용자 정보 로드
-    func loadUser(userId: String, completion: @escaping (User?) -> Void) {
-        db.collection("users").document(userId).getDocument { (snapshot, error) in
-            guard let snapshot = snapshot, let data = snapshot.data(),
-                  let jsonData = try? JSONSerialization.data(withJSONObject: data, options: []),
-                  let user = try? JSONDecoder().decode(User.self, from: jsonData) else {
-                print("Error loading user: \(error?.localizedDescription ?? "")")
-                completion(nil)
-                return
-            }
-            completion(user)
-        }
-    }
+    // 현재 로그인한 사용자 정보 로드
+       func loadUser(completion: @escaping (User?) -> Void) {
+           guard let userId = Auth.auth().currentUser?.uid else {
+               print("No current user logged in.")
+               completion(nil)
+               return
+           }
+           
+           db.collection("users").document(userId).getDocument { (snapshot, error) in
+               guard let snapshot = snapshot, let data = snapshot.data(),
+                     let jsonData = try? JSONSerialization.data(withJSONObject: data, options: []),
+                     let user = try? JSONDecoder().decode(User.self, from: jsonData) else {
+                   print("Error loading user: \(error?.localizedDescription ?? "")")
+                   completion(nil)
+                   return
+               }
+               completion(user)
+           }
+       }
     
-    // 사용자 미션 로드 (위에서 작성한 로직)
-    func loadUserMissions(userId: String, completion: @escaping ([FirestoreMission]) -> Void) {
-        let userDocument = Firestore.firestore().collection("users").document(userId)
-        userDocument.getDocument { (userSnapshot, error) in
-            guard let userSnapshot = userSnapshot, let missionIds = userSnapshot.data()?["missions"] as? [String] else {
-                print("Error loading user missions: \(error?.localizedDescription ?? "")")
-                completion([])
-                return
-            }
-            
-            let group = DispatchGroup()
-            var userMissions: [FirestoreMission] = []
-            
-            for missionId in missionIds {
-                group.enter()
-                let missionDocument = Firestore.firestore().collection("missions").document(missionId)
-                missionDocument.getDocument { (missionSnapshot, error) in
-                    if let missionSnapshot = missionSnapshot, let missionData = missionSnapshot.data() {
-                        do {
-                            let jsonData = try JSONSerialization.data(withJSONObject: missionData, options: [])
-                            let mission = try JSONDecoder().decode(FirestoreMission.self, from: jsonData)
-                            userMissions.append(mission)
-                        } catch {
-                            print("Error decoding mission: \(error)")
-                        }
-                    }
-                    group.leave()
-                }
-                
-            }
-            
-            group.notify(queue: .main) {
-                completion(userMissions)
-            }
-        }
-    }
+
+
+
 
     
 }

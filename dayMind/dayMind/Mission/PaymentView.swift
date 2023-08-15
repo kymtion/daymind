@@ -7,7 +7,7 @@ struct PaymentView: View {
     @State private var showAlertForEmptyAmount: Bool = false // 예치금 입력 알림을 표시할지 여부
     @State private var showAlertForConfirmation: Bool = false // 미션 등록 확인 알림을 표시할지 여부
     @State private var alertType: AlertType? // 현재 표시될 알림 유형 저장
-        
+    
     enum AlertType: Identifiable {
         case emptyAmount
         case confirmMission
@@ -109,20 +109,40 @@ struct PaymentView: View {
                             case .confirmMission:
                                 return Alert(title: Text("알림"), message: Text("미션을 등록하시겠습니까?"),
                                              primaryButton: .default(Text("예"), action: {
-                                    // 미션 생성 및 모니터링 시작
-                                    if let createdMission = self.missionViewModel.createMission() {
-                                        self.missionViewModel.missionMonitoring(selectedTime1: self.missionViewModel.selectedTime1,
-                                                                                selectedTime2: self.missionViewModel.selectedTime2,
-                                                                                missionId: createdMission.id)
-                                        missionViewModel.closeAllModals()
+                                    // 금액 계산
+                                    let rechargeAmount = calculateRechargeAmount()
+                                    var finalBalance = userInfoViewModel.balance
+                                    
+                                    if rechargeAmount > 0 {
+                                        finalBalance += rechargeAmount
+                                        finalBalance -= missionViewModel.actualAmount
+                                    } else {
+                                        finalBalance -= missionViewModel.actualAmount
+                                    }
+                                    
+                                    // 잔액 업데이트
+                                    userInfoViewModel.updateBalance(newBalance: finalBalance) { error in
+                                        if let error = error {
+                                            print("Failed to update balance: \(error.localizedDescription)")
+                                        } else {
+                                            userInfoViewModel.balance = finalBalance
+                                            // 미션 생성 및 모니터링 시작
+                                            if let createdMission = self.missionViewModel.createMission() {
+                                                self.missionViewModel.missionMonitoring(selectedTime1: self.missionViewModel.selectedTime1,
+                                                                                        selectedTime2: self.missionViewModel.selectedTime2,
+                                                                                        missionId: createdMission.id)
+                                                missionViewModel.closeAllModals()
+                                            }
+                                        }
                                     }
                                 }),
                                              secondaryButton: .cancel(Text("아니오"))
                                 )
                             }
                         }
-                        
-                        Text("현재 잔액: \(userInfoViewModel.balance)원") // 잔액 표시
+                        Text("예치금: \(displayAmount)원") // 예치금 즉, 입력된 금액
+                        Text("남은 잔고: \(userInfoViewModel.balance)원") // 잔액 표시
+                        Text("충전 금액: \(calculateRechargeAmount())원")
                     }
                     .padding(.vertical, 40)
                 }
@@ -131,7 +151,7 @@ struct PaymentView: View {
                     hideKeyboard()
                 }
                 .onAppear {
-                    userInfoViewModel.loadUserBalance(userId: userInfoViewModel.uid)
+                    userInfoViewModel.loadUserBalance()
                 }
             }
         }
@@ -164,6 +184,16 @@ struct PaymentView: View {
     func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
+    // 예치금과 남은잔고의 크기 비교에 따른 충전금액 산출 로직
+    func calculateRechargeAmount() -> Int {
+        if missionViewModel.actualAmount > userInfoViewModel.balance {
+            return missionViewModel.actualAmount - userInfoViewModel.balance
+        } else {
+            return 0
+        }
+    }
+    
+    
 }
 
 

@@ -34,6 +34,7 @@ class UserInfoViewModel: ObservableObject {
         FirestoreMission.listenForChanges { missions in
                self.missions = missions
         }
+        loadUserBalance()
     }
     
     deinit {
@@ -41,12 +42,24 @@ class UserInfoViewModel: ObservableObject {
             Auth.auth().removeStateDidChangeListener(handle)
         }
     }
-    
-    func loadUserBalance(userId: String) {
-        UserManager.shared.loadUser(userId: userId) { user in
-            self.balance = user?.balance ?? 0
+    // 사용자 남은 잔액 정보 가져오기
+    func loadUserBalance() {
+        UserManager.shared.loadUser { user in
+            if let user = user {
+                self.balance = user.balance
+            }
         }
     }
+    
+    // 사용자 남은 잔액 정보 업데이트
+    func updateBalance(newBalance: Int, completion: @escaping (Error?) -> Void) {
+        db.collection("users").document(uid).updateData(["balance": newBalance]) { error in
+            completion(error)
+        }
+    }
+
+   
+
     
     // 필터링, 그룹핑 및 정렬 작업을 수행하는 메소드
     func getGroupedMissions() -> [String: [FirestoreMission]] {

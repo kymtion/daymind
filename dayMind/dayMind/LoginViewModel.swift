@@ -154,7 +154,7 @@ class LoginViewModel: NSObject, ObservableObject {
             
             // 사용자 데이터가 존재하지 않을 경우 생성
             if let documentSnapshot = documentSnapshot, !documentSnapshot.exists {
-                let initialUser = User(uid: uid, balance: 0, missions: [])
+                let initialUser = User(uid: uid, balance: 0)
                 UserManager.shared.saveUser(user: initialUser)
             } else {
                 print("User already exists, no need to create")

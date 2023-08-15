@@ -152,7 +152,7 @@ struct TimeSettingView: View {
                                             if selectedDateMinute < nowDateMinute {
                                                 self.activeAlert = .pastError
                                             } else {
-                                                // 만약 현재 미션을 완료하지 않은상태에서 새로운 미션을 생성하게되면
+                                                // 미션 상태가 진행중인데 종료시각이 이미 지난 경우 오류메시지 뜸
                                                 let inProgressMissions = missionViewModel.missions.filter {
                                                     $0.missionStatus == .inProgress
                                                 }
@@ -204,7 +204,7 @@ struct TimeSettingView: View {
                                     case .storeNotSelected:
                                         return Alert(title: Text("알림"), message: Text("앱 허용 리스트를 선택하세요"), dismissButton: .default(Text("확인")))
                                     case .intervalError:
-                                        return Alert(title: Text("경고"), message: Text("시간 간격이 너무 짧습니다. 최소한 15분이상 설정해야합니다."), dismissButton: .default(Text("확인")))
+                                        return Alert(title: Text("경고"), message: Text("시간 간격이 너무 짧습니다. \n최소한 15분이상 설정해야합니다."), dismissButton: .default(Text("확인")))
                                     case .pastError:
                                         return Alert(title: Text("경고"), message: Text("시작 시간이 현재 시간 이후로 설정 해야합니다."), dismissButton: .default(Text("확인")))
                                     case .missionInProgressError:

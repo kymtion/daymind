@@ -6,6 +6,7 @@ import DeviceActivity
 struct ActionView: View {
     
     @EnvironmentObject var missionViewModel: MissionViewModel
+    @EnvironmentObject var userInfoViewModel: UserInfoViewModel
     @State var showAlert2: Bool = false // 포기하면 예치금 환급이 불가능합니다. 포기하시겠습니까?
     @State private var alertType: AlertType?
     @State var remainingTime: String = ""
@@ -212,6 +213,7 @@ struct ActionView: View {
                 // 자정 이후에 생기는 환급 버튼
                 if showMidnightButton {
                     Button {
+                        refundMissionAmount()
                         missionViewModel.completeMission(missionId: missionId)
                     } label: {
                         Text("환 급")
@@ -252,6 +254,7 @@ struct ActionView: View {
                 //미션 타입 -> 집중
                 if mission?.missionStatus == .verificationCompleted && mission?.missionType == "집중" {
                     Button {
+                        refundMissionAmount()
                         missionViewModel.stopMonitoring(missionId: missionId)
                         missionViewModel.completeMission(missionId: missionId)
                     } label: {
@@ -333,6 +336,22 @@ struct ActionView: View {
             showMidnightButton = true
         }
     }
+    
+    func refundMissionAmount() {
+        guard let mission = mission else { return }
+
+        let refundAmount = mission.actualAmount
+        var finalBalance = userInfoViewModel.balance + refundAmount
+
+        userInfoViewModel.updateBalance(newBalance: finalBalance) { error in
+            if let error = error {
+                print("Failed to refund balance: \(error)")
+            } else {
+                userInfoViewModel.balance = finalBalance // ViewModel의 잔액 업데이트
+            }
+        }
+    }
+    
 }
 
 

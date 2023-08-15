@@ -100,19 +100,28 @@ class MissionViewModel: ObservableObject {
     // 미션 상태 (대기중 -> 진행중)
     func updateMissionStatuses() {
         print("Updating mission statuses...")
-        var currentDate = Date()
-        
-        currentDate = Calendar.current.date(byAdding: .minute, value: 1, to: currentDate)!
-        
+        let calendar = Calendar.current
+
+        // 현재 날짜에서 초를 제거 (분 단위까지만)
+        let currentDateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: Date())
+        guard let currentDate = calendar.date(from: currentDateComponents) else { return }
+
         for mission in missions {
-            if mission.missionStatus == .beforeStart,
-               currentDate >= mission.selectedTime1 {
-                FirestoreMission.updateMissionStatus(missionId: mission.id, newStatus: .inProgress)
+            if mission.missionStatus == .beforeStart {
+                // 미션 날짜에서 초를 제거 (분 단위까지만)
+                let missionDateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime1)
+                guard let missionDate = calendar.date(from: missionDateComponents) else { continue }
+
+                // 분 단위까지만 비교
+                if currentDate >= missionDate {
+                    FirestoreMission.updateMissionStatus(missionId: mission.id, newStatus: .inProgress)
+                }
             }
         }
+
         FirestoreMission.loadUserMissions { fetchedMissions in
-                self.missions = fetchedMissions
-            }
+            self.missions = fetchedMissions
+        }
     }
     
     // 미션 상태 -> 실패
