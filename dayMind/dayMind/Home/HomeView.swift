@@ -30,7 +30,7 @@ struct HomeView: View {
                 ScrollView {
                     LazyVGrid(columns: layout, spacing: 10) {
                         let filteredMissions = missionViewModel.missions.filter { mission in
-                            return mission.missionStatus == .beforeStart || mission.missionStatus == .inProgress || mission.missionStatus == .verificationCompleted
+                            return mission.missionStatus == .beforeStart || mission.missionStatus == .inProgress || mission.missionStatus == .verificationCompleted1 || mission.missionStatus == .verificationCompleted2
                         }.sorted(by: { $0.selectedTime1 < $1.selectedTime1 })
                         
                         if filteredMissions.isEmpty {

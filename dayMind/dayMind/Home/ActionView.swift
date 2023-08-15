@@ -29,13 +29,15 @@ struct ActionView: View {
         }
     }
     
-    // CameraView의 상태 변수들
+    // 알림 상태 변수들
     @State private var showCamera = false // 카메라 촬영뷰
     @State private var image: UIImage?
     @State private var showConfirmButton = false
     @State private var showConfirmation = false // 촬영된 사진 인증 뷰
     @State private var showMidnightButton = false // 수면미션 환급 버튼
     @State private var captureTime: Date?
+    @State private var showVerificationCompleted2 = false
+    @State private var showButton = true // 인증완료 버튼 표시여부
     
     init(mission: FirestoreMission, selectedMissionId: Binding<UUID?>) {
         self.missionId = mission.id
@@ -97,113 +99,133 @@ struct ActionView: View {
                            let second = timeComponents[2] {
                             let totalSeconds = hour * 3600 + minute * 60 + second
                             if totalSeconds > 0 && totalSeconds < 3600 {
-                                Button {
-                                    if mission?.missionStatus == .verificationCompleted {
-                                        alertType = .alreadyVerified
-                                    } else if mission?.missionStatus == .inProgress {
-                                        self.showCamera = true
-                                    } else if mission?.missionStatus == .beforeStart {
-                                        alertType = .beforeStart
+                                if mission?.missionStatus == .beforeStart || mission?.missionStatus == .inProgress || mission?.missionStatus == .verificationCompleted1 {
+                                    Button {
+                                        if mission?.missionStatus == .verificationCompleted1 {
+                                            alertType = .alreadyVerified
+                                        } else if mission?.missionStatus == .inProgress {
+                                            self.showCamera = true
+                                        } else if mission?.missionStatus == .beforeStart {
+                                            alertType = .beforeStart
+                                        }
+                                    } label: {
+                                        Text("사진인증")
+                                            .padding(10)
+                                            .font(.system(size: 25, weight: .bold))
+                                            .frame(width: UIScreen.main.bounds.width * 0.5)
+                                            .background(.green)
+                                            .foregroundColor(.white)
+                                            .clipShape(Capsule())
                                     }
-                                } label: {
-                                    Text("인 증")
-                                        .padding(10)
-                                        .font(.system(size: 25, weight: .bold))
-                                        .frame(width: UIScreen.main.bounds.width * 0.5)
-                                        .background(.green)
-                                        .foregroundColor(.white)
-                                        .clipShape(Capsule())
-                                }
-                                .alert(item: $alertType) { alertType in
-                                    switch alertType {
-                                    case .alreadyVerified:
-                                        return Alert(title: Text("알림"), message: Text("이미 인증을 완료하셨습니다."), dismissButton: .default(Text("확인")))
-                                    case .beforeStart:
-                                        return Alert(title: Text("알림"), message: Text("미션 상태가 진행 중일 때 인증이 가능합니다."), dismissButton: .default(Text("확인")))
-                                        // 다른 알림 유형 처리
+                                    .alert(item: $alertType) { alertType in
+                                        switch alertType {
+                                        case .alreadyVerified:
+                                            return Alert(title: Text("알림"), message: Text("이미 사진인증을 완료하셨습니다.\n\n시간이 다 되면 차단된 앱을 클릭하여 \n'미션완료' 버튼을 누르세요."), dismissButton: .default(Text("확인")))
+                                        case .beforeStart:
+                                            return Alert(title: Text("알림"), message: Text("미션이 시작되어야 인증이 가능합니다."), dismissButton: .default(Text("확인")))
+                                            // 다른 알림 유형 처리
+                                        }
+                                        
                                     }
-                                    
-                                }
-                                .fullScreenCover(isPresented: $showCamera) {
-                                    ImagePicker(image: self.$image) { selectedImage, captureTime in
-                                        self.image = selectedImage
-                                        self.captureTime = captureTime
-                                        self.showCamera = false
-                                        if selectedImage != nil {
-                                            DispatchQueue.main.async {
-                                                self.showConfirmation = true
+                                    .fullScreenCover(isPresented: $showCamera) {
+                                        ImagePicker(image: self.$image) { selectedImage, captureTime in
+                                            self.image = selectedImage
+                                            self.captureTime = captureTime
+                                            self.showCamera = false
+                                            if selectedImage != nil {
+                                                DispatchQueue.main.async {
+                                                    self.showConfirmation = true
+                                                }
                                             }
                                         }
+                                        .edgesIgnoringSafeArea(.all)  // Add this line
+                                        .background(Color.black) // Add this line
                                     }
-                                    .edgesIgnoringSafeArea(.all)  // Add this line
-                                    .background(Color.black) // Add this line
-                                }
-                                .fullScreenCover(isPresented: $showConfirmation) {
-                                    VStack {
-                                        if let img = self.image {
-                                            Image(uiImage: img)
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: UIScreen.main.bounds.width * 1)
-                                                .padding(.bottom, 30)
-                                            
-                                            Text("인증을 완료하시겠습니까?")
-                                                .font(.system(size: 20, weight: .medium))
-                                                .foregroundColor(.white)
-                                                .padding(.bottom, 20)
-                                            
-                                            Button {
-                                                // Get an instance of the mission from your data model
-                                                guard let mission = self.mission else {
-                                                    print("Mission not found")
-                                                    return
-                                                }
+                                    .fullScreenCover(isPresented: $showConfirmation) {
+                                        VStack {
+                                            if let img = self.image {
+                                                Image(uiImage: img)
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .frame(width: UIScreen.main.bounds.width * 1)
+                                                    .padding(.bottom, 30)
                                                 
-                                                // Make sure there is an image to upload
-                                                guard let img = self.image else {
-                                                    print("No image to upload")
-                                                    return
-                                                }
-                                                
-                                                // Make sure the capture time is available
-                                                guard let captureTime = self.captureTime else {
-                                                    print("Capture time not available")
-                                                    return
-                                                }
-                                                
-                                                // Upload the image and metadata
-                                                missionViewModel.uploadImage(img, for: mission, captureTime: captureTime)
-                                                
-                                                
-                                                
-                                                self.showConfirmation = false
-                                                self.selectedMissionId = nil
-                                                missionViewModel.toVerification(missionId: self.missionId)
-                                                missionViewModel.stopMonitoring(missionId: missionId)
-                                            } label: {
-                                                Text("인 증")
-                                                    .padding(10)
-                                                    .font(.system(size: 25, weight: .bold))
-                                                    .frame(width: UIScreen.main.bounds.width * 0.5)
-                                                    .background(.green)
+                                                Text("인증을 완료하시겠습니까?")
+                                                    .font(.system(size: 20, weight: .medium))
                                                     .foregroundColor(.white)
-                                                    .clipShape(Capsule())
+                                                    .padding(.bottom, 20)
+                                                
+                                                Button {
+                                                    // Get an instance of the mission from your data model
+                                                    guard let mission = self.mission else {
+                                                        print("Mission not found")
+                                                        return
+                                                    }
+                                                    
+                                                    // Make sure there is an image to upload
+                                                    guard let img = self.image else {
+                                                        print("No image to upload")
+                                                        return
+                                                    }
+                                                    
+                                                    // Make sure the capture time is available
+                                                    guard let captureTime = self.captureTime else {
+                                                        print("Capture time not available")
+                                                        return
+                                                    }
+                                                    
+                                                    // Upload the image and metadata
+                                                    missionViewModel.uploadImage(img, for: mission, captureTime: captureTime)
+                                                    
+                                                    
+                                                    
+                                                    self.showConfirmation = false
+                                                    self.selectedMissionId = nil
+                                                    missionViewModel.toVerification1(missionId: self.missionId)
+                                                } label: {
+                                                    Text("인 증")
+                                                        .padding(10)
+                                                        .font(.system(size: 25, weight: .bold))
+                                                        .frame(width: UIScreen.main.bounds.width * 0.5)
+                                                        .background(.green)
+                                                        .foregroundColor(.white)
+                                                        .clipShape(Capsule())
+                                                }
                                             }
                                         }
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                        .background(Color.black)
                                     }
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .background(Color.black)
                                 }
                             }
                         }
                     }
-                    if mission?.missionType == "수면", mission?.missionStatus != .verificationCompleted {
+                    if mission?.missionType == "수면", mission?.missionStatus == .verificationCompleted2 {
+                            Button {
+                                showVerificationCompleted2 = true
+                            } label: {
+                                Text("인증완료")
+                                    .padding(10)
+                                    .font(.system(size: 25, weight: .bold))
+                                    .frame(width: UIScreen.main.bounds.width * 0.5)
+                                    .background(.blue)
+                                    .foregroundColor(.white)
+                                    .clipShape(Capsule())
+                            }
+                            .alert(isPresented: $showVerificationCompleted2) {
+                                Alert(title: Text("알림"), message: Text("모든 인증을 완료하셨습니다.\n오늘 자정에 환급 버튼이 생성됩니다."),
+                                      dismissButton: .default(Text("확인")))
+                            }
+                        }
+                    
+                    
+                    if mission?.missionType == "수면", mission?.missionStatus != .verificationCompleted1, mission?.missionStatus != .verificationCompleted2 {
                         Text("남은 시간이 1시간 이하일 때\n인증 버튼이 활성화됩니다.")
                             .font(.system(size: 16))
                             .multilineTextAlignment(.center)
                             .opacity(0.7)
                     }
-                    if mission?.missionType == "수면", mission?.missionStatus == .verificationCompleted {
+                    if mission?.missionType == "수면", (mission?.missionStatus == .verificationCompleted1 || mission?.missionStatus == .verificationCompleted2) {
                         Text("인증사진이 관리자에게 승인되면,\n오늘 자정에 환급 버튼이 활성화됩니다.")
                             .font(.system(size: 16))
                             .multilineTextAlignment(.center)
@@ -226,7 +248,7 @@ struct ActionView: View {
                     }
                 }
                 //미션 상태가 인증완료 일때만 포기 버튼이 사라짐
-                if mission?.missionStatus != .verificationCompleted {
+                if mission?.missionStatus != .verificationCompleted2 {
                     
                     Button {
                         showAlert2 = true
@@ -252,10 +274,9 @@ struct ActionView: View {
                     }
                 }
                 //미션 타입 -> 집중
-                if mission?.missionStatus == .verificationCompleted && mission?.missionType == "집중" {
+                if mission?.missionStatus == .verificationCompleted2 && mission?.missionType == "집중" {
                     Button {
                         refundMissionAmount()
-                        missionViewModel.stopMonitoring(missionId: missionId)
                         missionViewModel.completeMission(missionId: missionId)
                     } label: {
                         Text("환 급")
@@ -278,8 +299,7 @@ struct ActionView: View {
             .frame(maxWidth: .infinity)
         }
         .onAppear {
-            midnightBackMoney()
-            print("환급버튼생성!")
+            midnightBackMoney() //자정에 환급버튼 생성 함수
         }
     }
     
@@ -322,7 +342,7 @@ struct ActionView: View {
     func midnightBackMoney() {
         guard let missionEndTime = mission?.selectedTime2,
               mission?.missionType == "수면",
-              mission?.missionStatus == .verificationCompleted else {
+              mission?.missionStatus == .verificationCompleted2 else {
             return
         }
         let calendar = Calendar.current
@@ -336,7 +356,7 @@ struct ActionView: View {
             showMidnightButton = true
         }
     }
-    
+    // 환급 버튼 누를 시 예치금이 남은 잔고에 더해주는 함수
     func refundMissionAmount() {
         guard let mission = mission else { return }
 

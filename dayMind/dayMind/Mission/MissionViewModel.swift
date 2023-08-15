@@ -88,13 +88,15 @@ class MissionViewModel: ObservableObject {
         }
     }
 
-    // 미션 상태 (진행중 -> 인증완료)
-    func toVerification(missionId: UUID) {
+    // 미션 상태 (진행중 -> 인증완료1)
+    func toVerification1(missionId: UUID) {
         if let mission = missions.first(where: { $0.id == missionId }),
            mission.missionStatus == .inProgress {
-            FirestoreMission.updateMissionStatus(missionId: mission.id, newStatus: .verificationCompleted)
+            FirestoreMission.updateMissionStatus(missionId: mission.id, newStatus: .verificationCompleted1)
         }
     }
+    
+    
 
     
     // 미션 상태 (대기중 -> 진행중)
@@ -135,7 +137,7 @@ class MissionViewModel: ObservableObject {
     // 미션 완료 (verificationCompleted -> success)
     func completeMission(missionId: UUID) {
         if let mission = missions.first(where: { $0.id == missionId }),
-           mission.missionStatus == .verificationCompleted {
+           mission.missionStatus == .verificationCompleted2 {
             FirestoreMission.updateMissionStatus(missionId: mission.id, newStatus: .success)
             FirestoreMission.loadUserMissions { fetchedMissions in
                      self.missions = fetchedMissions

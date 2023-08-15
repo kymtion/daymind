@@ -17,7 +17,7 @@ class ShieldActionExtension: ShieldActionDelegate {
         os_log("함수 2번", type: .default)
         
         for (index, mission) in missions.enumerated() {
-            if mission.missionStatus == .inProgress {
+            if mission.missionStatus == .inProgress || mission.missionStatus == .verificationCompleted1 {
                 os_log("함수 3번", type: .default)
                 
                 let nowComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: now)
@@ -27,7 +27,12 @@ class ShieldActionExtension: ShieldActionDelegate {
                 let missionDate = calendar.date(from: missionTimeComponents)!
                 
                 if missionDate <= nowDate { // 테스트하고 원래대로 <= 로 바꿔야함
-                    missions[index].missionStatus = .verificationCompleted
+                    
+                    let currentStoreName = ManagedSettingsStore.Name(rawValue: mission.currentStore)
+                    let selectedList = ManagedSettingsStore(named: currentStoreName)
+                    selectedList.clearAllSettings()
+                    
+                    missions[index].missionStatus = .verificationCompleted2
                     os_log("함수 4번", type: .default)
                     AppGroupMission.saveMissionAppGroup(missions: missions)
                     os_log("함수 6번", type: .default)
@@ -38,7 +43,7 @@ class ShieldActionExtension: ShieldActionDelegate {
         }
         return false
     }
-
+    
     
     override func handle(action: ShieldAction, for application: ApplicationToken, completionHandler: @escaping (ShieldActionResponse) -> Void) {
         switch action {
