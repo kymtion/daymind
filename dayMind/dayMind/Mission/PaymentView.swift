@@ -48,7 +48,7 @@ struct PaymentView: View {
                                     .font(.system(size: 23, weight: .semibold))
                                     .foregroundColor(.black)
                                 
-                                Text("미션을 성공하면 즉시 환급됩니다!")
+                                Text("미션을 성공하면 환급이 가능합니다.")
                                     .font(.system(size: 17, weight: .regular))
                                     .opacity(0.7)
                             }
@@ -86,65 +86,97 @@ struct PaymentView: View {
                                 .opacity(0.7)
                         }
                         
-                        Button {
-                            if displayAmount.isEmpty {
-                                alertType = .emptyAmount // 예치금이 입력되지 않았을 때 알림 표시
-                            } else {
-                                formatAndRoundAmount()
-                                alertType = .confirmMission // 미션 등록 확인 알림 표시
-                            }
-                        } label: {
-                            Text("미션등록")
-                                .padding(10)
-                                .font(.system(size: 22, weight: .semibold))
-                                .frame(width: UIScreen.main.bounds.width * 0.4)
-                                .background(.blue.opacity(0.8))
-                                .foregroundColor(.white)
-                                .clipShape(Capsule())
-                        }
-                        .alert(item: $alertType) { alertType in
-                            switch alertType {
-                            case .emptyAmount:
-                                return Alert(title: Text("알림"), message: Text("금액을 입력해주세요!"), dismissButton: .default(Text("확인")))
-                            case .confirmMission:
-                                return Alert(title: Text("알림"), message: Text("미션을 등록하시겠습니까?"),
-                                             primaryButton: .default(Text("예"), action: {
-                                    // 금액 계산
-                                    let rechargeAmount = calculateRechargeAmount()
-                                    var finalBalance = userInfoViewModel.balance
-                                    
-                                    if rechargeAmount > 0 {
-                                        finalBalance += rechargeAmount
-                                        finalBalance -= missionViewModel.actualAmount
-                                    } else {
-                                        finalBalance -= missionViewModel.actualAmount
-                                    }
-                                    
-                                    // 잔액 업데이트
-                                    userInfoViewModel.updateBalance(newBalance: finalBalance) { error in
-                                        if let error = error {
-                                            print("Failed to update balance: \(error.localizedDescription)")
-                                        } else {
-                                            userInfoViewModel.balance = finalBalance
-                                            // 미션 생성 및 모니터링 시작
-                                            if let createdMission = self.missionViewModel.createMission() {
-                                                self.missionViewModel.missionMonitoring(selectedTime1: self.missionViewModel.selectedTime1,
-                                                                                        selectedTime2: self.missionViewModel.selectedTime2,
-                                                                                        missionId: createdMission.id)
-                                                missionViewModel.closeAllModals()
-                                            }
-                                        }
-                                    }
-                                }),
-                                             secondaryButton: .cancel(Text("아니오"))
-                                )
-                            }
-                        }
-                        Text("예치금: \(displayAmount)원") // 예치금 즉, 입력된 금액
-                        Text("남은 잔고: \(userInfoViewModel.balance)원") // 잔액 표시
-                        Text("충전 금액: \(calculateRechargeAmount())원")
                     }
                     .padding(.vertical, 40)
+                    
+                    VStack(spacing: 15) {
+                        HStack {
+                            Text("충전 및 결제")
+                                .font(.system(size: 23, weight: .semibold))
+                                .foregroundColor(.black)
+                            
+                            Text("현재 보유 금액 \(userInfoViewModel.balance)원")
+                                .font(.system(size: 13, weight: .regular))
+                                .foregroundColor(.black)
+                                .opacity(0.7)
+                            Spacer()
+                        }
+                        HStack {
+                            Text("미션 예치금")
+                            Spacer()
+                            Text("\(displayAmount) 원")
+                        }
+                        .font(.system(size: 17, weight: .medium))
+                        
+                        HStack {
+                            Text("사용 금액 ")
+                            Spacer()
+                            Text("\(missionViewModel.actualAmount - calculateRechargeAmount()) 원")
+                        }
+                        .font(.system(size: 17, weight: .medium))
+                        
+                        HStack {
+                            Text("충전 금액")
+                                .font(.system(size: 23, weight: .semibold))
+                                .foregroundColor(.black)
+                            Spacer()
+                            Text("\(calculateRechargeAmount()) 원")
+                                .font(.system(size: 23, weight: .semibold))
+                                .foregroundColor(.red)
+                                .opacity(0.8)
+                        }
+                        
+                        
+                        
+                    }
+                    .padding(.horizontal, 30)
+                    
+                    BlueButton(title: "결제 및 등록") {
+                        if displayAmount.isEmpty {
+                            alertType = .emptyAmount // 예치금이 입력되지 않았을 때 알림 표시
+                        } else {
+                            formatAndRoundAmount()
+                            alertType = .confirmMission // 미션 등록 확인 알림 표시
+                        }
+                    }
+                    .alert(item: $alertType) { alertType in
+                        switch alertType {
+                        case .emptyAmount:
+                            return Alert(title: Text("알림"), message: Text("금액을 입력해주세요!"), dismissButton: .default(Text("확인")))
+                        case .confirmMission:
+                            return Alert(title: Text("알림"), message: Text("미션을 등록하시겠습니까?"),
+                                         primaryButton: .default(Text("예"), action: {
+                                // 금액 계산
+                                let rechargeAmount = calculateRechargeAmount()
+                                var finalBalance = userInfoViewModel.balance
+                                
+                                if rechargeAmount > 0 {
+                                    finalBalance += rechargeAmount
+                                    finalBalance -= missionViewModel.actualAmount
+                                } else {
+                                    finalBalance -= missionViewModel.actualAmount
+                                }
+                                
+                                // 잔액 업데이트
+                                userInfoViewModel.updateBalance(newBalance: finalBalance) { error in
+                                    if let error = error {
+                                        print("Failed to update balance: \(error.localizedDescription)")
+                                    } else {
+                                        userInfoViewModel.balance = finalBalance
+                                        // 미션 생성 및 모니터링 시작
+                                        if let createdMission = self.missionViewModel.createMission() {
+                                            self.missionViewModel.missionMonitoring(selectedTime1: self.missionViewModel.selectedTime1,
+                                                                                    selectedTime2: self.missionViewModel.selectedTime2,
+                                                                                    missionId: createdMission.id)
+                                            missionViewModel.closeAllModals()
+                                        }
+                                    }
+                                }
+                            }),
+                                         secondaryButton: .cancel(Text("아니오"))
+                            )
+                        }
+                    }
                 }
                 .onTapGesture {
                     formatAndRoundAmount()
@@ -200,9 +232,11 @@ struct PaymentView: View {
 
 
 
-//
-//struct PaymentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        PaymentView()
-//    }
-//}
+
+struct PaymentView_Previews: PreviewProvider {
+    static var previews: some View {
+        PaymentView()
+            .environmentObject(MissionViewModel()) // 예시 객체, 실제 앱에서 필요한 초기값으로 설정해야 할 수도 있습니다.
+            .environmentObject(UserInfoViewModel()) // 예시 객체, 실제 앱에서 필요한 초기값으로 설정해야 할 수도 있습니다.
+    }
+}

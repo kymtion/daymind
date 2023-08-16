@@ -25,6 +25,7 @@ class UserInfoViewModel: ObservableObject {
                 self.uid = user.uid
                 self.email = user.email ?? ""
                 self.displayName = user.displayName ?? ""
+                self.setDefaultNicknameIfNeeded() // 만약 사용자가 닉네임이 없다면 호출되어 닉네임을 만들어줌
             } else {
                 self.uid = ""
                 self.email = ""
@@ -42,6 +43,37 @@ class UserInfoViewModel: ObservableObject {
             Auth.auth().removeStateDidChangeListener(handle)
         }
     }
+    // 실패, 성공을 제외한 모든 미션의 예치금 합산
+    func calculateOtherAmounts() -> Int {
+        var otherAmount = 0
+        
+        for mission in missions {
+            if mission.missionStatus != .success && mission.missionStatus != .failure {
+                otherAmount += mission.actualAmount
+            }
+        }
+        
+        return otherAmount
+    }
+    
+    // 실패, 성공 미션들의 예치금 합산 
+        func calculateAmounts() -> (successAmount: Int, failureAmount: Int) {
+            var successAmount = 0
+            var failureAmount = 0
+            
+            for mission in missions {
+                if mission.missionStatus == .success {
+                    successAmount += mission.actualAmount
+                } else if mission.missionStatus == .failure {
+                    failureAmount += mission.actualAmount
+                }
+            }
+            
+            return (successAmount, failureAmount)
+        }
+
+
+    
     // 사용자 남은 잔액 정보 가져오기
     func loadUserBalance() {
         UserManager.shared.loadUser { user in
@@ -101,6 +133,27 @@ class UserInfoViewModel: ObservableObject {
         case userNotLoggedIn
         case wrongPassword
     }
+    
+    // 닉네임 자동 생성
+    func setDefaultNicknameIfNeeded() {
+        if let user = Auth.auth().currentUser, (user.displayName == nil || user.displayName?.isEmpty == true) {
+            // 닉네임이 없는 경우 자동으로 생성합니다.
+            let randomNumber = Int.random(in: 100000..<1000000) // 100000부터 999999까지의 랜덤한 숫자
+            let defaultNickname = "#\(randomNumber)" // 예: '#123456'
+            
+            let changeRequest = user.createProfileChangeRequest()
+            changeRequest.displayName = defaultNickname
+            changeRequest.commitChanges { error in
+                if let error = error {
+                    print("닉네임 설정 중 에러 발생: \(error)")
+                } else {
+                    print("닉네임이 성공적으로 설정되었습니다: \(defaultNickname)")
+                }
+            }
+        }
+    }
+
+    // 닉네임 변경 함수
     func updateProfile(userName: String, completion: @escaping (Error?) -> Void) {
         let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
         changeRequest?.displayName = userName

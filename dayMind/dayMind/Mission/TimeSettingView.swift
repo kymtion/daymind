@@ -133,7 +133,7 @@ struct TimeSettingView: View {
                                 }
                                 
                                 
-                                Button {
+                                BlueButton(title: "다 음") {
                                     if missionViewModel.currentStore.isEmpty {
                                         self.activeAlert = .storeNotSelected
                                     } else {
@@ -189,15 +189,6 @@ struct TimeSettingView: View {
                                             }
                                         }
                                     }
-                                } label: {
-                                    Text("다음")
-                                        .padding(10)
-                                        .font(.system(size: 22, weight: .semibold))
-                                        .frame(width: UIScreen.main.bounds.width * 0.4)
-                                        .background(.blue.opacity(0.8))
-                                        .foregroundColor(.white)
-                                        .clipShape(Capsule())
-                                    
                                 }
                                 .alert(item: $activeAlert) { alertType in
                                     switch alertType {

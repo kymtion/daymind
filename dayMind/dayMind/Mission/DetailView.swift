@@ -145,16 +145,8 @@ struct DetailView: View {
                                 .font(.system(size: 15))
                                 .background(Color.gray.opacity(0.1))
                             
-                            Button {
+                            BlueButton(title: "시 작") {
                                 missionViewModel.showTimeSettingView = true
-                            } label: {
-                                Text("시 작")
-                                    .padding(10)
-                                    .font(.system(size: 23, weight: .bold))
-                                    .frame(width: UIScreen.main.bounds.width * 0.4)
-                                    .background(.blue)
-                                    .foregroundColor(.white)
-                                    .clipShape(Capsule())
                             }
                             .fullScreenCover(isPresented: $missionViewModel.showTimeSettingView) {
                                 TimeSettingView()

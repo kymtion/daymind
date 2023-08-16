@@ -100,7 +100,7 @@ struct ActionView: View {
                             let totalSeconds = hour * 3600 + minute * 60 + second
                             if totalSeconds > 0 && totalSeconds < 3600 {
                                 if mission?.missionStatus == .beforeStart || mission?.missionStatus == .inProgress || mission?.missionStatus == .verificationCompleted1 {
-                                    Button {
+                                    GreenButton(title: "사진인증") {
                                         if mission?.missionStatus == .verificationCompleted1 {
                                             alertType = .alreadyVerified
                                         } else if mission?.missionStatus == .inProgress {
@@ -108,14 +108,6 @@ struct ActionView: View {
                                         } else if mission?.missionStatus == .beforeStart {
                                             alertType = .beforeStart
                                         }
-                                    } label: {
-                                        Text("사진인증")
-                                            .padding(10)
-                                            .font(.system(size: 25, weight: .bold))
-                                            .frame(width: UIScreen.main.bounds.width * 0.5)
-                                            .background(.green)
-                                            .foregroundColor(.white)
-                                            .clipShape(Capsule())
                                     }
                                     .alert(item: $alertType) { alertType in
                                         switch alertType {
@@ -155,7 +147,7 @@ struct ActionView: View {
                                                     .foregroundColor(.white)
                                                     .padding(.bottom, 20)
                                                 
-                                                Button {
+                                                GreenButton(title: "인 증") {
                                                     // Get an instance of the mission from your data model
                                                     guard let mission = self.mission else {
                                                         print("Mission not found")
@@ -176,20 +168,10 @@ struct ActionView: View {
                                                     
                                                     // Upload the image and metadata
                                                     missionViewModel.uploadImage(img, for: mission, captureTime: captureTime)
-                                                    
-                                                    
-                                                    
+                                             
                                                     self.showConfirmation = false
                                                     self.selectedMissionId = nil
                                                     missionViewModel.toVerification1(missionId: self.missionId)
-                                                } label: {
-                                                    Text("인 증")
-                                                        .padding(10)
-                                                        .font(.system(size: 25, weight: .bold))
-                                                        .frame(width: UIScreen.main.bounds.width * 0.5)
-                                                        .background(.green)
-                                                        .foregroundColor(.white)
-                                                        .clipShape(Capsule())
                                                 }
                                             }
                                         }
@@ -201,16 +183,8 @@ struct ActionView: View {
                         }
                     }
                     if mission?.missionType == "수면", mission?.missionStatus == .verificationCompleted2 {
-                            Button {
+                        BlueButton(title: "인증완료") {
                                 showVerificationCompleted2 = true
-                            } label: {
-                                Text("인증완료")
-                                    .padding(10)
-                                    .font(.system(size: 25, weight: .bold))
-                                    .frame(width: UIScreen.main.bounds.width * 0.5)
-                                    .background(.blue)
-                                    .foregroundColor(.white)
-                                    .clipShape(Capsule())
                             }
                             .alert(isPresented: $showVerificationCompleted2) {
                                 Alert(title: Text("알림"), message: Text("모든 인증을 완료하셨습니다.\n오늘 자정에 환급 버튼이 생성됩니다."),
@@ -234,32 +208,16 @@ struct ActionView: View {
                 }
                 // 자정 이후에 생기는 환급 버튼
                 if showMidnightButton {
-                    Button {
+                    GreenButton(title: "환 급") {
                         refundMissionAmount()
                         missionViewModel.completeMission(missionId: missionId)
-                    } label: {
-                        Text("환 급")
-                            .padding(10)
-                            .font(.system(size: 25, weight: .bold))
-                            .frame(width: UIScreen.main.bounds.width * 0.5)
-                            .background(.green)
-                            .foregroundColor(.white)
-                            .clipShape(Capsule())
                     }
                 }
                 //미션 상태가 인증완료 일때만 포기 버튼이 사라짐
                 if mission?.missionStatus != .verificationCompleted2 {
                     
-                    Button {
+                    BlueButton(title: "포 기") {
                         showAlert2 = true
-                    } label: {
-                        Text("포 기")
-                            .padding(10)
-                            .font(.system(size: 25, weight: .bold))
-                            .frame(width: UIScreen.main.bounds.width * 0.5)
-                            .background(.blue)
-                            .foregroundColor(.white)
-                            .clipShape(Capsule())
                     }
                     .alert(isPresented: $showAlert2) {
                         Alert(
@@ -275,17 +233,9 @@ struct ActionView: View {
                 }
                 //미션 타입 -> 집중
                 if mission?.missionStatus == .verificationCompleted2 && mission?.missionType == "집중" {
-                    Button {
+                    GreenButton(title: "환 급") {
                         refundMissionAmount()
                         missionViewModel.completeMission(missionId: missionId)
-                    } label: {
-                        Text("환 급")
-                            .padding(10)
-                            .font(.system(size: 25, weight: .bold))
-                            .frame(width: UIScreen.main.bounds.width * 0.5)
-                            .background(.green)
-                            .foregroundColor(.white)
-                            .clipShape(Capsule())
                     }
                 }
                 if mission?.missionType == "집중" {
