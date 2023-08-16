@@ -36,7 +36,15 @@ class MissionViewModel: ObservableObject {
             }
         }
 
-    
+    // 충전 금액 데이터 저장
+    func saveDepositTransaction(rechargeAmount: Int) {
+        if let userId = Auth.auth().currentUser?.uid {
+            let transaction = Transaction(userId: userId, type: .deposit, amount: rechargeAmount, date: Date())
+            saveTransaction(transaction: transaction)
+        }
+    }
+
+
     
     // 미션 등록되면 모든 모달이 닫혀서 초기 뷰로 돌아오게함
     func closeAllModals() {

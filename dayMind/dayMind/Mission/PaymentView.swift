@@ -169,6 +169,8 @@ struct PaymentView: View {
                                                                                     selectedTime2: self.missionViewModel.selectedTime2,
                                                                                     missionId: createdMission.id)
                                             missionViewModel.closeAllModals()
+                                            
+                                            missionViewModel.saveDepositTransaction(rechargeAmount: rechargeAmount)
                                         }
                                     }
                                 }

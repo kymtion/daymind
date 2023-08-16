@@ -28,6 +28,7 @@ struct TimeSettingView: View {
         case confirmation
         case missionInProgressError
         case storeNotSelected
+        case maxMissionsReached
         
         var id: Int {
             self.rawValue
@@ -138,60 +139,74 @@ struct TimeSettingView: View {
                                         self.activeAlert = .storeNotSelected
                                     } else {
                                         
-                                        let interval = missionViewModel.selectedTime2.timeIntervalSince(missionViewModel.selectedTime1)
-                                        if interval < 15 * 60 {
-                                            self.activeAlert = .intervalError
-                                            
+                                        // 오늘 날짜와 같은 미션의 개수 확인
+                                        let calendar = Calendar.current
+                                        let today = calendar.startOfDay(for: Date())
+                                        let todayMissionsCount = missionViewModel.missions.filter { mission in
+                                            let missionStartDate = calendar.startOfDay(for: mission.selectedTime1)
+                                            return missionStartDate == today
+                                        }.count
+                                        // 숫자는 5로 맞춰놓아야함! 그래야 5개 이상부터 알림이 표시됨
+                                        if todayMissionsCount > 5 {
+                                            self.activeAlert = .maxMissionsReached
                                         } else {
-                                            //시작 시간이 현재 시간보다 과거일 경우 오류메시지 뜸
-                                            let calendar = Calendar.current
-                                            let nowComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: Date())
-                                            let selectedTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: missionViewModel.selectedTime1)
-                                            let nowDateMinute = calendar.date(from: nowComponents)!
-                                            let selectedDateMinute = calendar.date(from: selectedTimeComponents)!
-                                            if selectedDateMinute < nowDateMinute {
-                                                self.activeAlert = .pastError
-                                            } else {
-                                                // 미션 상태가 진행중인데 종료시각이 이미 지난 경우 오류메시지 뜸
-                                                let inProgressMissions = missionViewModel.missions.filter {
-                                                    $0.missionStatus == .inProgress
-                                                }
-                                                for mission in inProgressMissions {
-                                                    let missionEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
-                                                    let missionEndTime = calendar.date(from: missionEndTimeComponents)!
-                                                    if missionEndTime < nowDateMinute {
-                                                        self.activeAlert = .missionInProgressError
-                                                        return
-                                                    }
-                                                }
+                                            let interval = missionViewModel.selectedTime2.timeIntervalSince(missionViewModel.selectedTime1)
+                                            if interval < 15 * 60 {
+                                                self.activeAlert = .intervalError
                                                 
-                                                // 미션 상태가 진행중 또는 대기중인 미션들 중에서 미션 시간이 겹치는게 있는지 파악해줌
-                                                let overlappingMissions = missionViewModel.missions.filter { mission in
-                                                    return (mission.missionStatus == .beforeStart || mission.missionStatus == .inProgress)
-                                                }
-                                                for mission in overlappingMissions {
-                                                    let currentStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: missionViewModel.selectedTime1)
-                                                    let currentEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: missionViewModel.selectedTime2)
-                                                    let missionStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime1)
-                                                    let missionEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
-                                                    
-                                                    let currentStartTime = calendar.date(from: currentStartTimeComponents)!
-                                                    let currentEndTime = calendar.date(from: currentEndTimeComponents)!
-                                                    let missionStartTime = calendar.date(from: missionStartTimeComponents)!
-                                                    let missionEndTime = calendar.date(from: missionEndTimeComponents)!
-                                                    
-                                                    if (missionEndTime >= currentStartTime && missionStartTime <= currentEndTime) {
-                                                        self.activeAlert = .overlapError
-                                                        return
+                                            } else {
+                                                //시작 시간이 현재 시간보다 과거일 경우 오류메시지 뜸
+                                                let calendar = Calendar.current
+                                                let nowComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: Date())
+                                                let selectedTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: missionViewModel.selectedTime1)
+                                                let nowDateMinute = calendar.date(from: nowComponents)!
+                                                let selectedDateMinute = calendar.date(from: selectedTimeComponents)!
+                                                if selectedDateMinute < nowDateMinute {
+                                                    self.activeAlert = .pastError
+                                                } else {
+                                                    // 미션 상태가 진행중인데 종료시각이 이미 지난 경우 오류메시지 뜸
+                                                    let inProgressMissions = missionViewModel.missions.filter {
+                                                        $0.missionStatus == .inProgress
                                                     }
+                                                    for mission in inProgressMissions {
+                                                        let missionEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
+                                                        let missionEndTime = calendar.date(from: missionEndTimeComponents)!
+                                                        if missionEndTime < nowDateMinute {
+                                                            self.activeAlert = .missionInProgressError
+                                                            return
+                                                        }
+                                                    }
+                                                    
+                                                    // 미션 상태가 진행중 또는 대기중인 미션들 중에서 미션 시간이 겹치는게 있는지 파악해줌
+                                                    let overlappingMissions = missionViewModel.missions.filter { mission in
+                                                        return (mission.missionStatus == .beforeStart || mission.missionStatus == .inProgress)
+                                                    }
+                                                    for mission in overlappingMissions {
+                                                        let currentStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: missionViewModel.selectedTime1)
+                                                        let currentEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: missionViewModel.selectedTime2)
+                                                        let missionStartTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime1)
+                                                        let missionEndTimeComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: mission.selectedTime2)
+                                                        
+                                                        let currentStartTime = calendar.date(from: currentStartTimeComponents)!
+                                                        let currentEndTime = calendar.date(from: currentEndTimeComponents)!
+                                                        let missionStartTime = calendar.date(from: missionStartTimeComponents)!
+                                                        let missionEndTime = calendar.date(from: missionEndTimeComponents)!
+                                                        
+                                                        if (missionEndTime >= currentStartTime && missionStartTime <= currentEndTime) {
+                                                            self.activeAlert = .overlapError
+                                                            return
+                                                        }
+                                                    }
+                                                    self.activeAlert = .confirmation
                                                 }
-                                                self.activeAlert = .confirmation
                                             }
                                         }
                                     }
                                 }
                                 .alert(item: $activeAlert) { alertType in
                                     switch alertType {
+                                    case .maxMissionsReached:
+                                        return Alert(title: Text("알림"), message: Text("하루 최대 5개까지만 미션등록이 가능합니다."), dismissButton: .default(Text("확인")))
                                     case .storeNotSelected:
                                         return Alert(title: Text("알림"), message: Text("앱 허용 리스트를 선택하세요"), dismissButton: .default(Text("확인")))
                                     case .intervalError:
