@@ -14,24 +14,31 @@ struct UserInfoView: View {
                 
                 VStack(spacing: 20) {
                     
-                    HStack {
-                        Text("😀")
-                            .font(.system(size: 30))
-                        Text("\(userInfoViewModel.displayName)")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(.black)
+                    HStack(spacing: 15) {
+                        Text("🌏")
+                            .font(.system(size: 50))
+                            .opacity(0.85)
+                        VStack(alignment: .leading) {
+                            Text("\(userInfoViewModel.displayName)")
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundColor(.black)
+                            Text("\(userInfoViewModel.email)")
+                                .font(.system(size: 16, weight: .regular))
+                                .opacity(0.7)
+                        }
                         Spacer()
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 30)
                     .padding(.top, 15)
                     
                     HStack {
                         Spacer()
                         VStack(spacing: 5) {
                             Text("💰")
-                                .font(.system(size: 50))
+                                .font(.system(size: 40))
+                                .opacity(0.85)
                             Text("현재 보유 잔액")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.system(size: 13, weight: .semibold))
                                 .opacity(0.7)
                             Text("\(userInfoViewModel.balance.formattedWithComma())원")
                                 .font(.system(size: 18, weight: .bold))
@@ -39,9 +46,10 @@ struct UserInfoView: View {
                         Spacer()
                         VStack(spacing: 5) {
                             Text("💵")
-                                .font(.system(size: 50))
+                                .font(.system(size: 40))
+                                .opacity(0.85)
                             Text("예치금 총액")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.system(size: 13, weight: .semibold))
                                 .opacity(0.7)
                             Text("\(userInfoViewModel.calculateOtherAmounts().formattedWithComma())원")
                                 .font(.system(size: 18, weight: .bold))
@@ -49,15 +57,11 @@ struct UserInfoView: View {
                         Spacer()
                     }
                     
-                    Text("\(userInfoViewModel.email)")
-                        .font(.system(size: 18, weight: .regular))
-                        .opacity(0.7)
-                    
-                    
-                    
                     
                     
                 }
+                .padding(.bottom, 20)
+                
                 Rectangle()
                     .frame(maxWidth: .infinity)
                     .frame(height: 10)
@@ -80,9 +84,9 @@ struct UserInfoView: View {
                     NavigationLink {
                         MissionRecordView().environmentObject(userInfoViewModel)
                         
-                    }label: {
+                    } label: {
                         HStack {
-                            Text("미션 결과 저장소")
+                            Text("환급 및 벌금 내역")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.black)
                             Spacer()
@@ -91,9 +95,38 @@ struct UserInfoView: View {
                                 .foregroundColor(.black.opacity(0.7))
                             
                         }
+                    }
+                    NavigationLink {
+                        TransactionHistoryView().environmentObject(userInfoViewModel)
                         
+                    } label: {
+                        HStack {
+                            Text("충전 및 출금 현황")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(.black)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 20))
+                                .foregroundColor(.black.opacity(0.7))
+                            
+                        }
                     }
                     
+                    NavigationLink {
+                        WithdrawalView().environmentObject(userInfoViewModel)
+                        
+                    } label: {
+                        HStack {
+                            Text("잔액 출금")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(.black)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 20))
+                                .foregroundColor(.black.opacity(0.7))
+                            
+                        }
+                    }
                 }
                 .padding()
             }

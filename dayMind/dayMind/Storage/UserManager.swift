@@ -8,7 +8,6 @@ struct User: Codable {
     var balance: Int
 }
 
-
 class UserManager {
     static let shared = UserManager()
     private let db = Firestore.firestore()
@@ -45,10 +44,4 @@ class UserManager {
                completion(user)
            }
        }
-    
-
-
-
-
-    
 }

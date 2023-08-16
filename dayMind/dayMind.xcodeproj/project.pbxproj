@@ -62,6 +62,9 @@
 		A87A46402A69670F00B56036 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A87A463F2A69670F00B56036 /* LoadingView.swift */; };
 		A880DAD02A37250500E3FD94 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = A880DACF2A37250500E3FD94 /* Kingfisher */; };
 		A88432DA2A8CA5960046287D /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88432D92A8CA5960046287D /* Transaction.swift */; };
+		A88432DC2A8CD2030046287D /* WithdrawalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88432DB2A8CD2030046287D /* WithdrawalView.swift */; };
+		A88432DE2A8CD25E0046287D /* TransactionHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88432DD2A8CD25E0046287D /* TransactionHistoryView.swift */; };
+		A88432E02A8D047D0046287D /* TransactionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88432DF2A8D047D0046287D /* TransactionCell.swift */; };
 		A88943F42A7E67A900D3342E /* PaymentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88943F32A7E67A800D3342E /* PaymentView.swift */; };
 		A894153C2A4E9724008885C7 /* ManagedSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A894153B2A4E9724008885C7 /* ManagedSettings.swift */; };
 		A8A530702A83D82300C5FFAE /* UserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A5306F2A83D82300C5FFAE /* UserManager.swift */; };
@@ -178,6 +181,9 @@
 		A879EBA62A0F812100791AAC /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		A87A463F2A69670F00B56036 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		A88432D92A8CA5960046287D /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
+		A88432DB2A8CD2030046287D /* WithdrawalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WithdrawalView.swift; sourceTree = "<group>"; };
+		A88432DD2A8CD25E0046287D /* TransactionHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionHistoryView.swift; sourceTree = "<group>"; };
+		A88432DF2A8D047D0046287D /* TransactionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionCell.swift; sourceTree = "<group>"; };
 		A88762992A15DFD2004376EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A88943F32A7E67A800D3342E /* PaymentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentView.swift; sourceTree = "<group>"; };
 		A890FBF42A1B9A5B00F44249 /* dayMindTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = dayMindTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -462,6 +468,9 @@
 				A8229A852A13A8AE00881C31 /* DeleteAccountView.swift */,
 				A8E5A7FE2A5D2E710078D118 /* RecordCell.swift */,
 				A8E5A7FC2A5D2E2D0078D118 /* MissionRecordView.swift */,
+				A88432DF2A8D047D0046287D /* TransactionCell.swift */,
+				A88432DD2A8CD25E0046287D /* TransactionHistoryView.swift */,
+				A88432DB2A8CD2030046287D /* WithdrawalView.swift */,
 			);
 			path = UserInfoView;
 			sourceTree = "<group>";
@@ -762,6 +771,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A8F2CFAB2A0A41790030E175 /* UserInfoView.swift in Sources */,
+				A88432DE2A8CD25E0046287D /* TransactionHistoryView.swift in Sources */,
 				A88943F42A7E67A900D3342E /* PaymentView.swift in Sources */,
 				A863AEC82A0CB30D00407B6F /* Mission.swift in Sources */,
 				A8F2CFA92A0A2DB50030E175 /* TapBarView.swift in Sources */,
@@ -794,9 +804,11 @@
 				A806079B2A3F212400946A5E /* TextInputView.swift in Sources */,
 				A8229A862A13A8AE00881C31 /* DeleteAccountView.swift in Sources */,
 				A863AED32A0F601200407B6F /* LoginViewModel.swift in Sources */,
+				A88432DC2A8CD2030046287D /* WithdrawalView.swift in Sources */,
 				A8CF3C942A7BB55400C38FA0 /* MissionTransformer.swift in Sources */,
 				A8229A882A13A9B600881C31 /* AccountSetting.swift in Sources */,
 				A8F2CFA32A08F1E00030E175 /* HomeView.swift in Sources */,
+				A88432E02A8D047D0046287D /* TransactionCell.swift in Sources */,
 				A8FFF5072A700C0B00E42723 /* ImagePicker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

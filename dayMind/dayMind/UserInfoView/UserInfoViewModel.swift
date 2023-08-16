@@ -13,6 +13,7 @@ class UserInfoViewModel: ObservableObject {
     @Published var displayName: String = ""
     @Published var missions: [FirestoreMission] = []
     @Published var balance: Int = 0
+    @Published var transactions: [Transaction] = []
     
     private let db = Firestore.firestore()
     var handle: AuthStateDidChangeListenerHandle?
@@ -36,6 +37,7 @@ class UserInfoViewModel: ObservableObject {
                self.missions = missions
         }
         loadUserBalance()
+        loadUserTransactions()
     }
     
     deinit {
@@ -43,6 +45,37 @@ class UserInfoViewModel: ObservableObject {
             Auth.auth().removeStateDidChangeListener(handle)
         }
     }
+    
+    func loadUserTransactions() {
+            loadTransactions { loadedTransactions in
+                if let loadedTransactions = loadedTransactions {
+                    self.transactions = loadedTransactions
+                }
+            }
+        }
+    
+    
+    
+    // 출금한 금액을 파이어스토어에 데이터로 저장하는 함수
+    func saveWithdrawalTransaction(withdrawalAmount: Int) {
+        if let userId = Auth.auth().currentUser?.uid {
+            let transaction = Transaction(userId: userId, type: .withdrawal, amount: withdrawalAmount, date: Date())
+            saveTransaction(transaction: transaction)
+        }
+    }
+    
+    // 잔액에서 출금 금액을 빼주고 저장해주는 함수
+    func updateBalance(newBalance: Int) {
+           guard let userId = Auth.auth().currentUser?.uid else {
+               print("No current user logged in.")
+               return
+           }
+
+           let user = User(uid: userId, balance: newBalance)
+           UserManager.shared.saveUser(user: user)
+           self.balance = newBalance // 뷰 모델의 잔액 업데이트
+       }
+    
     // 실패, 성공을 제외한 모든 미션의 예치금 합산
     func calculateOtherAmounts() -> Int {
         var otherAmount = 0
@@ -133,6 +166,8 @@ class UserInfoViewModel: ObservableObject {
         case userNotLoggedIn
         case wrongPassword
     }
+    
+    
     
     // 닉네임 자동 생성
     func setDefaultNicknameIfNeeded() {

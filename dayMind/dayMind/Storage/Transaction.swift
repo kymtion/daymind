@@ -1,8 +1,9 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
 
-struct Transaction: Codable {
+struct Transaction: Codable, Identifiable {
     var id: String
     var userId: String
     var type: TransactionType
@@ -55,6 +56,46 @@ func saveTransaction(transaction: Transaction) {
         }
     } catch let error {
         print("Error encoding transaction: \(error)")
+    }
+}
+
+func loadTransactions(completion: @escaping ([Transaction]?) -> Void) {
+    guard let userId = Auth.auth().currentUser?.uid else {
+        print("No current user logged in.")
+        completion(nil)
+        return
+    }
+
+    // Firestore 데이터베이스의 참조 가져오기
+    let db = Firestore.firestore()
+
+    // 현재 사용자의 UID와 일치하는 트랜잭션만 가져오기
+    db.collection("transactions").whereField("userId", isEqualTo: userId).getDocuments { (snapshot, error) in
+        guard let documents = snapshot?.documents else {
+            print("Error fetching transactions: \(error?.localizedDescription ?? "")")
+            completion(nil)
+            return
+        }
+        
+        var transactions: [Transaction] = []
+        
+        // 각 문서를 Transaction 객체로 디코딩
+        for document in documents {
+            guard let jsonData = try? JSONSerialization.data(withJSONObject: document.data(), options: []),
+                  var transaction = try? JSONDecoder().decode(Transaction.self, from: jsonData) else {
+                print("Error decoding transaction")
+                continue
+            }
+            
+            // 밀리초에서 Date로 변환
+            if let dateInMilliseconds = document.data()["date"] as? Double {
+                transaction.date = Date(timeIntervalSince1970: dateInMilliseconds / 1000)
+            }
+            
+            transactions.append(transaction)
+        }
+        
+        completion(transactions)
     }
 }
 

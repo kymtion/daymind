@@ -79,6 +79,7 @@ struct ActionView: View {
                 .clipShape(Capsule())
                 Text("🌏")
                     .font(.system(size: 100))
+                    .opacity(0.85)
                 VStack {
                     Text(remainingTime)
                         .font(.system(size: 50, weight: .medium))
