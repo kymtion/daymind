@@ -6,18 +6,17 @@ struct MissionRow: View {
     var mission: Mission
     
     var body: some View {
-            VStack(spacing: 20) {
+            VStack(spacing: 10) {
                 Image(systemName: mission.imageName)
                     .symbolRenderingMode(.palette)
-                    .resizable()
                     .aspectRatio(contentMode: .fit)
                     .foregroundStyle(.blue, .green)
-                    .font(.system(size: 24, weight: .light))
-                    .frame(width: UIScreen.main.bounds.width * 0.16)
+                    .font(.system(size: 65, weight: .light))
+                    .opacity(0.9)
 
                 
                 Text(mission.missionType)
-                    .font(.system(size: 22))
+                    .font(.system(size: 20))
                     .foregroundColor(Color.black)
                 
             }

@@ -22,14 +22,12 @@ struct HomeCell: View {
     var body: some View {
        
             HStack {
-                VStack {
+                VStack(spacing: 5) {
                     Image(systemName: firestoreMission.imageName)
                         .symbolRenderingMode(.palette)
-                        .resizable()
                         .aspectRatio(contentMode: .fit)
                         .foregroundStyle(.blue, .green)
-                        .font(.system(size: 999, weight: .light))
-                        .frame(width: UIScreen.main.bounds.width * 0.12, height: UIScreen.main.bounds.width * 0.12)
+                        .font(.system(size: 50, weight: .light))
                     
                     Text(firestoreMission.missionType)
                         .font(.system(size: 17, weight: .regular))

@@ -49,7 +49,7 @@ struct BlueButton: View {
                 .padding(10)
                 .font(.system(size: 22, weight: .semibold))
                 .frame(width: UIScreen.main.bounds.width * 0.4)
-                .background(Color.blue.opacity(0.8))
+                .background(Color.blue.opacity(0.9))
                 .foregroundColor(.white)
                 .clipShape(Capsule())
         }
@@ -66,7 +66,7 @@ struct GreenButton: View {
                 .padding(10)
                 .font(.system(size: 22, weight: .semibold))
                 .frame(width: UIScreen.main.bounds.width * 0.4)
-                .background(Color.green.opacity(0.8))
+                .background(Color.green.opacity(0.9))
                 .foregroundColor(.white)
                 .clipShape(Capsule())
         }

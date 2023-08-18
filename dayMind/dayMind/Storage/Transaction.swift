@@ -100,4 +100,36 @@ func loadTransactions(completion: @escaping ([Transaction]?) -> Void) {
 }
 
 
+func listenForTransactions(completion: @escaping ([Transaction]) -> Void) {
+    guard let userId = Auth.auth().currentUser?.uid else {
+        print("No current user logged in.")
+        return
+    }
 
+    let db = Firestore.firestore()
+
+    db.collection("transactions")
+        .whereField("userId", isEqualTo: userId)
+        .addSnapshotListener { querySnapshot, error in
+            guard let documents = querySnapshot?.documents else {
+                print("Error fetching documents: \(error!)")
+                return
+            }
+            let transactions = documents.compactMap { document -> Transaction? in
+                let transactionDict = document.data()
+                guard let jsonData = try? JSONSerialization.data(withJSONObject: transactionDict, options: []),
+                      var transaction = try? JSONDecoder().decode(Transaction.self, from: jsonData) else {
+                    return nil
+                }
+
+                // 밀리초에서 Date로 변환
+                if let dateInMilliseconds = transactionDict["date"] as? Double {
+                    transaction.date = Date(timeIntervalSince1970: dateInMilliseconds / 1000)
+                }
+
+                return transaction
+            }
+            
+            completion(transactions)
+        }
+}

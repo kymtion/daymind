@@ -16,7 +16,7 @@ struct MissionRecordView: View {
                     .opacity(0.7)
                 Spacer()
                 Text("\(successAmount.formattedWithComma())원")
-                    .font(.system(size: 20, weight: .medium))
+                    .font(.system(size: 17, weight: .medium))
             }
             Divider()
             HStack {
@@ -25,11 +25,9 @@ struct MissionRecordView: View {
                     .opacity(0.7)
                 Spacer()
                 Text("\(failureAmount.formattedWithComma())원")
-                    .font(.system(size: 20, weight: .medium))
+                    .font(.system(size: 17, weight: .medium))
             }
-            
         }
-        
         .padding(.horizontal, 30)
         .padding(.vertical, 10)
         

@@ -44,7 +44,6 @@ class MissionViewModel: ObservableObject {
         }
     }
 
-
     
     // 미션 등록되면 모든 모달이 닫혀서 초기 뷰로 돌아오게함
     func closeAllModals() {

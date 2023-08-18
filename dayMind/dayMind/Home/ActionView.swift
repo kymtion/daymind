@@ -13,7 +13,6 @@ struct ActionView: View {
     @Binding var selectedMissionId: UUID?
     
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
     let missionId: UUID
     var mission: FirestoreMission? {
         missionViewModel.missions.first { $0.id == missionId }
@@ -77,9 +76,22 @@ struct ActionView: View {
                 .padding()
                 .background(Color.gray.opacity(0.1))
                 .clipShape(Capsule())
-                Text("🌏")
-                    .font(.system(size: 100))
-                    .opacity(0.85)
+                
+                
+                if let mission = mission {
+                    VStack(spacing: 10) {
+                        Image(systemName: mission.imageName)
+                            .symbolRenderingMode(.palette)
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundStyle(.blue, .green)
+                            .font(.system(size: 100, weight: .light))
+                            .opacity(0.9)
+                        
+                        Text(mission.missionType)
+                            .font(.system(size: 17, weight: .regular))
+                            .foregroundColor(.black)
+                    }
+                }
                 VStack {
                     Text(remainingTime)
                         .font(.system(size: 50, weight: .medium))
@@ -249,6 +261,7 @@ struct ActionView: View {
             }
             .frame(maxWidth: .infinity)
         }
+        .padding(.top, 30)
         .onAppear {
             midnightBackMoney() //자정에 환급버튼 생성 함수
         }

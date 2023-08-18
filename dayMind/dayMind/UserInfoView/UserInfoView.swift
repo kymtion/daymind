@@ -15,9 +15,15 @@ struct UserInfoView: View {
                 VStack(spacing: 20) {
                     
                     HStack(spacing: 15) {
-                        Text("🌏")
-                            .font(.system(size: 50))
-                            .opacity(0.85)
+                        Image(systemName: "person.text.rectangle")
+                            .symbolRenderingMode(.palette)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundStyle(.blue, .green)
+                            .font(.system(size: 100, weight: .light))
+                            .opacity(0.9)
+                            .frame(width: UIScreen.main.bounds.width * 0.15)
+                        
                         VStack(alignment: .leading) {
                             Text("\(userInfoViewModel.displayName)")
                                 .font(.system(size: 20, weight: .semibold))
@@ -34,9 +40,13 @@ struct UserInfoView: View {
                     HStack {
                         Spacer()
                         VStack(spacing: 5) {
-                            Text("💰")
+                            Image(systemName: "wonsign.circle")
+                                .symbolRenderingMode(.hierarchical)
+                                .foregroundColor(.blue)
+                                .aspectRatio(contentMode: .fit)
                                 .font(.system(size: 40))
-                                .opacity(0.85)
+                                .opacity(0.9)
+                            
                             Text("현재 보유 잔액")
                                 .font(.system(size: 13, weight: .semibold))
                                 .opacity(0.7)
@@ -45,9 +55,12 @@ struct UserInfoView: View {
                         }
                         Spacer()
                         VStack(spacing: 5) {
-                            Text("💵")
+                            Image(systemName: "banknote")
+                                .symbolRenderingMode(.hierarchical)
+                                .foregroundColor(.green)
+                                .aspectRatio(contentMode: .fit)
                                 .font(.system(size: 40))
-                                .opacity(0.85)
+                                .opacity(0.9)
                             Text("예치금 총액")
                                 .font(.system(size: 13, weight: .semibold))
                                 .opacity(0.7)

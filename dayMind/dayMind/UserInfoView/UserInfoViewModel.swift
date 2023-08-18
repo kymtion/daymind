@@ -37,7 +37,9 @@ class UserInfoViewModel: ObservableObject {
                self.missions = missions
         }
         loadUserBalance()
-        loadUserTransactions()
+        listenForTransactions { transactions in // 이 부분을 추가
+                self.transactions = transactions
+            }
     }
     
     deinit {
@@ -45,14 +47,6 @@ class UserInfoViewModel: ObservableObject {
             Auth.auth().removeStateDidChangeListener(handle)
         }
     }
-    
-    func loadUserTransactions() {
-            loadTransactions { loadedTransactions in
-                if let loadedTransactions = loadedTransactions {
-                    self.transactions = loadedTransactions
-                }
-            }
-        }
     
     
     
@@ -128,28 +122,29 @@ class UserInfoViewModel: ObservableObject {
     
     // 필터링, 그룹핑 및 정렬 작업을 수행하는 메소드
     func getGroupedMissions() -> [String: [FirestoreMission]] {
-        
         var groupedMissions: [String: [FirestoreMission]] = [:]
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy. MM"
-        
+        dateFormatter.dateFormat = "yyyy. MM.dd"
+        let calendar = Calendar.current
+
         for mission in missions {
-                   if mission.missionStatus == .success || mission.missionStatus == .failure {
-                       let dateString = dateFormatter.string(from: mission.selectedTime2)
-                       if groupedMissions[dateString] == nil {
-                           groupedMissions[dateString] = []
-                       }
-                       groupedMissions[dateString]?.append(mission)
-                   }
-               }
-               
-               for (date, missions) in groupedMissions {
-                   groupedMissions[date] = missions.sorted { $0.selectedTime2 > $1.selectedTime2 }
-               }
-               
-               return groupedMissions
-           }
-    
+            if mission.missionStatus == .success || mission.missionStatus == .failure {
+                let dateWithoutTime = calendar.startOfDay(for: mission.selectedTime2) // 시간 구성 요소를 제거합니다.
+                let dateString = dateFormatter.string(from: dateWithoutTime)
+                if groupedMissions[dateString] == nil {
+                    groupedMissions[dateString] = []
+                }
+                groupedMissions[dateString]?.append(mission)
+            }
+        }
+
+        for (date, missions) in groupedMissions {
+            groupedMissions[date] = missions.sorted { $0.selectedTime2 > $1.selectedTime2 }
+        }
+
+        return groupedMissions
+    }
+
     func signOut() -> Error? {
         do {
             try Auth.auth().signOut()
