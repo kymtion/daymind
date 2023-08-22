@@ -4,8 +4,9 @@ import FirebaseFirestore
 import FirebaseAuth
 
 struct User: Codable {
-    var uid: String
+    var userId: String
     var balance: Int
+    var nickname: String
 }
 
 class UserManager {
@@ -19,7 +20,7 @@ class UserManager {
             guard let userData = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
                 throw NSError()
             }
-            db.collection("users").document(user.uid).setData(userData)
+            db.collection("users").document(user.userId).setData(userData)
         } catch let error {
             print("Error writing user to Firestore: \(error)")
         }

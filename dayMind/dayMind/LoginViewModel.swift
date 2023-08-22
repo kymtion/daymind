@@ -12,7 +12,6 @@ class LoginViewModel: NSObject, ObservableObject {
     @Published var isLoggedin: Bool = false
     @Published var email: String = ""
     @Published var password: String = ""
-    @Published var displayName: String = ""
     @Published var error: Error? = nil
     @Published var isLoading: Bool = false
     
@@ -88,8 +87,8 @@ class LoginViewModel: NSObject, ObservableObject {
                         }
                         
                         // Create user account
-                        if let uid = authResult?.user.uid {
-                            self.createUserAccount(uid: uid, completion: completion)
+                        if let userId = authResult?.user.uid {
+                            self.createUserAccount(userId: userId, completion: completion)
                             self.isLoading = false // 로딩 상태 업데이트
                         }
                     }
@@ -99,24 +98,39 @@ class LoginViewModel: NSObject, ObservableObject {
     }
     
     // 로그인할때 계정 데이터를 파이어스토어에 저장해줌 단, 데이터가 기존에 있다면 저장하지 않음
-    private func createUserAccount(uid: String, completion: @escaping (Error?) -> Void) {
-           let userDocument = Firestore.firestore().collection("users").document(uid)
-           userDocument.getDocument { (documentSnapshot, error) in
-               if let error = error {
-                   completion(error)
-                   return
-               }
-               
-               // 사용자 데이터가 존재하지 않을 경우 생성
-               if let documentSnapshot = documentSnapshot, !documentSnapshot.exists {
-                   let initialUser = User(uid: uid, balance: 0)
-                   UserManager.shared.saveUser(user: initialUser)
-               } else {
-                   print("User already exists, no need to create")
-                   completion(nil)
-               }
-           }
-       }
+    private func createUserAccount(userId: String, completion: @escaping (Error?) -> Void) {
+        let userCollection = Firestore.firestore().collection("users")
+        
+        userCollection.getDocuments { (querySnapshot, error) in
+            if let error = error {
+                completion(error)
+                return
+            }
+            
+            // 가입한 순번을 닉네임으로 사용합니다.
+            let totalCount = querySnapshot?.documents.count ?? 0
+            let nickname = "#" + String(totalCount + 1)
+            
+            let userDocument = userCollection.document(userId)
+            userDocument.getDocument { (documentSnapshot, error) in
+                if let error = error {
+                    completion(error)
+                    return
+                }
+                
+                // 사용자 데이터가 존재하지 않을 경우 생성
+                if let documentSnapshot = documentSnapshot, !documentSnapshot.exists {
+                    let initialUser = User(userId: userId, balance: 0, nickname: nickname)
+                    UserManager.shared.saveUser(user: initialUser)
+                    completion(nil)
+                } else {
+                    print("User already exists, no need to create")
+                    completion(nil)
+                }
+            }
+        }
+    }
+
 
     
     //----------------------------------------------------------------------------------------------------------------------------------------파이어베이스 로그인 부분
@@ -146,29 +160,29 @@ class LoginViewModel: NSObject, ObservableObject {
                print("Signed in to Firebase successfully")
                
                // Create user account
-               if let uid = authResult?.user.uid {
-                   self.createUserAccount(uid: uid, completion: completion)
+               if let userId = authResult?.user.uid {
+                   self.createUserAccount(userId: userId, completion: completion)
                }
            }
        }
     
     func signUpWithEmail(completion: @escaping (Error?) -> Void) {
         isLoading = true
-           Auth.auth().createUser(withEmail: self.email, password: self.password) { authResult, error in
-               self.isLoading = false // 로딩 상태 업데이트
-               if let error = error {
-                   completion(error)
-                   return
-               }
-               self.isLoggedin = true
-               self.error = nil
-               let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
-               changeRequest?.displayName = self.displayName
-               changeRequest?.commitChanges { (error) in
-                   completion(error)
-               }
-           }
-       }
+        Auth.auth().createUser(withEmail: self.email, password: self.password) { authResult, error in
+            self.isLoading = false // 로딩 상태 업데이트
+            if let error = error {
+                completion(error)
+                return
+            }
+            self.isLoggedin = true
+            self.error = nil
+            
+            
+            if let userId = authResult?.user.uid {
+                self.createUserAccount(userId: userId, completion: completion) // 여기서 Firestore에 사용자 계정을 생성합니다.
+            }
+        }
+    }
     
     func sendPasswordResetWithEmail(_ email: String, completion: @escaping (Error?) -> Void) {
            Auth.auth().sendPasswordReset(withEmail: email) { error in

@@ -3,6 +3,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Admin from './components/Admin';
 import Login from './components/Login'; 
 import MissionList from './components/MissionList'; // MissionList 컴포넌트를 가져옵니다.
+import UserSearch from './components/UserSearch'; 
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import './App.css';
 
@@ -37,12 +38,16 @@ function App() {
               <li>
                 <Link to="/missionlist" className="nav-link">미션리스트</Link>  
               </li>
+              <li>
+                <Link to="/usersearch" className="nav-link">유저검색</Link> 
+              </li>
             </ul>
           </nav>
         )}
         <Routes>
           <Route path="/admin" element={user ? <Admin /> : <Login />} />
           <Route path="/missionlist" element={user ? <MissionList /> : <Login />} />
+          <Route path="/usersearch" element={user ? <UserSearch /> : <Login />} /> 
         </Routes>
       </div>
     </Router>

@@ -9,7 +9,7 @@ import FirebaseFirestore
 class UserInfoViewModel: ObservableObject {
     @Published var email = ""
     @Published var uid: String = ""
-    @Published var displayName: String = ""
+    @Published var nickname: String = ""
     @Published var missions: [FirestoreMission] = []
     @Published var balance: Int = 0
     @Published var transactions: [Transaction] = []
@@ -23,12 +23,11 @@ class UserInfoViewModel: ObservableObject {
             if let user = user {
                 self.uid = user.uid
                 self.email = user.email ?? ""
-                self.displayName = user.displayName ?? ""
-                self.setDefaultNicknameIfNeeded() // 만약 사용자가 닉네임이 없다면 호출되어 닉네임을 만들어줌
+                self.loadNickname()
             } else {
                 self.uid = ""
                 self.email = ""
-                self.displayName = ""
+                self.nickname = ""
             }
         }
         FirestoreMission.listenForChanges { missions in
@@ -46,7 +45,15 @@ class UserInfoViewModel: ObservableObject {
         }
     }
     
-    
+    private func loadNickname() {
+           guard let userId = Auth.auth().currentUser?.uid else { return }
+           let userDocument = db.collection("users").document(userId)
+           userDocument.getDocument { (documentSnapshot, error) in
+               if let document = documentSnapshot, document.exists, let data = document.data() {
+                   self.nickname = data["nickname"] as? String ?? "" // 닉네임을 로드하고 업데이트합니다.
+               }
+           }
+       }
     
     // 출금한 금액을 파이어스토어에 데이터로 저장하는 함수
     func saveWithdrawalTransaction(withdrawalAmount: Int) {
@@ -63,7 +70,7 @@ class UserInfoViewModel: ObservableObject {
                return
            }
 
-           let user = User(uid: userId, balance: newBalance)
+        let user = User(userId: userId, balance: newBalance, nickname: self.nickname)
            UserManager.shared.saveUser(user: user)
            self.balance = newBalance // 뷰 모델의 잔액 업데이트
        }
@@ -148,7 +155,7 @@ class UserInfoViewModel: ObservableObject {
             try Auth.auth().signOut()
             self.uid = ""
             self.email = ""
-            self.displayName = ""
+            self.nickname = ""
         } catch let signOutError {
             return signOutError
         }
@@ -162,39 +169,44 @@ class UserInfoViewModel: ObservableObject {
     
     
     
-    // 닉네임 자동 생성
-    func setDefaultNicknameIfNeeded() {
-        if let user = Auth.auth().currentUser, (user.displayName == nil || user.displayName?.isEmpty == true) {
-            // 닉네임이 없는 경우 자동으로 생성합니다.
-            let randomNumber = Int.random(in: 100000..<1000000) // 100000부터 999999까지의 랜덤한 숫자
-            let defaultNickname = "#\(randomNumber)" // 예: '#123456'
+   
+
+    // 닉네임 변경 함수
+    func updateProfile(nickname: String, completion: @escaping (Error?) -> Void) {
+        // Firestore의 users 컬렉션 참조
+        let usersCollection = Firestore.firestore().collection("users")
+        
+        // nickname이 겹치는 문서가 있는지 확인
+        usersCollection.whereField("nickname", isEqualTo: nickname).getDocuments { (querySnapshot, error) in
+            if let error = error {
+                completion(error)
+                return
+            }
             
-            let changeRequest = user.createProfileChangeRequest()
-            changeRequest.displayName = defaultNickname
-            changeRequest.commitChanges { error in
+            // 겹치는 닉네임이 있다면 오류 반환
+            if let documents = querySnapshot?.documents, !documents.isEmpty {
+                completion(NSError(domain: "updateProfile", code: -1, userInfo: [NSLocalizedDescriptionKey: "이미 사용 중인 닉네임입니다."]))
+                return
+            }
+            
+            // 현재 로그인한 사용자의 UID
+            guard let userId = Auth.auth().currentUser?.uid else {
+                completion(NSError(domain: "updateProfile", code: -2, userInfo: [NSLocalizedDescriptionKey: "현재 로그인한 사용자가 없습니다."]))
+                return
+            }
+            
+            // 닉네임 업데이트
+            usersCollection.document(userId).updateData(["nickname": nickname]) { error in
                 if let error = error {
-                    print("닉네임 설정 중 에러 발생: \(error)")
+                    completion(error)
                 } else {
-                    print("닉네임이 성공적으로 설정되었습니다: \(defaultNickname)")
+                    // 성공적으로 업데이트 완료
+                    completion(nil)
                 }
             }
         }
     }
 
-    // 닉네임 변경 함수
-    func updateProfile(userName: String, completion: @escaping (Error?) -> Void) {
-        let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
-        changeRequest?.displayName = userName
-        changeRequest?.commitChanges { error in
-            if let error = error {
-                completion(error)
-            } else {
-                // Add this line
-                self.displayName = userName
-                completion(nil)
-            }
-        }
-    }
     
     func reauthenticate(currentPassword: String, completion: @escaping (Error?) -> Void) {
         guard let email = Auth.auth().currentUser?.email else {

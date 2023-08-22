@@ -31,11 +31,7 @@ struct SignUpView: View {
             return
         }
         
-        guard !loginViewModel.displayName.isEmpty else {
-            alertMessage = "이름을 입력해주세요."
-            showAlert = true
-            return
-        }
+     
         
         // 모든 검사를 통과하면 회원가입 프로세스 진행
         loginViewModel.signUpWithEmail { error in
@@ -60,10 +56,7 @@ struct SignUpView: View {
                 SecureField("비밀번호 확인", text: $confirmPassword)
                     .padding()
                     .border(Color.gray, width: 0.5)
-                TextField("이름(닉네임)", text: $loginViewModel.displayName)
-                    .autocapitalization(.none)
-                    .padding()
-                    .border(Color.gray, width: 0.5)
+              
                 Button {
                     signUp()
                 } label: {

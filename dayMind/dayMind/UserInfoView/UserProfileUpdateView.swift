@@ -4,7 +4,7 @@ struct UserProfileUpdateView: View {
     
     @EnvironmentObject var userInfoViewModel: UserInfoViewModel
     @Environment(\.presentationMode) var presentationMode
-    @State private var displayName: String = ""
+    @State private var nickname: String = ""
     @State private var errorMessage: String = ""
     @State private var showingAlert = false
     @State private var isLoading = false // 로딩 상태 추가
@@ -12,16 +12,20 @@ struct UserProfileUpdateView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 15) {
-                TextField("이름(닉네임)", text: $displayName)
+                TextField("닉네임", text: $nickname)
                     .autocapitalization(.none) // 자동 대문자 변환 방지
                     .keyboardType(.emailAddress)
                     .padding()
                     .border(Color.gray, width: 0.5)
                 
                 Button {
-                    self.showingAlert = true
+                    if nickname.isEmpty {
+                            self.errorMessage = "닉네임을 입력해주세요."
+                        } else {
+                            self.showingAlert = true
+                        }
                 } label: {
-                    Text("이름 변경")
+                    Text("닉네임 변경")
                         .foregroundColor(.white)
                         .padding()
                         .background(Color.blue.opacity(0.8))
@@ -30,6 +34,7 @@ struct UserProfileUpdateView: View {
                 
                 if !errorMessage.isEmpty {
                     Text("Error: \(errorMessage)")
+                        .foregroundColor(.red)
                 }
             }
             
@@ -38,16 +43,13 @@ struct UserProfileUpdateView: View {
             }
         }
         .padding()
-        .onAppear {
-            self.displayName = userInfoViewModel.displayName
-        }
         .alert(isPresented: $showingAlert) {
             Alert(
-                title: Text("이름 변경"),
-                message: Text("정말 이름(닉네임)을 변경하시겠습니까?"),
+                title: Text("닉네임 변경"),
+                message: Text("정말 닉네임을 변경하시겠습니까?"),
                 primaryButton: .default(Text("예")) {
                     self.isLoading = true // 로딩 시작
-                        userInfoViewModel.updateProfile(userName: self.displayName) { error in
+                        userInfoViewModel.updateProfile(nickname: self.nickname) { error in
                             self.isLoading = false // 로딩 종료
                             if let error = error {
                                 self.errorMessage = error.localizedDescription

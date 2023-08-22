@@ -14,7 +14,7 @@ struct AccountSetting: View {
                     UserProfileUpdateView()
                 } label: {
                     HStack {
-                        Text("이름(닉네임) 변경")
+                        Text("닉네임 변경")
                             .font(.system(size: 20, weight: .semibold))
                         Spacer()
                         Image(systemName: "chevron.right")

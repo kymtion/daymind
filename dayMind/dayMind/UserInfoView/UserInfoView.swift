@@ -26,7 +26,7 @@ struct UserInfoView: View {
                             .frame(width: UIScreen.main.bounds.width * 0.15)
                         
                         VStack(alignment: .leading) {
-                            Text("\(userInfoViewModel.displayName)")
+                            Text("\(userInfoViewModel.nickname)")
                                 .font(.system(size: 20, weight: .semibold))
                             Text("\(userInfoViewModel.email)")
                                 .font(.system(size: 16, weight: .regular))
