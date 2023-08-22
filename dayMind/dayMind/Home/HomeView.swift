@@ -5,6 +5,7 @@ struct HomeView: View {
     @EnvironmentObject var userInfoViewModel: UserInfoViewModel
     @EnvironmentObject var missionViewModel: MissionViewModel
     @Environment(\.scenePhase) var scenePhase
+    @Environment(\.colorScheme) var colorScheme
     @State var selectedMissionId: UUID?
     
     let layout: [GridItem] = [
@@ -14,8 +15,8 @@ struct HomeView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color(red: 247 / 255, green: 247 / 255, blue: 247 / 255)
-                    .edgesIgnoringSafeArea(.all)
+                Color(colorScheme == .dark ? .black : UIColor(red: 247 / 255, green: 247 / 255, blue: 247 / 255, alpha: 1))
+                               .edgesIgnoringSafeArea(.all)
                 
                 let filteredMissions = missionViewModel.missions.filter { mission in
                     return mission.missionStatus == .beforeStart || mission.missionStatus == .inProgress || mission.missionStatus == .verificationCompleted1 || mission.missionStatus == .verificationCompleted2
@@ -31,7 +32,7 @@ struct HomeView: View {
                                 .resizable()
                                 .renderingMode(.original)
                                 .aspectRatio(contentMode: .fit)
-                                .foregroundColor(Color.black)
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                                 .opacity(0.8)
                                 .frame(width: 25, height: 25)
                         }
@@ -43,7 +44,7 @@ struct HomeView: View {
                         Spacer()
                         Text("현재 등록된 미션이 없습니다.")
                             .opacity(0.7)
-                            .padding(.top)
+//                            .padding(.top)
                         Spacer()
                     } else {
                         ScrollView {

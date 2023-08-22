@@ -1,6 +1,5 @@
 import Foundation
 import FirebaseAuth
-import Combine
 import KakaoSDKUser
 import KakaoSDKAuth
 import KakaoSDKCommon
@@ -17,7 +16,6 @@ class UserInfoViewModel: ObservableObject {
     
     private let db = Firestore.firestore()
     var handle: AuthStateDidChangeListenerHandle?
-    var cancellables = Set<AnyCancellable>()
     
     init() {
         handle = Auth.auth().addStateDidChangeListener { [weak self] (auth, user) in
@@ -225,9 +223,15 @@ class UserInfoViewModel: ObservableObject {
     }
     
     func deleteUser(completion: @escaping (Error?) -> Void) {
+        // 파이어베이스 계정 삭제 전에 리스너 제거
+        if let handle = handle {
+            Auth.auth().removeStateDidChangeListener(handle)
+        }
+        // 파이어베이스 계정 삭제
         Auth.auth().currentUser?.delete(completion: completion)
     }
-    //카카오 로그아웃 오후 9시 50분
+    
+    //카카오, 파이어베이스 모두 적용되는 로그아웃
     func logout() {
         // 현재 파이어베이스에 로그인된 사용자가 있는지 확인합니다.
         if let _ = Auth.auth().currentUser {

@@ -3,6 +3,7 @@ import SwiftUI
 struct PaymentView: View {
     @EnvironmentObject var missionViewModel: MissionViewModel
     @EnvironmentObject var userInfoViewModel: UserInfoViewModel
+    @Environment(\.colorScheme) var colorScheme
     @State private var displayAmount: String = ""
     @State private var showAlertForEmptyAmount: Bool = false // 예치금 입력 알림을 표시할지 여부
     @State private var showAlertForConfirmation: Bool = false // 미션 등록 확인 알림을 표시할지 여부
@@ -16,9 +17,7 @@ struct PaymentView: View {
     }
     
     var body: some View {
-        ZStack {
-            Color.white
-                .edgesIgnoringSafeArea(.all)
+  
             VStack {
                 HStack {
                     Button {
@@ -46,10 +45,11 @@ struct PaymentView: View {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("예치금")
                                     .font(.system(size: 23, weight: .semibold))
-                                    .foregroundColor(.black)
+                                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                                 
                                 Text("미션을 성공하면 환급이 가능합니다.")
                                     .font(.system(size: 17, weight: .regular))
+                                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                                     .opacity(0.7)
                             }
                             Spacer()
@@ -63,6 +63,7 @@ struct PaymentView: View {
                                 .multilineTextAlignment(.center)
                                 .font(.system(size: 35, weight: .semibold))
                                 .frame(width: UIScreen.main.bounds.width * 0.5)
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                                 .onChange(of: displayAmount) { newValue in
                                     displayAmount = newValue.filter { $0.isNumber || $0 == ","
                                     }
@@ -70,6 +71,7 @@ struct PaymentView: View {
                             Spacer()
                             Text("원")
                                 .font(.system(size: 20, weight: .semibold))
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                                 .opacity(0.85)
                             
                         }
@@ -77,12 +79,13 @@ struct PaymentView: View {
                         
                         VStack{
                             Rectangle()
-                                .fill(Color.green)  // 색상 변경
+                                .fill(Color.green.opacity(0.8))  // 색상 변경
                                 .frame(height: 2) // 두께 변경
                                 .frame(width: UIScreen.main.bounds.width * 0.75)
                             
                             Text("최소 1천원 ~ 최대 20만원 (1천원 단위 가능)")
                                 .font(.system(size: 14, weight: .regular))
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                                 .opacity(0.7)
                         }
                         
@@ -93,11 +96,11 @@ struct PaymentView: View {
                         HStack {
                             Text("충전 및 결제")
                                 .font(.system(size: 23, weight: .semibold))
-                                .foregroundColor(.black)
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                             
                             Text("현재 보유 금액 \(userInfoViewModel.balance)원")
                                 .font(.system(size: 13, weight: .regular))
-                                .foregroundColor(.black)
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                                 .opacity(0.7)
                             Spacer()
                         }
@@ -107,6 +110,7 @@ struct PaymentView: View {
                             Text("\(displayAmount) 원")
                         }
                         .font(.system(size: 17, weight: .medium))
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                         
                         HStack {
                             Text("사용 금액 ")
@@ -114,11 +118,12 @@ struct PaymentView: View {
                             Text("\(missionViewModel.actualAmount - calculateRechargeAmount()) 원")
                         }
                         .font(.system(size: 17, weight: .medium))
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                         
                         HStack {
                             Text("충전 금액")
                                 .font(.system(size: 23, weight: .semibold))
-                                .foregroundColor(.black)
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                             Spacer()
                             Text("\(calculateRechargeAmount()) 원")
                                 .font(.system(size: 23, weight: .semibold))
@@ -189,7 +194,7 @@ struct PaymentView: View {
                 }
             }
         }
-    }
+    
     
     func formatAndRoundAmount() {
         let numbersOnly = displayAmount.filter { "0"..."9" ~= $0 }

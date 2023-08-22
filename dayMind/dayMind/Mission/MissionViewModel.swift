@@ -204,24 +204,7 @@ class MissionViewModel: ObservableObject {
     }
         
     
-    // 디테일뷰 설명에 쓰일 사진 업로드
-    func fetchImageURL(from path: String) {
-        let storageRef = Storage.storage().reference()
-        let imageRef = storageRef.child(path)
-        
-        imageRef.downloadURL { [weak self] url, error in
-            if let error = error {
-                print("Error occurred: \(error.localizedDescription)")
-                return
-            }
-            
-            if let url = url {
-                DispatchQueue.main.async {
-                    self?.imageURL = url
-                }
-            }
-        }
-    }
+
     
     // 앱 허용 리스트 추가, 삭제, 이름 변경 메소드 모음
     func addStore(_ store: String, selection: FamilyActivitySelection) {

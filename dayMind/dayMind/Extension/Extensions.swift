@@ -2,7 +2,6 @@
 import Foundation
 import SwiftUI
 
-
 extension Dictionary {
     func mapKeys<T>(_ transform: (Key) throws -> T) rethrows -> [T: Value] {
         var dictionary: [T: Value] = [:]
@@ -49,7 +48,7 @@ struct BlueButton: View {
                 .padding(10)
                 .font(.system(size: 22, weight: .semibold))
                 .frame(width: UIScreen.main.bounds.width * 0.4)
-                .background(Color.blue.opacity(0.9))
+                .background(Color.blue.opacity(0.8))
                 .foregroundColor(.white)
                 .clipShape(Capsule())
         }
@@ -66,7 +65,7 @@ struct GreenButton: View {
                 .padding(10)
                 .font(.system(size: 22, weight: .semibold))
                 .frame(width: UIScreen.main.bounds.width * 0.4)
-                .background(Color.green.opacity(0.9))
+                .background(Color.green.opacity(0.8))
                 .foregroundColor(.white)
                 .clipShape(Capsule())
         }
@@ -80,3 +79,5 @@ extension Int {
         return numberFormatter.string(from: NSNumber(value: self)) ?? ""
     }
 }
+
+

@@ -40,7 +40,6 @@ struct RecordCell: View {
                     
                     Text(firestoreMission.missionType)
                         .font(.system(size: 17, weight: .regular))
-                        .foregroundColor(.black)
                 }
                 .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
                 .frame(width: UIScreen.main.bounds.width * 0.27)
@@ -48,7 +47,6 @@ struct RecordCell: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text(missionTime)
                         .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(Color.black)
                         .padding(.trailing)
                     HStack {
                         let missionStatus = firestoreMission.missionStatus
@@ -62,7 +60,6 @@ struct RecordCell: View {
                                 .stroke(missionStatus.color, lineWidth: 1))
                         Text(missionDate)
                             .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.black)
                             .opacity(0.8)
                     }
                     
@@ -77,7 +74,7 @@ struct RecordCell: View {
                 .padding(.vertical, 20)
                 
             }
-            .background(Color.white)
+//            .background(Color.white)
         }
     }
 

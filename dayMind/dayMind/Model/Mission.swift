@@ -8,65 +8,52 @@ struct Mission: Identifiable {
     var imageName: String
     var step1a: String
     var step1b: String
-    var step1c: String
     var step2a: String
     var step2b: String
-    var step2c: String
-    var step3a: String
-    var step3b: String
-    var step3c: String
-    var confirmmethod1: String
-    var confirmmethod2: String
-    var examplePhoto1: String
-    var examplePhoto2: String
-    var examplePhoto3: String
-    var description: String
+    var verificationGuide1: String
+    var verificationGuide2: String
+    var examplePhoto: String
+    var refundGuide1: String
+    var refundGuide2: String
+    var warnings1: String
+    var warnings2: String
     var timeSetting1: String
     var timeSetting2: String
 }
-    
-    
+
 let missionData: [Mission] = [
     Mission(
         missionType: "수면",
         imageName: "alarm",
-        step1a: "STEP 1",
-        step1b: "취침시간과 기상시간을 설정하세요",
-        step1c: "수면 설정은 하루 1회만 가능합니다. 1회 미션이 끝나면 새로 설정해야 합니다.",
-        step2a: "STEP 2",
-        step2b: "예치할 금액을 설정하세요",
-        step2c: "정해진 시간에 인증하면 환급! 인증하지 못하면 벌금! 돈을 걸어 원하는 수면시간을 통제하세요!",
-        step3a: "",
-        step3b: "",
-        step3c: "",
-        confirmmethod1: "취침 30분 전부터 인증 시간입니다. 시작 버튼을 누르면 앱 잠금이 시작되고 인증이 완료됩니다.",
-        confirmmethod2: "기상 30분 전부터 인증 시간입니다. 약속한 시간이 지나면 인증 버튼이 비활성화됩니다.",
-        examplePhoto1: "인증 예시",
-        examplePhoto2: "sample.png",
-        examplePhoto3: "야외에서 신고 있는 신발 사진 찍기",
-        description: "매일 30분씩 시간을 앞당겨 자는 시간과 일어나는 시간을 조정해보세요. 천천히 변화를 주는 것이 새로운 습관을 이루는 데 더 효과적입니다.",
+        step1a: "오늘 몇 시에 취침하시나요?",
+        step1b: "취침 시간을 설정하면, 그 시간 이후로 선택된 필수 앱을 제외한 모든 앱이 차단됩니다.\n\n자기 전에 휴대폰을 놓으세요, 그리고 나의 소중한 수면 시간을 지켜주세요!",
+        step2a: "내일 몇 시에 기상하시나요?",
+        step2b: "기상 시간을 설정하면 그 시간까지 허용 리스트에 없는 앱들은 접근이 제한됩니다.\n\n야외에서 신발을 신고 사진을 찍는 기상 미션은, 잠에서 깨어나는 가장 확실한 방법이에요.",
+        verificationGuide1: "약속한 기상 시간 1시간 전부터 사진 인증이 가능해요. 생성된 <사진인증> 버튼을 클릭하여 인증을 진행하세요!",
+        verificationGuide2: "기상 시간이 지나면 앱 차단을 해제할 수 있어요. 차단된 앱을 클릭하고 <미션 완료> 버튼을 누르면, 미션 인증 완료!",
+        examplePhoto: "examplePhoto1",
+        refundGuide1: "1️⃣ 미션의 모든 인증을 완료하면 관리자가 인증 사진을 검토해요. 인증 사진이 조건에 맞지 않으면 자동으로 미션 실패로 처리되어, 예치금 환급을 받을 수 없어요.",
+        refundGuide2: "2️⃣ 인증 사진에 문제가 없다면, 그날 밤 자정에 <환급> 버튼이 생성됩니다. 버튼을 누르면 미션 예치금을 즉시 환급받게 돼요.",
+        warnings1: "1️⃣ 미션 도중 아이폰의 dayMind 앱 스크린 타임 접근 권한을 해제하면 인증이 불가능해집니다.이때 미션 예치금 환급을 받을 수 없으니 주의해 주세요.",
+        warnings2: "2️⃣ 미션을 인증하거나 포기하지 않고 다음 미션이 진행되면, 앱 차단이 중복되는 오류가 발생합니다.다음 미션 인증이 불가능해지므로 기존 미션을 반드시 인증하거나 포기한 후에만 다음 미션을 진행해 주세요.",
         timeSetting1: "취침 시간",
         timeSetting2: "기상 시간"
-     
     ),
+    
     Mission(
         missionType: "집중",
         imageName: "lock.iphone",
-        step1a: "STEP 1",
-        step1b: "앱 허용 리스트를 설정하세요",
-        step1c: "이미 설정한 리스트가 있다면 해당 목록 선택! ex) 공부용, 업무용, 수면용",
-        step2a: "STEP 2",
-        step2b: "시작 시간, 종료 시간을 설정하세요!",
-        step2c: "'지금 시작'을 체크할 경우 인증 없이 바로 앱 잠금이 시작됩니다.",
-        step3a: "STEP 3",
-        step3b: "예치할 금액을 설정하세요",
-        step3c: "정해진 시간에 시작하고 설정한 시간까지 포기하지 않으면 환급! 정해진 시간에 시작하지 못하거나 중간에 포기할 경우 벌금! 돈을 걸어 자제력을 높이고, 집중력을 높이세요!",
-        confirmmethod1: "시작 시간 30분 전부터 인증 시간입니다. 약속 시간 안에 시작 버튼을 누르면 인증 완료! ",
-        confirmmethod2: "종료 시간까지 포기하지 않고 앱 잠금을 유지할 경우 미션 성공!",
-        examplePhoto1: "",
-        examplePhoto2: "",
-        examplePhoto3: "",
-        description: "앱 허용 리스트를 통해 전화, 문자, 카카오톡, 지도, 날씨 앱 등 집중에 방해되지 않는 필요한 앱만 허용하여 자제력은 높이고 휴대폰의 필요한 기능은 사용하세요.",
+        step1a: "어떤 앱이 집중에 방해되나요?",
+        step1b: "휴대폰 없이 살 수 없는 요즘, 앱 허용 리스트를 통해 꼭 필요한 앱만 사용하고 집중을 방해하는 앱은 모두 차단하세요! \n\n시작 시간부터 종료 시간까지 온전히 일에만 집중할 수 있어요.",
+        step2a: "",
+        step2b: "",
+        verificationGuide1: "시작 시간이 되면 자동으로 선택된 필수 앱을 제외한 모든 앱이 차단됩니다.",
+        verificationGuide2: "종료 시간이 지나면 앱 차단을 해제할 수 있어요. 차단된 앱을 클릭하고 <미션 완료> 버튼을 누르면, 미션 인증이 완료되며 모든 앱 차단이 해제됩니다!",
+        examplePhoto: "examplePhoto2",
+        refundGuide1: "차단된 앱을 클릭하고 <미션 완료> 버튼을 누르면 <환급> 버튼이 생성되고 버튼을 누르면 미션 예치금이 환급됩니다.",
+        refundGuide2: "",
+        warnings1: "1️⃣ 미션 도중 아이폰의 dayMind 앱 스크린 타임 접근 권한을 해제하면 인증이 불가능해집니다.이때 미션 예치금 환급을 받을 수 없으니 주의해 주세요.",
+        warnings2: "2️⃣ 미션을 인증하거나 포기하지 않고 다음 미션이 진행되면, 앱 차단이 중복되는 오류가 발생합니다.다음 미션 인증이 불가능해지므로 기존 미션을 반드시 인증하거나 포기한 후에만 다음 미션을 진행해 주세요.",
         timeSetting1: "시작 시간",
         timeSetting2: "종료 시간"
         )

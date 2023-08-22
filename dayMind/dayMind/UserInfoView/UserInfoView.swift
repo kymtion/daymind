@@ -3,12 +3,13 @@ import SwiftUI
 struct UserInfoView: View {
     
     @EnvironmentObject var userInfoViewModel: UserInfoViewModel
+    @Environment(\.colorScheme) var colorScheme
     @State private var showingReauthentication = false
     @State private var navigateToAccountSettings = false
     
     var body: some View {
         
-       
+     
             
             ScrollView {
                 
@@ -27,7 +28,6 @@ struct UserInfoView: View {
                         VStack(alignment: .leading) {
                             Text("\(userInfoViewModel.displayName)")
                                 .font(.system(size: 20, weight: .semibold))
-                                .foregroundColor(.black)
                             Text("\(userInfoViewModel.email)")
                                 .font(.system(size: 16, weight: .regular))
                                 .opacity(0.7)
@@ -80,18 +80,17 @@ struct UserInfoView: View {
                     .frame(height: 10)
                     .foregroundColor(.gray.opacity(0.1))
                 
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 30) {
                     NavigationLink {
                         AccountSetting().environmentObject(userInfoViewModel)
                     }label: {
                         HStack {
                             Text("계정 설정")
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(.black)
+                                .font(.system(size: 20, weight: .semibold))
                             Spacer()
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 20))
-                                .foregroundColor(.black.opacity(0.7))
+                                .opacity(0.7)
                         }
                     }
                     NavigationLink {
@@ -100,12 +99,11 @@ struct UserInfoView: View {
                     } label: {
                         HStack {
                             Text("환급 및 벌금 내역")
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(.black)
+                                .font(.system(size: 20, weight: .semibold))
                             Spacer()
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 20))
-                                .foregroundColor(.black.opacity(0.7))
+                                .opacity(0.7)
                             
                         }
                     }
@@ -115,12 +113,11 @@ struct UserInfoView: View {
                     } label: {
                         HStack {
                             Text("충전 및 출금 현황")
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(.black)
+                                .font(.system(size: 20, weight: .semibold))
                             Spacer()
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 20))
-                                .foregroundColor(.black.opacity(0.7))
+                                .opacity(0.7)
                             
                         }
                     }
@@ -131,16 +128,16 @@ struct UserInfoView: View {
                     } label: {
                         HStack {
                             Text("잔액 출금")
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(.black)
+                                .font(.system(size: 20, weight: .semibold))
                             Spacer()
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 20))
-                                .foregroundColor(.black.opacity(0.7))
+                                .opacity(0.7)
                             
                         }
                     }
                 }
+                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                 .padding()
             }
         }

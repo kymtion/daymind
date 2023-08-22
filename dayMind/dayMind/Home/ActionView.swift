@@ -7,6 +7,7 @@ struct ActionView: View {
     
     @EnvironmentObject var missionViewModel: MissionViewModel
     @EnvironmentObject var userInfoViewModel: UserInfoViewModel
+    @Environment(\.colorScheme) var colorScheme
     @State var showAlert2: Bool = false // 포기하면 예치금 환급이 불가능합니다. 포기하시겠습니까?
     @State private var alertType: AlertType?
     @State var remainingTime: String = ""
@@ -70,7 +71,7 @@ struct ActionView: View {
                         .cornerRadius(10)
                     
                     Text("\(mission?.currentStore ?? "")")
-                        .foregroundColor(Color.black)
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                         .font(.system(size: 16))
                 }
                 .padding()
@@ -89,7 +90,7 @@ struct ActionView: View {
                         
                         Text(mission.missionType)
                             .font(.system(size: 17, weight: .regular))
-                            .foregroundColor(.black)
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                     }
                 }
                 VStack {

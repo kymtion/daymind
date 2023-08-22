@@ -6,30 +6,33 @@ struct PasswordResetView: View {
     @EnvironmentObject var loginViewModel: LoginViewModel
     @State private var email: String = ""
     @State private var errorMessage: String = ""
+    @State private var showAlert: Bool = false
     
     var body: some View {
-        VStack {
+        VStack(spacing: 10) {
             TextField("이메일", text: $email)
                 .autocapitalization(.none)
                 .padding()
                 .border(Color.gray, width: 0.5)
             Button(action: {
-                loginViewModel.sendPasswordResetSubject.send(email)
+                loginViewModel.sendPasswordResetWithEmail(email) { error in
+                    if let error = error {
+                        self.errorMessage = error.localizedDescription
+                        self.showAlert = true
+                    }
+                }
             }) {
                 Text("비밀번호 재설정 이메일 보내기")
                     .foregroundColor(.white)
                     .padding()
-                    .background(Color.blue)
-                    .cornerRadius(5)
+                    .background(Color.blue.opacity(0.8))
+                    .cornerRadius(10)
             }
         }
         .padding()
-        .alert(isPresented: Binding<Bool>(
-            get: { self.loginViewModel.error != nil },
-            set: { _ in self.loginViewModel.error = nil }
-        ), content: { () -> Alert in
-            Alert(title: Text("Error"), message: Text(self.loginViewModel.error?.localizedDescription ?? "Unknown error"), dismissButton: .default(Text("OK"), action: {
-                self.loginViewModel.error = nil
+        .alert(isPresented: $showAlert, content: {
+            Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .default(Text("OK"), action: {
+                self.showAlert = false
             }))
         })
     }

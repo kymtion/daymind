@@ -58,7 +58,7 @@ struct WithdrawalView: View {
                     
                     VStack {
                         Rectangle()
-                            .fill(Color.green) // 색상 변경
+                            .fill(Color.green.opacity(0.8)) // 색상 변경
                             .frame(height: 2) // 두께 변경
                             .frame(width: UIScreen.main.bounds.width * 0.75)
                         

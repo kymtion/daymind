@@ -3,7 +3,7 @@ import SwiftUI
 struct MissionListView: View {
     
     @StateObject var vm = MissionViewModel()
-    
+    @Environment(\.colorScheme) var colorScheme
     
     let layout: [GridItem] = [
         GridItem(.flexible()),
@@ -12,8 +12,8 @@ struct MissionListView: View {
     
     var body: some View {
         ZStack {
-            Color(red: 247 / 255, green: 247 / 255, blue: 247 / 255)
-                .edgesIgnoringSafeArea(.all)
+            Color(colorScheme == .dark ? .black : UIColor(red: 247 / 255, green: 247 / 255, blue: 247 / 255, alpha: 1))
+                           .edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 25) {
                 HStack{
