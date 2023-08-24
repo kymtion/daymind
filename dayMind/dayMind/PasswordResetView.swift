@@ -7,6 +7,7 @@ struct PasswordResetView: View {
     @State private var email: String = ""
     @State private var errorMessage: String = ""
     @State private var showAlert: Bool = false
+    @State private var showSuccessAlert: Bool = false // 성공 알림 상태 추가
     
     var body: some View {
         VStack(spacing: 10) {
@@ -19,6 +20,8 @@ struct PasswordResetView: View {
                     if let error = error {
                         self.errorMessage = error.localizedDescription
                         self.showAlert = true
+                    } else {
+                        self.showSuccessAlert = true // 성공 시 성공 알림 상태 업데이트
                     }
                 }
             }) {
@@ -35,8 +38,14 @@ struct PasswordResetView: View {
                 self.showAlert = false
             }))
         })
+        .alert(isPresented: $showSuccessAlert, content: { // 성공 알림 추가
+            Alert(title: Text("성공"), message: Text("이메일이 전송되었습니다."), dismissButton: .default(Text("OK"), action: {
+                self.showSuccessAlert = false
+            }))
+        })
     }
 }
+
 
 struct PasswordResetView_Previews: PreviewProvider {
     static var previews: some View {

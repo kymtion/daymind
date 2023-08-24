@@ -92,6 +92,7 @@
 		A8F2CFA92A0A2DB50030E175 /* TapBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F2CFA82A0A2DB50030E175 /* TapBarView.swift */; };
 		A8F2CFAB2A0A41790030E175 /* UserInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F2CFAA2A0A41790030E175 /* UserInfoView.swift */; };
 		A8F2CFAE2A0A680B0030E175 /* MissionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8F2CFAD2A0A680B0030E175 /* MissionRow.swift */; };
+		A8FC35D72A97462800424207 /* LoadingView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FC35D62A97462800424207 /* LoadingView2.swift */; };
 		A8FD9F5C2A3B677900905352 /* AllowListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8FD9F5B2A3B677900905352 /* AllowListView.swift */; };
 		A8FE77592A6116EB008FC9CB /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8FE77582A6116EB008FC9CB /* ManagedSettings.framework */; };
 		A8FE775B2A6116EB008FC9CB /* ManagedSettingsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8FE775A2A6116EB008FC9CB /* ManagedSettingsUI.framework */; };
@@ -211,6 +212,7 @@
 		A8F2CFA82A0A2DB50030E175 /* TapBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapBarView.swift; sourceTree = "<group>"; };
 		A8F2CFAA2A0A41790030E175 /* UserInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoView.swift; sourceTree = "<group>"; };
 		A8F2CFAD2A0A680B0030E175 /* MissionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionRow.swift; sourceTree = "<group>"; };
+		A8FC35D62A97462800424207 /* LoadingView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView2.swift; sourceTree = "<group>"; };
 		A8FD9F5B2A3B677900905352 /* AllowListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllowListView.swift; sourceTree = "<group>"; };
 		A8FE77572A6116EB008FC9CB /* ShieldConfiguration.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShieldConfiguration.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8FE77582A6116EB008FC9CB /* ManagedSettings.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ManagedSettings.framework; path = System/Library/Frameworks/ManagedSettings.framework; sourceTree = SDKROOT; };
@@ -397,6 +399,7 @@
 				A879EBA62A0F812100791AAC /* SignUpView.swift */,
 				A8F2CFA82A0A2DB50030E175 /* TapBarView.swift */,
 				A87A463F2A69670F00B56036 /* LoadingView.swift */,
+				A8FC35D62A97462800424207 /* LoadingView2.swift */,
 				A8F2CFB22A0A91F10030E175 /* UserInfoView */,
 				A8F2CFB12A0A91C00030E175 /* Mission */,
 				A86270682A8610800038E882 /* Home */,
@@ -786,6 +789,7 @@
 				A8F2CFA72A0A2AC70030E175 /* MissionListView.swift in Sources */,
 				A863AED52A0F60AC00407B6F /* LoginView.swift in Sources */,
 				A8229A822A13914400881C31 /* ChangePasswordView.swift in Sources */,
+				A8FC35D72A97462800424207 /* LoadingView2.swift in Sources */,
 				A8FD9F5C2A3B677900905352 /* AllowListView.swift in Sources */,
 				A863AECC2A0D300400407B6F /* DetailView.swift in Sources */,
 				A879EBA72A0F812100791AAC /* SignUpView.swift in Sources */,

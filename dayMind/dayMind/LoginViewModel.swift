@@ -24,6 +24,10 @@ class LoginViewModel: NSObject, ObservableObject {
                attachAuthListener()
            }
     
+    deinit {
+           detachAuthListener()
+       }
+    
     var functions = Functions.functions()
     
     func loginWithKakao(completion: @escaping (Error?) -> Void) {
@@ -135,6 +139,7 @@ class LoginViewModel: NSObject, ObservableObject {
     
     //----------------------------------------------------------------------------------------------------------------------------------------파이어베이스 로그인 부분
     
+    // 사용자의 인증상태 변화를 감지하는 역할
     func attachAuthListener() {
         handle = Auth.auth().addStateDidChangeListener { [weak self] (auth, user) in
             guard let self = self else { return }
@@ -142,7 +147,7 @@ class LoginViewModel: NSObject, ObservableObject {
         }
     }
     
-    
+    // 이 함수는 리스너를 종료하는 함수로 메모리 누수를 방지함
     func detachAuthListener() {
         if let handle = handle {
             Auth.auth().removeStateDidChangeListener(handle)
