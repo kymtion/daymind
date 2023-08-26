@@ -45,4 +45,32 @@ class UserManager {
                completion(user)
            }
        }
+    
+    func listenForUserChanges(completion: @escaping (User?) -> Void) {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("No current user logged in.")
+            return
+        }
+        
+        db.collection("users").document(userId)
+            .addSnapshotListener { documentSnapshot, error in
+                if let error = error {
+                    print("Error fetching user: \(error)")
+                    completion(nil)
+                    return
+                }
+                
+                guard let document = documentSnapshot, let data = document.data(),
+                      let jsonData = try? JSONSerialization.data(withJSONObject: data, options: []),
+                      let user = try? JSONDecoder().decode(User.self, from: jsonData) else {
+                    print("Error decoding user data.")
+                    completion(nil)
+                    return
+                }
+                
+                completion(user)
+            }
+    }
+
+
 }

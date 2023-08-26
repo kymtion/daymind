@@ -81,6 +81,15 @@
   margin-right: 20px;
 }
 
+table {
+  border-collapse: separate;
+  border-spacing: 1px;
+}
+
+th, td {
+  border: 1px solid black;
+  padding: 5px; /* 셀 안의 내용과 경계선 사이의 간격을 설정합니다. */
+}
 
 @keyframes App-logo-spin {
   from {

@@ -14,6 +14,7 @@ class LoginViewModel: NSObject, ObservableObject {
     @Published var password: String = ""
     @Published var error: Error? = nil
     @Published var isLoading: Bool = false
+    @Published var isSigningUp: Bool = false
     
  
     var handle: AuthStateDidChangeListenerHandle?
@@ -101,27 +102,27 @@ class LoginViewModel: NSObject, ObservableObject {
         }
     }
     
-    // 로그인할때 계정 데이터를 파이어스토어에 저장해줌 단, 데이터가 기존에 있다면 저장하지 않음
+//     로그인할때 계정 데이터를 파이어스토어에 저장해줌 단, 데이터가 기존에 있다면 저장하지 않음
     private func createUserAccount(userId: String, completion: @escaping (Error?) -> Void) {
         let userCollection = Firestore.firestore().collection("users")
-        
+
         userCollection.getDocuments { (querySnapshot, error) in
             if let error = error {
                 completion(error)
                 return
             }
-            
+
             // 가입한 순번을 닉네임으로 사용합니다.
             let totalCount = querySnapshot?.documents.count ?? 0
             let nickname = "#" + String(totalCount + 1)
-            
+
             let userDocument = userCollection.document(userId)
             userDocument.getDocument { (documentSnapshot, error) in
                 if let error = error {
                     completion(error)
                     return
                 }
-                
+
                 // 사용자 데이터가 존재하지 않을 경우 생성
                 if let documentSnapshot = documentSnapshot, !documentSnapshot.exists {
                     let initialUser = User(userId: userId, balance: 0, nickname: nickname)
@@ -137,17 +138,18 @@ class LoginViewModel: NSObject, ObservableObject {
 
 
     
-    //----------------------------------------------------------------------------------------------------------------------------------------파이어베이스 로그인 부분
     
     // 사용자의 인증상태 변화를 감지하는 역할
     func attachAuthListener() {
         handle = Auth.auth().addStateDidChangeListener { [weak self] (auth, user) in
             guard let self = self else { return }
-            self.isLoggedin = user != nil
+            if !self.isSigningUp {  // <-- 상태 변수를 확인
+                self.isLoggedin = user != nil
+            }
         }
     }
     
-    // 이 함수는 리스너를 종료하는 함수로 메모리 누수를 방지함
+//     이 함수는 리스너를 종료하는 함수로 메모리 누수를 방지함
     func detachAuthListener() {
         if let handle = handle {
             Auth.auth().removeStateDidChangeListener(handle)
@@ -173,21 +175,33 @@ class LoginViewModel: NSObject, ObservableObject {
     
     func signUpWithEmail(completion: @escaping (Error?) -> Void) {
         isLoading = true
+        isSigningUp = true
         Auth.auth().createUser(withEmail: self.email, password: self.password) { authResult, error in
-            self.isLoading = false // 로딩 상태 업데이트
-            if let error = error {
-                completion(error)
-                return
-            }
-            self.isLoggedin = true
-            self.error = nil
-            
-            
-            if let userId = authResult?.user.uid {
-                self.createUserAccount(userId: userId, completion: completion) // 여기서 Firestore에 사용자 계정을 생성합니다.
+            DispatchQueue.main.async {
+                self.isLoading = false
+                self.isSigningUp = false
+                if let error = error {
+                    completion(error)
+                    return
+                }
+                
+                // 회원가입 성공 후 자동 로그인을 방지하기 위해 로그아웃
+                do {
+                    try Auth.auth().signOut()
+                    self.isLoggedin = false
+                    self.error = nil
+                } catch let signOutError {
+                    print("Error signing out: \(signOutError)")
+                    completion(signOutError)
+                    return
+                }
+                completion(nil)
             }
         }
     }
+    
+
+    
     
     func sendPasswordResetWithEmail(_ email: String, completion: @escaping (Error?) -> Void) {
            Auth.auth().sendPasswordReset(withEmail: email) { error in

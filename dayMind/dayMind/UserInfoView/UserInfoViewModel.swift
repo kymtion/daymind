@@ -30,13 +30,26 @@ class UserInfoViewModel: ObservableObject {
                 self.nickname = ""
             }
         }
-        FirestoreMission.listenForChanges { missions in
-               self.missions = missions
-        }
-        loadUserBalance()
-        listenForTransactions { transactions in // 이 부분을 추가
-                self.transactions = transactions
+        
+        // UserManager에서 사용자 정보 변경을 감지
+        UserManager.shared.listenForUserChanges { user in
+            if let user = user {
+                self.uid = user.userId
+                self.nickname = user.nickname
+                self.balance = user.balance
             }
+        }
+        
+        
+        FirestoreMission.listenForChanges { missions in
+            self.missions = missions
+        }
+        
+        loadUserBalance()
+        
+        listenForTransactions { transactions in // 이 부분을 추가
+            self.transactions = transactions
+        }
     }
     
     deinit {
@@ -46,14 +59,14 @@ class UserInfoViewModel: ObservableObject {
     }
     
     private func loadNickname() {
-           guard let userId = Auth.auth().currentUser?.uid else { return }
-           let userDocument = db.collection("users").document(userId)
-           userDocument.getDocument { (documentSnapshot, error) in
-               if let document = documentSnapshot, document.exists, let data = document.data() {
-                   self.nickname = data["nickname"] as? String ?? "" // 닉네임을 로드하고 업데이트합니다.
-               }
-           }
-       }
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        let userDocument = db.collection("users").document(userId)
+        userDocument.getDocument { (documentSnapshot, error) in
+            if let document = documentSnapshot, document.exists, let data = document.data() {
+                self.nickname = data["nickname"] as? String ?? "" // 닉네임을 로드하고 업데이트합니다.
+            }
+        }
+    }
     
     // 출금한 금액을 파이어스토어에 데이터로 저장하는 함수
     func saveWithdrawalTransaction(withdrawalAmount: Int) {
@@ -65,15 +78,15 @@ class UserInfoViewModel: ObservableObject {
     
     // 잔액에서 출금 금액을 빼주고 저장해주는 함수
     func updateBalance(newBalance: Int) {
-           guard let userId = Auth.auth().currentUser?.uid else {
-               print("No current user logged in.")
-               return
-           }
-
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("No current user logged in.")
+            return
+        }
+        
         let user = User(userId: userId, balance: newBalance, nickname: self.nickname)
-           UserManager.shared.saveUser(user: user)
-           self.balance = newBalance // 뷰 모델의 잔액 업데이트
-       }
+        UserManager.shared.saveUser(user: user)
+        self.balance = newBalance // 뷰 모델의 잔액 업데이트
+    }
     
     // 실패, 성공을 제외한 모든 미션의 예치금 합산
     func calculateOtherAmounts() -> Int {

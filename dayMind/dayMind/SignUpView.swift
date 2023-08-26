@@ -2,8 +2,10 @@ import SwiftUI
 
 struct SignUpView: View {
     @EnvironmentObject var loginViewModel: LoginViewModel
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @State private var confirmPassword = ""
     @State private var showAlert = false
+    @State private var alertTitle = "오류"
     @State private var alertMessage = ""
     
     private func isValidEmail(_ email: String) -> Bool {
@@ -30,17 +32,21 @@ struct SignUpView: View {
             showAlert = true
             return
         }
-        
      
         
         // 모든 검사를 통과하면 회원가입 프로세스 진행
         loginViewModel.signUpWithEmail { error in
             if let error = error {
                 alertMessage = error.localizedDescription
-                showAlert = true
+                alertTitle = "오류"
+            } else {
+                alertMessage = "성공적으로 회원가입이 완료되었습니다!"
+                alertTitle = "성공"
             }
+            showAlert = true
         }
     }
+    
     var body: some View {
         ZStack {
             VStack {
@@ -69,14 +75,26 @@ struct SignUpView: View {
             }
             .padding()
             .alert(isPresented: $showAlert) {
-                Alert(title: Text("오류"), message: Text(alertMessage), dismissButton: .default(Text("확인")))
-            }
+                         if alertTitle == "성공" {
+                             return Alert(title: Text(alertTitle),
+                                          message: Text(alertMessage),
+                                          dismissButton: .default(Text("확인")) {
+                                              self.presentationMode.wrappedValue.dismiss()
+                                          })
+                         } else {
+                             return Alert(title: Text(alertTitle),
+                                          message: Text(alertMessage),
+                                          dismissButton: .default(Text("확인")))
+                         }
+                     }
+            
             if loginViewModel.isLoading {
                 LoadingView() // 로딩 뷰 표시
             }
         }
     }
 }
+
 struct SignUpView_Previews: PreviewProvider {
     static var previews: some View {
         SignUpView().environmentObject(LoginViewModel())
