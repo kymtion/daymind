@@ -7,11 +7,27 @@ struct User: Codable {
     var userId: String
     var balance: Int
     var nickname: String
+    var fcmToken: String?
 }
 
 class UserManager {
     static let shared = UserManager()
     private let db = Firestore.firestore()
+    
+    
+    func saveUserWithFCMToken(user: User, fcmToken: String) {
+        do {
+            var data = try JSONEncoder().encode(user)
+            guard var userData = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
+                throw NSError()
+            }
+            userData["fcmToken"] = fcmToken // FCM 토큰 추가
+            db.collection("users").document(user.userId).setData(userData)
+        } catch let error {
+            print("Error writing user with FCM Token to Firestore: \(error)")
+        }
+    }
+
     
     // 사용자 정보 저장
     func saveUser(user: User) {

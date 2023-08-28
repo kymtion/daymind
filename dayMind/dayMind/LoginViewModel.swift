@@ -6,6 +6,7 @@ import KakaoSDKAuth
 import KakaoSDKCommon
 import FirebaseFunctions
 import FirebaseFirestore
+import FirebaseMessaging
 
 class LoginViewModel: NSObject, ObservableObject {
     
@@ -102,19 +103,16 @@ class LoginViewModel: NSObject, ObservableObject {
         }
     }
     
-//     로그인할때 계정 데이터를 파이어스토어에 저장해줌 단, 데이터가 기존에 있다면 저장하지 않음
-    private func createUserAccount(userId: String, completion: @escaping (Error?) -> Void) {
-        let userCollection = Firestore.firestore().collection("users")
+    //     로그인할때 계정 데이터를 파이어스토어에 저장해줌 단, 데이터가 기존에 있다면 저장하지 않음
+        private func createUserAccount(userId: String, completion: @escaping (Error?) -> Void) {
+            let userCollection = Firestore.firestore().collection("users")
 
-        userCollection.getDocuments { (querySnapshot, error) in
-            if let error = error {
-                completion(error)
-                return
-            }
-
-            // 가입한 순번을 닉네임으로 사용합니다.
-            let totalCount = querySnapshot?.documents.count ?? 0
-            let nickname = "#" + String(totalCount + 1)
+            // 영어 소문자 3자리와 숫자 5자리로 닉네임을 생성합니다.
+            let letters = "abcdefghijklmnopqrstuvwxyz"
+            let numbers = "0123456789"
+            let letterPart = String((0..<3).map { _ in letters.randomElement()! })
+            let numberPart = String((0..<5).map { _ in numbers.randomElement()! })
+            let nickname = letterPart + numberPart
 
             let userDocument = userCollection.document(userId)
             userDocument.getDocument { (documentSnapshot, error) in
@@ -134,7 +132,6 @@ class LoginViewModel: NSObject, ObservableObject {
                 }
             }
         }
-    }
 
 
     

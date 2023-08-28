@@ -45,6 +45,7 @@ function App() {
           </nav>
         )}
         <Routes>
+          <Route path="/" element={<Login />} />
           <Route path="/admin" element={user ? <Admin /> : <Login />} />
           <Route path="/missionlist" element={user ? <MissionList /> : <Login />} />
           <Route path="/usersearch" element={user ? <UserSearch /> : <Login />} /> 
