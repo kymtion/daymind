@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A80107172A9CE8E6005DC0E4 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80107162A9CE8E6005DC0E4 /* Notification.swift */; };
 		A80607972A3F1AAC00946A5E /* ActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80607962A3F1AAC00946A5E /* ActionView.swift */; };
 		A806079B2A3F212400946A5E /* TextInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A806079A2A3F212400946A5E /* TextInputView.swift */; };
 		A81E24982A7AA416005B8304 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8FE77582A6116EB008FC9CB /* ManagedSettings.framework */; };
@@ -160,6 +161,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A80107162A9CE8E6005DC0E4 /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
 		A80607922A3C2F1C00946A5E /* dayMind.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = dayMind.entitlements; sourceTree = "<group>"; };
 		A80607962A3F1AAC00946A5E /* ActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionView.swift; sourceTree = "<group>"; };
 		A806079A2A3F212400946A5E /* TextInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputView.swift; sourceTree = "<group>"; };
@@ -400,6 +402,7 @@
 				A8F2CFA82A0A2DB50030E175 /* TapBarView.swift */,
 				A87A463F2A69670F00B56036 /* LoadingView.swift */,
 				A8FC35D62A97462800424207 /* LoadingView2.swift */,
+				A80107162A9CE8E6005DC0E4 /* Notification.swift */,
 				A8F2CFB22A0A91F10030E175 /* UserInfoView */,
 				A8F2CFB12A0A91C00030E175 /* Mission */,
 				A86270682A8610800038E882 /* Home */,
@@ -811,6 +814,7 @@
 				A88432DC2A8CD2030046287D /* WithdrawalView.swift in Sources */,
 				A8CF3C942A7BB55400C38FA0 /* MissionTransformer.swift in Sources */,
 				A8229A882A13A9B600881C31 /* AccountSetting.swift in Sources */,
+				A80107172A9CE8E6005DC0E4 /* Notification.swift in Sources */,
 				A8F2CFA32A08F1E00030E175 /* HomeView.swift in Sources */,
 				A88432E02A8D047D0046287D /* TransactionCell.swift in Sources */,
 				A8FFF5072A700C0B00E42723 /* ImagePicker.swift in Sources */,

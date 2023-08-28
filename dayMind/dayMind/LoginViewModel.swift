@@ -6,7 +6,7 @@ import KakaoSDKAuth
 import KakaoSDKCommon
 import FirebaseFunctions
 import FirebaseFirestore
-import FirebaseMessaging
+
 
 class LoginViewModel: NSObject, ObservableObject {
     
@@ -122,16 +122,18 @@ class LoginViewModel: NSObject, ObservableObject {
                 }
 
                 // 사용자 데이터가 존재하지 않을 경우 생성
-                if let documentSnapshot = documentSnapshot, !documentSnapshot.exists {
-                    let initialUser = User(userId: userId, balance: 0, nickname: nickname)
-                    UserManager.shared.saveUser(user: initialUser)
-                    completion(nil)
-                } else {
-                    print("User already exists, no need to create")
-                    completion(nil)
+                    if let documentSnapshot = documentSnapshot, !documentSnapshot.exists {
+                        // 초기 FCM 토큰을 null로 설정
+                        let initialUser = User(userId: userId, balance: 0, nickname: nickname, fcmToken: "Not set")
+                        UserManager.shared.saveUser(user: initialUser)
+                        completion(nil)
+                    } else {
+                        print("User already exists, no need to create")
+                        completion(nil)
+                    }
                 }
             }
-        }
+
 
 
     

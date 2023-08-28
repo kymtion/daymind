@@ -2,6 +2,8 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const axios = require('axios');
 const serviceAccount = require("./daymind-2f6e2-firebase-adminsdk-yba79-a6005cbb37.json");
+const { Firestore } = require('@google-cloud/firestore');
+const firestore = new Firestore();
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -69,6 +71,40 @@ exports.exchangeKakaoCode = functions.https.onCall(async (data, context) => {
   }
 });
 
+// 매일 저녁 6시에 실행되는 스케쥴러
+exports.scheduledFunction = functions.pubsub.schedule('0 19 * * *').timeZone('Asia/Seoul').onRun(async (context) => {
+  // Firestore에서 모든 사용자의 FCM 토큰을 가져옵니다.
+  const usersSnapshot = await firestore.collection('users').get();
+  
+  usersSnapshot.forEach(async (doc) => {
+      const userData = doc.data();
+      const fcmToken = userData.fcmToken;
 
+      if (!fcmToken) {
+        console.error('FCM Token not found for the user');
+        return;
+      }
 
+      // FCM 푸시 알람 보내기
+      const message = {
+        token: fcmToken,
+        notification: {
+          title: '오늘 밤 몇시에 주무실 계획이신가요? 😀',
+          body: '상쾌한 아침을 위한 준비, 지금 바로 수면 미션을 등록하세요!',
+        },
+        apns: {
+          payload: {
+            aps: {
+              sound: 'default', // 'default' 또는 사용자 정의 사운드
+            },
+          },
+        },
+      };
 
+      // 알림 전송
+      await admin.messaging().send(message);
+  });
+
+  console.log('Notifications sent successfully at 6 PM');
+  return null;
+});
