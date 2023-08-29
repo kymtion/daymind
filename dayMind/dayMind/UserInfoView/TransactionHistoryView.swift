@@ -52,6 +52,7 @@ struct TransactionHistoryView: View {
         }
         .padding(.horizontal, 30)
         .padding(.vertical, 10)
+        .navigationTitle("충전 및 출금 현황")
         
         List {
             ForEach(groupedTransactions, id: \.key) { key, transactions in

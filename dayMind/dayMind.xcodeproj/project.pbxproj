@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A80107172A9CE8E6005DC0E4 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80107162A9CE8E6005DC0E4 /* Notification.swift */; };
+		A80107192A9E0229005DC0E4 /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80107182A9E0229005DC0E4 /* NotificationSettingsView.swift */; };
 		A80607972A3F1AAC00946A5E /* ActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80607962A3F1AAC00946A5E /* ActionView.swift */; };
 		A806079B2A3F212400946A5E /* TextInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A806079A2A3F212400946A5E /* TextInputView.swift */; };
 		A81E24982A7AA416005B8304 /* ManagedSettings.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8FE77582A6116EB008FC9CB /* ManagedSettings.framework */; };
@@ -161,7 +161,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		A80107162A9CE8E6005DC0E4 /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
+		A80107182A9E0229005DC0E4 /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
 		A80607922A3C2F1C00946A5E /* dayMind.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = dayMind.entitlements; sourceTree = "<group>"; };
 		A80607962A3F1AAC00946A5E /* ActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionView.swift; sourceTree = "<group>"; };
 		A806079A2A3F212400946A5E /* TextInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputView.swift; sourceTree = "<group>"; };
@@ -402,7 +402,6 @@
 				A8F2CFA82A0A2DB50030E175 /* TapBarView.swift */,
 				A87A463F2A69670F00B56036 /* LoadingView.swift */,
 				A8FC35D62A97462800424207 /* LoadingView2.swift */,
-				A80107162A9CE8E6005DC0E4 /* Notification.swift */,
 				A8F2CFB22A0A91F10030E175 /* UserInfoView */,
 				A8F2CFB12A0A91C00030E175 /* Mission */,
 				A86270682A8610800038E882 /* Home */,
@@ -477,6 +476,7 @@
 				A88432DF2A8D047D0046287D /* TransactionCell.swift */,
 				A88432DD2A8CD25E0046287D /* TransactionHistoryView.swift */,
 				A88432DB2A8CD2030046287D /* WithdrawalView.swift */,
+				A80107182A9E0229005DC0E4 /* NotificationSettingsView.swift */,
 			);
 			path = UserInfoView;
 			sourceTree = "<group>";
@@ -794,6 +794,7 @@
 				A8229A822A13914400881C31 /* ChangePasswordView.swift in Sources */,
 				A8FC35D72A97462800424207 /* LoadingView2.swift in Sources */,
 				A8FD9F5C2A3B677900905352 /* AllowListView.swift in Sources */,
+				A80107192A9E0229005DC0E4 /* NotificationSettingsView.swift in Sources */,
 				A863AECC2A0D300400407B6F /* DetailView.swift in Sources */,
 				A879EBA72A0F812100791AAC /* SignUpView.swift in Sources */,
 				A8FEAD612A78F59200174335 /* FirestoreMission.swift in Sources */,
@@ -814,7 +815,6 @@
 				A88432DC2A8CD2030046287D /* WithdrawalView.swift in Sources */,
 				A8CF3C942A7BB55400C38FA0 /* MissionTransformer.swift in Sources */,
 				A8229A882A13A9B600881C31 /* AccountSetting.swift in Sources */,
-				A80107172A9CE8E6005DC0E4 /* Notification.swift in Sources */,
 				A8F2CFA32A08F1E00030E175 /* HomeView.swift in Sources */,
 				A88432E02A8D047D0046287D /* TransactionCell.swift in Sources */,
 				A8FFF5072A700C0B00E42723 /* ImagePicker.swift in Sources */,

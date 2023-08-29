@@ -30,6 +30,7 @@ struct MissionRecordView: View {
         }
         .padding(.horizontal, 30)
         .padding(.vertical, 10)
+        .navigationTitle("환급 및 벌금 내역")
         
             List {
                 ForEach(userInfoViewModel.getGroupedMissions().keys.sorted(by: >), id: \.self) { key in

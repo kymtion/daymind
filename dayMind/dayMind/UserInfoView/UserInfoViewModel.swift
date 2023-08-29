@@ -13,6 +13,7 @@ class UserInfoViewModel: ObservableObject {
     @Published var missions: [FirestoreMission] = []
     @Published var balance: Int = 0
     @Published var transactions: [Transaction] = []
+   
     
     private let db = Firestore.firestore()
     var handle: AuthStateDidChangeListenerHandle?

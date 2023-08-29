@@ -79,9 +79,10 @@ exports.scheduledFunction = functions.pubsub.schedule('0 19 * * *').timeZone('As
   usersSnapshot.forEach(async (doc) => {
       const userData = doc.data();
       const fcmToken = userData.fcmToken;
+      const firebasePushNotificationEnabled = userData.notificationSettings ? userData.notificationSettings.firebasePushNotificationEnabled : true;
 
-      if (!fcmToken) {
-        console.error('FCM Token not found for the user');
+      if (!fcmToken || !firebasePushNotificationEnabled) {
+        console.log('FCM Token not found for the user or push notification is disabled');
         return;
       }
 
@@ -89,8 +90,8 @@ exports.scheduledFunction = functions.pubsub.schedule('0 19 * * *').timeZone('As
       const message = {
         token: fcmToken,
         notification: {
-          title: '오늘 밤 몇시에 주무실 계획이신가요? 😀',
-          body: '상쾌한 아침을 위한 준비, 지금 바로 수면 미션을 등록하세요!',
+          title: '오늘 밤 몇 시에 주무실 계획이신가요? 😀',
+          body: '건강한 내일을 위해, 지금 바로 수면 미션을 등록하세요!',
         },
         apns: {
           payload: {
@@ -105,6 +106,6 @@ exports.scheduledFunction = functions.pubsub.schedule('0 19 * * *').timeZone('As
       await admin.messaging().send(message);
   });
 
-  console.log('Notifications sent successfully at 6 PM');
+  console.log('Notifications sent successfully at 7 PM');
   return null;
 });

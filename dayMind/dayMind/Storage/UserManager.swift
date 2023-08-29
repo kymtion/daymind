@@ -8,6 +8,7 @@ struct User: Codable {
     var balance: Int
     var nickname: String
     var fcmToken: String?
+    var notificationSettings: [String: Bool]?
 }
 
 class UserManager {
@@ -27,6 +28,28 @@ class UserManager {
             print("Error writing user with FCM Token to Firestore: \(error)")
         }
     }
+    
+    func updateNotificationSettingsInFirestore(startNotificationEnabled: Bool, endNotificationEnabled: Bool, before10MinNotificationEnabled: Bool, firebasePushNotificationEnabled: Bool) {
+          guard let userId = Auth.auth().currentUser?.uid else { return }
+          
+          let userRef = db.collection("users").document(userId)
+          
+          let settings: [String: Bool] = [
+              "startNotificationEnabled": startNotificationEnabled,
+              "endNotificationEnabled": endNotificationEnabled,
+              "before10MinNotificationEnabled": before10MinNotificationEnabled,
+              "firebasePushNotificationEnabled": firebasePushNotificationEnabled
+          ]
+          
+          userRef.setData(["notificationSettings": settings], merge: true) { err in
+              if let err = err {
+                  print("Error updating document: \(err)")
+              } else {
+                  print("Document successfully updated")
+              }
+          }
+      }
+  
 
     
     // 사용자 정보 저장
@@ -53,11 +76,12 @@ class UserManager {
            db.collection("users").document(userId).getDocument { (snapshot, error) in
                guard let snapshot = snapshot, let data = snapshot.data(),
                      let jsonData = try? JSONSerialization.data(withJSONObject: data, options: []),
-                     let user = try? JSONDecoder().decode(User.self, from: jsonData) else {
+                     var user = try? JSONDecoder().decode(User.self, from: jsonData) else {
                    print("Error loading user: \(error?.localizedDescription ?? "")")
                    completion(nil)
                    return
                }
+               user.notificationSettings = data["notificationSettings"] as? [String: Bool]
                completion(user)
            }
        }

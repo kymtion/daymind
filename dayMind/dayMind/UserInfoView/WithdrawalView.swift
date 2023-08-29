@@ -95,6 +95,7 @@ struct WithdrawalView: View {
             }
         }
         .padding(.vertical, 30)
+        .navigationTitle("잔액 출금")
     }
 }
     

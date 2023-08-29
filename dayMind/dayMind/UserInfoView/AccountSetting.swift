@@ -70,6 +70,7 @@ struct AccountSetting: View {
             }
             .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
             .padding()
+            .navigationTitle("계정 설정")
         }
     }
 
