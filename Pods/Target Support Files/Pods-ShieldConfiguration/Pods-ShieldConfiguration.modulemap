@@ -1,0 +1,6 @@
+framework module Pods_ShieldConfiguration {
+  umbrella header "Pods-ShieldConfiguration-umbrella.h"
+
+  export *
+  module * { export * }
+}
