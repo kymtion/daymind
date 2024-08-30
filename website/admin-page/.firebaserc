@@ -1,0 +1,16 @@
+{
+  "projects": {
+    "default": "daymind-2f6e2"
+  },
+  "targets": {
+    "daymind-2f6e2": {
+      "hosting": {
+        "daymind-admin": [
+          "daymind"
+        ]
+      }
+    }
+  },
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
+}

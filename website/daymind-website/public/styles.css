@@ -1,0 +1,129 @@
+/* 전체 레이아웃 설정 */
+body {
+    font-family: 'Noto Sans', sans-serif;  /* Noto Sans 폰트 적용 */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    max-width: 428px;  /* 최대 너비를 428px로 고정 */
+    margin-left: auto;
+    margin-right: auto;  /* 중앙 정렬 */
+    overflow-x: hidden;  /* 가로 스크롤 제거 */
+}
+
+/* 상단 로고 영역 */
+header {
+    background-color: transparent;
+    padding: 10px;
+    text-align: left;
+    max-width: 428px;
+    width: 100%;  /* 너비 100% */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+header .logo img {
+    height: 50px; /* 로고 이미지 높이를 조정 */
+}
+
+/* 메인 콘텐츠 영역 */
+main {
+    flex: 1;  /* 메인 영역이 화면의 대부분을 차지하도록 설정 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f4f4f4;
+    max-width: 428px;
+    width: 100%;  /* 너비 100% */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+main .content {
+    text-align: center;
+}
+
+main .content img {
+    max-width: 100%; /* 이미지가 화면을 넘치지 않도록 설정 */
+    height: auto;
+}
+
+main .content p {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #333;
+}
+
+/* 하단 푸터 영역 */
+footer {
+    background-color: #555;  /* 연한 검정색 배경 */
+    color: white;
+    text-align: left;  /* 좌측 정렬 */
+    padding: 10px 20px;  /* 상하 20px, 좌우 40px 패딩 설정 */
+    font-weight: 400;  /* 기본 글씨체를 얇게 설정 */
+    font-family: 'Noto Sans', sans-serif;  /* Noto Sans 폰트 적용 */
+    font-size: 14px;  /* 기본 텍스트 크기 설정 */
+    max-width: 428px;
+    width: 100%;  /* 너비 100% */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+footer p {
+    margin: 5px 0;
+}
+
+footer p strong {
+    font-weight: bold;  /* 볼드체 */
+}
+
+/* '이라디오' 텍스트 크기와 간격 조정 */
+footer p.first-line {
+    font-size: 17px; 
+    margin-bottom: 20px;  /* 아래 텍스트와의 간격을 더 벌림 */
+}
+
+/* Header with buttons layout */
+.header-with-buttons {
+    display: flex;
+    justify-content: space-between;  /* 텍스트와 버튼을 양쪽에 배치 */
+    align-items: center;  /* 수직 정렬 */
+    max-width: 428px;
+    width: 100%;  /* 너비 100% */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 버튼 간격 조정 */
+.footer-buttons {
+    margin-top: -10px;  /* 상단 여백 추가로 버튼들이 더 위로 이동 */
+    display: flex;
+    gap: 10px;  /* 버튼 간격 유지 */
+}
+
+.footer-button {
+    font-weight: 700;  /* 볼드체 텍스트 */
+    color: white;  /* 텍스트 색상 */
+    text-decoration: none;  /* 링크 밑줄 제거 */
+    transition: opacity 0.3s ease;  /* 투명도 변화 애니메이션 */
+}
+
+.footer-button.service-terms {
+    font-weight: 400;  /* '서비스 이용약관'은 기본 글씨체 두께로 설정 */
+}
+
+.footer-button:hover {
+    opacity: 0.7;  /* 호버 시 텍스트가 약간 투명해짐 */
+}
+
+
+/* Copyright 텍스트만 가운데 정렬 */
+footer p.copyright {
+    text-align: center;
+    margin-top: 20px;  /* 상단 여백 추가 */
+}
