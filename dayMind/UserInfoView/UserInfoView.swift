@@ -110,62 +110,92 @@ struct UserInfoView: View {
             }
             .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
             .padding()
+            
+            Rectangle()
+                .frame(maxWidth: .infinity)
+                .frame(height: 10)
+                .foregroundColor(.gray.opacity(0.1))
+            VStack(alignment: .leading, spacing: 30) {
+                
+                NavigationLink {
+                    MissionRecordView().environmentObject(userInfoViewModel)
+                    
+                } label: {
+                    HStack {
+                        Text("환급 및 벌금 내역")
+                            .font(.system(size: 20, weight: .semibold))
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 20))
+                            .opacity(0.7)
+                        
+                    }
+                }
+                NavigationLink {
+                    TransactionHistoryView().environmentObject(userInfoViewModel)
+                    
+                } label: {
+                    HStack {
+                        Text("충전 및 출금 현황")
+                            .font(.system(size: 20, weight: .semibold))
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 20))
+                            .opacity(0.7)
+                        
+                    }
+                }
+                
+                NavigationLink {
+                    WithdrawalView().environmentObject(userInfoViewModel)
+                    
+                } label: {
+                    HStack {
+                        Text("잔액 출금")
+                            .font(.system(size: 20, weight: .semibold))
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 20))
+                            .opacity(0.7)
+                        
+                    }
+                }
+            }
+            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+            .padding()
                 
                 Rectangle()
                     .frame(maxWidth: .infinity)
                     .frame(height: 10)
                     .foregroundColor(.gray.opacity(0.1))
+                
                 VStack(alignment: .leading, spacing: 30) {
                     
                     NavigationLink {
-                        MissionRecordView().environmentObject(userInfoViewModel)
-                        
+                        LegalNoticeView().environmentObject(userInfoViewModel)  // 이 부분을 추가했습니다.
                     } label: {
                         HStack {
-                            Text("환급 및 벌금 내역")
+                            Text("법적 고지")
                                 .font(.system(size: 20, weight: .semibold))
                             Spacer()
                             Image(systemName: "chevron.right")
                                 .font(.system(size: 20))
                                 .opacity(0.7)
-                            
-                        }
-                    }
-                    NavigationLink {
-                        TransactionHistoryView().environmentObject(userInfoViewModel)
-                        
-                    } label: {
-                        HStack {
-                            Text("충전 및 출금 현황")
-                                .font(.system(size: 20, weight: .semibold))
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 20))
-                                .opacity(0.7)
-                            
                         }
                     }
                     
-                    NavigationLink {
-                        WithdrawalView().environmentObject(userInfoViewModel)
-                        
-                    } label: {
-                        HStack {
-                            Text("잔액 출금")
-                                .font(.system(size: 20, weight: .semibold))
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 20))
-                                .opacity(0.7)
-                            
-                        }
-                    }
-                }
-                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                .padding()
+                    
+                    
+                    
+                
             }
+            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+            .padding()
+            
         }
+            
     }
+}
 
 
 struct UserInfoView_Previews: PreviewProvider {

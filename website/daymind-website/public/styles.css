@@ -6,7 +6,8 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    max-width: 428px;  /* 최대 너비를 428px로 고정 */
+    width: 100%;  
+    max-width: 500px; 
     margin-left: auto;
     margin-right: auto;  /* 중앙 정렬 */
     overflow-x: hidden;  /* 가로 스크롤 제거 */
@@ -17,45 +18,81 @@ header {
     background-color: transparent;
     padding: 10px;
     text-align: left;
-    max-width: 428px;
     width: 100%;  /* 너비 100% */
+    max-width: 500px; 
     margin-left: auto;
     margin-right: auto;
 }
 
-
 header .logo img {
-    height: 50px; /* 로고 이미지 높이를 조정 */
+    height: 40px; /* 로고 이미지 높이를 조정 */
 }
 
 /* 메인 콘텐츠 영역 */
 main {
-    flex: 1;  /* 메인 영역이 화면의 대부분을 차지하도록 설정 */
+    flex: 1;
     display: flex;
+    flex-direction: column;  
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background-color: #f4f4f4;
-    max-width: 428px;
-    width: 100%;  /* 너비 100% */
+    background-color: #FFFFFF;
+    width: 100%;
+    max-width: 500px;
     margin-left: auto;
     margin-right: auto;
+    box-sizing: border-box;
 }
 
 
 main .content {
     text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 화면 너비에 꽉 차도록 설정 */
+main .content .full-width-background {
+    width: 100vw; /* 화면의 전체 너비로 설정 */
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0 auto 0px auto;
+    max-width: 500px; /* 최대 너비를 화면 전체로 설정 */
 }
 
 main .content img {
-    max-width: 100%; /* 이미지가 화면을 넘치지 않도록 설정 */
+    max-width: 100%;
     height: auto;
+    display: block;
+    margin: 0 auto;
 }
+
 
 main .content p {
     margin-top: 20px;
     font-size: 18px;
     color: #333;
+    line-height: 1.6;
+}
+
+/* iOS 앱 다운로드 버튼 스타일 */
+.download-button {
+    display: inline-block;
+    padding: 15px 30px;  /* 버튼의 패딩 설정 */
+    background-color: #007AFF;  /* iOS 스타일의 파란색 */
+    color: white;  /* 텍스트 색상 */
+    font-size: 16px;  /* 텍스트 크기 설정 */
+    font-weight: bold;  /* 볼드체 텍스트 */
+    text-align: center;  /* 텍스트 가운데 정렬 */
+    text-decoration: none;  /* 링크 밑줄 제거 */
+    border-radius: 25px;  /* 둥근 모서리 설정 */
+    transition: background-color 0.3s ease;  /* 배경색 변화 애니메이션 */
+    margin-bottom: 30px;  /* 하단 여백 추가 */
+}
+
+.download-button:hover {
+    background-color: #005BBB;  /* 호버 시 배경색 변경 */
 }
 
 /* 하단 푸터 영역 */
@@ -67,12 +104,12 @@ footer {
     font-weight: 400;  /* 기본 글씨체를 얇게 설정 */
     font-family: 'Noto Sans', sans-serif;  /* Noto Sans 폰트 적용 */
     font-size: 14px;  /* 기본 텍스트 크기 설정 */
-    max-width: 428px;
+    max-width: 500px;
     width: 100%;  /* 너비 100% */
     margin-left: auto;
     margin-right: auto;
+    box-sizing: border-box;
 }
-
 
 footer p {
     margin: 5px 0;
@@ -93,7 +130,7 @@ footer p.first-line {
     display: flex;
     justify-content: space-between;  /* 텍스트와 버튼을 양쪽에 배치 */
     align-items: center;  /* 수직 정렬 */
-    max-width: 428px;
+    max-width: 100%;
     width: 100%;  /* 너비 100% */
     margin-left: auto;
     margin-right: auto;
