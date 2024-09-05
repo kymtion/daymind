@@ -8,6 +8,8 @@ struct PaymentView: View {
     @State private var showAlertForEmptyAmount: Bool = false // 예치금 입력 알림을 표시할지 여부
     @State private var showAlertForConfirmation: Bool = false // 미션 등록 확인 알림을 표시할지 여부
     @State private var alertType: AlertType? // 현재 표시될 알림 유형 저장
+    @State private var showCancelPolicyModal: Bool = false // 결제 취소 규정 모달 표시 여부
+
     
     enum AlertType: Identifiable {
         case emptyAmount
@@ -184,6 +186,55 @@ struct PaymentView: View {
                             )
                         }
                     }
+                    
+                    Text("결제 조건 및 서비스 약관에 동의합니다")
+                        .foregroundColor(.gray)
+                        .font(.system(size: 20, weight: .bold))
+                        .padding(.top, 16)
+                    
+                    // 결제 취소 규정 및 이용약관 버튼
+                              HStack {
+                                  // 결제 취소 규정 버튼
+                                  Button(action: {
+                                      showCancelPolicyModal.toggle()
+                                  }) {
+                                      Text("결제 취소 규정")
+                                          .font(.system(size: 14, weight: .regular))
+                                          .underline()
+                                          .foregroundColor(.gray)
+                                  }
+                                  
+                                  // 이용약관 버튼 (링크)
+                                  Link(destination: URL(string: "https://daymind.co.kr")!) {
+                                      Text("이용약관")
+                                          .font(.system(size: 14, weight: .regular))
+                                          .underline()
+                                          .foregroundColor(.gray)
+                                  }
+                              }
+                              .padding(.top, 1)
+                          }
+                          .sheet(isPresented: $showCancelPolicyModal) {
+                              // 결제 취소 규정 모달 내용
+                              VStack {
+                                  Text("결제 취소 규정")
+                                      .font(.system(size: 20, weight: .bold))
+                                  
+                                  ScrollView {
+                                      Text("""
+                                      1. 미션 등록 후 30분 이내에 결제 취소 및 예치금 전액 환불이 가능합니다.
+                                      (단, 미션 시작 후에는 시간에 관계없이 취소 불가능)
+                                      
+                                      2. 미션 등록 후 30분 이후엔 미션 취소가 불가능합니다.
+                                      """)
+                                      .multilineTextAlignment(.leading)
+                                      .font(.system(size: 15, weight: .medium))
+                                      .lineSpacing(5)
+
+                                  }
+                              }
+                              .padding()
+                              .presentationDetents([.fraction(0.3)])
                 }
                 .onTapGesture {
                     formatAndRoundAmount()

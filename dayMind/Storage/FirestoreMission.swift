@@ -13,8 +13,9 @@ struct FirestoreMission: Identifiable, Codable {
     var missionStatus: MissionStatus
     var actualAmount: Int
     var userId: String
+    var missionCreationTime: Date
     
-    init(id: UUID, selectedTime1: Date, selectedTime2: Date, currentStore: String, missionType: String, imageName: String, missionStatus: MissionStatus, actualAmount: Int, userId: String) {
+    init(id: UUID, selectedTime1: Date, selectedTime2: Date, currentStore: String, missionType: String, imageName: String, missionStatus: MissionStatus, actualAmount: Int, userId: String, missionCreationTime: Date) {
         self.id = id
         self.selectedTime1 = selectedTime1
         self.selectedTime2 = selectedTime2
@@ -24,6 +25,7 @@ struct FirestoreMission: Identifiable, Codable {
         self.missionStatus = missionStatus
         self.actualAmount = actualAmount
         self.userId = userId
+        self.missionCreationTime = missionCreationTime // 기본값으로 Date() 설정하지 않음
     }
     
     enum CodingKeys: String, CodingKey {
@@ -36,6 +38,7 @@ struct FirestoreMission: Identifiable, Codable {
         case missionStatus
         case actualAmount
         case userId
+        case missionCreationTime // Firestore에 저장할 필드 추가
     }
     
     init(from decoder: Decoder) throws {
@@ -51,7 +54,10 @@ struct FirestoreMission: Identifiable, Codable {
         missionStatus = try container.decode(MissionStatus.self, forKey: .missionStatus)
         actualAmount = try container.decode(Int.self, forKey: .actualAmount)
         userId = try container.decode(String.self, forKey: .userId)
-    }
+        // missionCreationTime 필드 추가
+            let missionCreationTimeMilliseconds = try container.decode(Double.self, forKey: .missionCreationTime)
+            missionCreationTime = Date(timeIntervalSince1970: missionCreationTimeMilliseconds / 1000)
+        }
     
     
     
@@ -83,6 +89,7 @@ struct FirestoreMission: Identifiable, Codable {
             // selectedTime1 및 selectedTime2를 밀리초로 변환합니다.
             missionData["selectedTime1"] = mission.selectedTime1.timeIntervalSince1970 * 1000
             missionData["selectedTime2"] = mission.selectedTime2.timeIntervalSince1970 * 1000
+            missionData["missionCreationTime"] = mission.missionCreationTime.timeIntervalSince1970 * 1000
             
             db.collection("missions").document(mission.id.uuidString).setData(missionData)
         } catch let error {

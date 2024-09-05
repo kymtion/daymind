@@ -13,7 +13,7 @@ class UserInfoViewModel: ObservableObject {
     @Published var missions: [FirestoreMission] = []
     @Published var balance: Int = 0
     @Published var transactions: [Transaction] = []
-   
+    
     
     private let db = Firestore.firestore()
     var handle: AuthStateDidChangeListenerHandle?
@@ -89,12 +89,12 @@ class UserInfoViewModel: ObservableObject {
         self.balance = newBalance // 뷰 모델의 잔액 업데이트
     }
     
-    // 실패, 성공을 제외한 모든 미션의 예치금 합산
+    // 실패, 성공, 취소를 제외한 모든 미션의 예치금 합산 -> 현재의 예치금 총액을 알 수 있음
     func calculateOtherAmounts() -> Int {
         var otherAmount = 0
         
         for mission in missions {
-            if mission.missionStatus != .success && mission.missionStatus != .failure {
+            if mission.missionStatus != .success && mission.missionStatus != .failure  && mission.missionStatus != .canceled {
                 otherAmount += mission.actualAmount
             }
         }
@@ -102,23 +102,25 @@ class UserInfoViewModel: ObservableObject {
         return otherAmount
     }
     
-    // 실패, 성공 미션들의 예치금 합산 
-        func calculateAmounts() -> (successAmount: Int, failureAmount: Int) {
-            var successAmount = 0
-            var failureAmount = 0
-            
-            for mission in missions {
-                if mission.missionStatus == .success {
-                    successAmount += mission.actualAmount
-                } else if mission.missionStatus == .failure {
-                    failureAmount += mission.actualAmount
-                }
+    // 실패, 성공, 취소 미션들의 예치금 합산 -> 총 환급 금액과 벌금 총액을 계산해줌
+    func calculateAmounts() -> (successAmount: Int, failureAmount: Int, canceledAmount: Int) {
+        var successAmount = 0
+        var failureAmount = 0
+        var canceledAmount = 0
+        
+        for mission in missions {
+            if mission.missionStatus == .success {
+                successAmount += mission.actualAmount
+            } else if mission.missionStatus == .failure {
+                failureAmount += mission.actualAmount
+            } else if mission.missionStatus == .canceled {
+                canceledAmount += mission.actualAmount
             }
-            
-            return (successAmount, failureAmount)
         }
-
-
+        
+        return (successAmount, failureAmount, canceledAmount)
+    }
+    
     
     // 사용자 남은 잔액 정보 가져오기
     func loadUserBalance() {
@@ -135,9 +137,9 @@ class UserInfoViewModel: ObservableObject {
             completion(error)
         }
     }
-
-   
-
+    
+    
+    
     
     // 필터링, 그룹핑 및 정렬 작업을 수행하는 메소드
     func getGroupedMissions() -> [String: [FirestoreMission]] {
@@ -145,9 +147,9 @@ class UserInfoViewModel: ObservableObject {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy. MM.dd"
         let calendar = Calendar.current
-
+        
         for mission in missions {
-            if mission.missionStatus == .success || mission.missionStatus == .failure {
+            if mission.missionStatus == .success || mission.missionStatus == .failure || mission.missionStatus == .canceled {
                 let dateWithoutTime = calendar.startOfDay(for: mission.selectedTime2) // 시간 구성 요소를 제거합니다.
                 let dateString = dateFormatter.string(from: dateWithoutTime)
                 if groupedMissions[dateString] == nil {
@@ -156,14 +158,14 @@ class UserInfoViewModel: ObservableObject {
                 groupedMissions[dateString]?.append(mission)
             }
         }
-
+        
         for (date, missions) in groupedMissions {
             groupedMissions[date] = missions.sorted { $0.selectedTime2 > $1.selectedTime2 }
         }
-
+        
         return groupedMissions
     }
-
+    
     func signOut() -> Error? {
         do {
             try Auth.auth().signOut()
@@ -183,8 +185,8 @@ class UserInfoViewModel: ObservableObject {
     
     
     
-   
-
+    
+    
     // 닉네임 변경 함수
     func updateProfile(nickname: String, completion: @escaping (Error?) -> Void) {
         // Firestore의 users 컬렉션 참조
@@ -220,7 +222,7 @@ class UserInfoViewModel: ObservableObject {
             }
         }
     }
-
+    
     
     func reauthenticate(currentPassword: String, completion: @escaping (Error?) -> Void) {
         guard let email = Auth.auth().currentUser?.email else {
@@ -268,7 +270,7 @@ class UserInfoViewModel: ObservableObject {
                 print("Error signing out: \(error)")
             }
         }
-
+        
         // 카카오 로그인 사용자의 로그아웃 처리를 수행합니다.
         if UserApi.isKakaoTalkLoginAvailable() {
             UserApi.shared.logout {(error) in

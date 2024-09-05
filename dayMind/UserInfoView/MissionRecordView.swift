@@ -7,7 +7,7 @@ struct MissionRecordView: View {
     
     var body: some View {
         
-        let (successAmount, failureAmount) = userInfoViewModel.calculateAmounts()
+        let (successAmount, failureAmount, canceledAmount) = userInfoViewModel.calculateAmounts()
         
         VStack(spacing: 10) {
             HStack {
@@ -15,7 +15,7 @@ struct MissionRecordView: View {
                     .font(.system(size: 17, weight: .medium))
                     .opacity(0.7)
                 Spacer()
-                Text("\(successAmount.formattedWithComma())원")
+                Text("\((successAmount + canceledAmount).formattedWithComma())원")
                     .font(.system(size: 17, weight: .medium))
             }
             Divider()

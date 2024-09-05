@@ -9,6 +9,7 @@ struct ActionView: View {
     @EnvironmentObject var userInfoViewModel: UserInfoViewModel
     @Environment(\.colorScheme) var colorScheme
     @State var showAlert2: Bool = false // 포기하면 예치금 환급이 불가능합니다. 포기하시겠습니까?
+    @State var showAlertForCancel: Bool = false // 미션 취소 확인 알림
     @State private var alertType: AlertType?
     @State var remainingTime: String = ""
     @Binding var selectedMissionId: UUID?
@@ -18,6 +19,7 @@ struct ActionView: View {
     var mission: FirestoreMission? {
         missionViewModel.missions.first { $0.id == missionId }
     }
+    
     
     enum AlertType: Identifiable {
         case alreadyVerified
@@ -64,6 +66,8 @@ struct ActionView: View {
                     .foregroundColor(.red)
                     .opacity(0.8)
                 
+                
+                
                 HStack {
                     Text("●")
                         .foregroundColor(Color.green)
@@ -77,6 +81,7 @@ struct ActionView: View {
                 .padding()
                 .background(Color.gray.opacity(0.1))
                 .clipShape(Capsule())
+                
                 
                 
                 if let mission = mission {
@@ -182,7 +187,7 @@ struct ActionView: View {
                                                     
                                                     // Upload the image and metadata
                                                     missionViewModel.uploadImage(img, for: mission, captureTime: captureTime)
-                                             
+                                                    
                                                     self.showConfirmation = false
                                                     self.selectedMissionId = nil
                                                     missionViewModel.toVerification1(missionId: self.missionId)
@@ -198,13 +203,13 @@ struct ActionView: View {
                     }
                     if mission?.missionType == "수면", mission?.missionStatus == .verificationCompleted2 {
                         BlueButton(title: "인증완료") {
-                                showVerificationCompleted2 = true
-                            }
-                            .alert(isPresented: $showVerificationCompleted2) {
-                                Alert(title: Text("알림"), message: Text("모든 인증을 완료하셨습니다.\n오늘 자정에 환급 버튼이 생성됩니다."),
-                                      dismissButton: .default(Text("확인")))
-                            }
+                            showVerificationCompleted2 = true
                         }
+                        .alert(isPresented: $showVerificationCompleted2) {
+                            Alert(title: Text("알림"), message: Text("모든 인증을 완료하셨습니다.\n오늘 자정에 환급 버튼이 생성됩니다."),
+                                  dismissButton: .default(Text("확인")))
+                        }
+                    }
                     
                     
                     if mission?.missionType == "수면", mission?.missionStatus != .verificationCompleted1, mission?.missionStatus != .verificationCompleted2 {
@@ -263,8 +268,43 @@ struct ActionView: View {
             .frame(maxWidth: .infinity)
         }
         .padding(.top, 30)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(mission != nil ? formatMissionCreationTime(mission!.missionCreationTime) : "")
+        .navigationBarItems(trailing: missionViewModel.isMissionCancellable(missionId: missionId) ? cancelMissionButton : nil)
         .onAppear {
             midnightBackMoney() //자정에 환급버튼 생성 함수
+        }
+    }
+    
+    // 미션 취소 버튼
+    var cancelMissionButton: some View {
+        Group {
+            if missionViewModel.isMissionCancellable(missionId: missionId) {
+                Button(action: {
+                    showAlertForCancel = true
+                }) {
+                    Text("미션 취소")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundColor(.white)  // 글씨를 하얀색으로 설정
+                        .padding(.vertical, 10)
+                        .padding(.horizontal, 10)
+                        .background(Color.red)     // 버튼 배경을 빨간색으로 설정
+                        .cornerRadius(10)
+                }
+                .alert(isPresented: $showAlertForCancel) {
+                    Alert(
+                        title: Text("경고"),
+                        message: Text("정말로 미션을 취소하시겠습니까?\n(미션 등록 30분 이내 취소 가능)"),
+                        primaryButton: .destructive(Text("예"), action: {
+                            refundMissionAmount() // 환급 로직
+                            missionViewModel.cancelMission(missionId: missionId) // 미션 취소 함수 호출
+                        }),
+                        secondaryButton: .cancel(Text("아니오"))
+                    )
+                }
+            } else {
+                EmptyView() // 버튼이 표시되지 않도록 빈 뷰 반환
+            }
         }
     }
     
@@ -277,7 +317,16 @@ struct ActionView: View {
         let endTimeString = formatter.string(from: mission?.selectedTime2 ?? Date())
         return "\(startTimeString) ~ \(endTimeString)"
     }
-    // 남은 시간이 0초가 되면 자동으로 미션상태가 실패로 되고 앱차단이 풀림
+    
+    // 미션 등록 시각을 읽기 쉬운 형식으로 변환하는 함수 (함축적인 표현)
+    func formatMissionCreationTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "EEEE a h:mm"
+        return formatter.string(from: date)
+    }
+    
+    // 남은 시간이 0초가 되면 자동으로 미션상태가 실패로 되고 앱차단이 풀림 (수면 미션에 해당)
     func updateRemainingTime() {
         if let missionEndTime = mission?.selectedTime2 {
             let currentDate = Date()
@@ -324,10 +373,10 @@ struct ActionView: View {
     // 환급 버튼 누를 시 예치금이 남은 잔고에 더해주는 함수
     func refundMissionAmount() {
         guard let mission = mission else { return }
-
+        
         let refundAmount = mission.actualAmount
         var finalBalance = userInfoViewModel.balance + refundAmount
-
+        
         userInfoViewModel.updateBalance(newBalance: finalBalance) { error in
             if let error = error {
                 print("Failed to refund balance: \(error)")
@@ -338,6 +387,7 @@ struct ActionView: View {
     }
     
 }
+
 
 
 

@@ -13,6 +13,7 @@ struct AppGroupMission: Identifiable, Codable {
     var missionStatus: MissionStatus
     var actualAmount: Int
     var userId: String
+    var missionCreationTime: Date 
     
     static func saveMissionAppGroup(missions: [AppGroupMission]) {
         let userDefaults = UserDefaults(suiteName: "group.kr.co.daymind.daymind")

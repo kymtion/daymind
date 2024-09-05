@@ -21,29 +21,29 @@ class MissionViewModel: ObservableObject {
     @Published var selectedMission: Mission?
     
     @Published var startNotificationEnabled: Bool = true {
-            didSet {
-                updateNotificationSettings()
-            }
+        didSet {
+            updateNotificationSettings()
         }
-        
-        @Published var endNotificationEnabled: Bool = true {
-            didSet {
-                updateNotificationSettings()
-            }
+    }
+    
+    @Published var endNotificationEnabled: Bool = true {
+        didSet {
+            updateNotificationSettings()
         }
-        
-        @Published var before10MinNotificationEnabled: Bool = true {
-            didSet {
-                updateNotificationSettings()
-            }
+    }
+    
+    @Published var before10MinNotificationEnabled: Bool = true {
+        didSet {
+            updateNotificationSettings()
         }
-
-        @Published var firebasePushNotificationEnabled: Bool = true {
-            didSet {
-                updateNotificationSettings()
-            }
+    }
+    
+    @Published var firebasePushNotificationEnabled: Bool = true {
+        didSet {
+            updateNotificationSettings()
         }
-
+    }
+    
     
     private let storage = Storage.storage()
     private let userDefaultsKey = "managedSettings"
@@ -84,7 +84,7 @@ class MissionViewModel: ObservableObject {
             firebasePushNotificationEnabled: firebasePushNotificationEnabled
         )
     }
-  
+    
     
     // 충전 금액 데이터 저장
     func saveDepositTransaction(rechargeAmount: Int) {
@@ -184,6 +184,19 @@ class MissionViewModel: ObservableObject {
         }
     }
     
+    // 미션이 취소 가능한지 확인하는 함수
+    func isMissionCancellable(missionId: UUID) -> Bool {
+        // 해당 미션을 찾아야 함
+        guard let mission = missions.first(where: { $0.id == missionId }) else { return false }
+        
+        // 미션이 대기중 상태여야 하며, 미션 등록 후 30분 이내여야 함
+        let currentTime = Date()
+        let thirtyMinutes: TimeInterval = 30 * 60
+        
+        // 미션 상태가 "대기중"이고, 등록 후 30분 이내인 경우에만 true 반환
+        return mission.missionStatus == .beforeStart && currentTime.timeIntervalSince(mission.missionCreationTime) <= thirtyMinutes
+    }
+    
     // 미션 상태 -> 실패
     func giveUpMission(missionId: UUID) {
         FirestoreMission.updateMissionStatus(missionId: missionId, newStatus: .failure)
@@ -204,6 +217,19 @@ class MissionViewModel: ObservableObject {
                 self.missions = fetchedMissions
             }
         }
+    }
+    // 미션 상태 (대기중 -> 취소)
+    func cancelMission(missionId: UUID) {
+        if let mission = missions.first(where: { $0.id == missionId }),
+           mission.missionStatus == .beforeStart {
+            FirestoreMission.updateMissionStatus(missionId: mission.id, newStatus: .canceled) // "취소" 상태로 변경
+            FirestoreMission.loadUserMissions { fetchedMissions in
+                self.missions = fetchedMissions
+            }
+        }
+        
+        // 미션과 관련된 알림 취소
+        cancelAllNotifications(for: missionId)
     }
     
     // 모든 알림 취소 함수
@@ -252,7 +278,9 @@ class MissionViewModel: ObservableObject {
                                           imageName: selectedMission.imageName,
                                           missionStatus: MissionStatus.beforeStart,
                                           actualAmount: self.actualAmount,
-                                          userId: Auth.auth().currentUser?.uid ?? "")
+                                          userId: Auth.auth().currentUser?.uid ?? "",
+                                          missionCreationTime: Date()  // 미션 생성 시 현재 시각 기록
+        )
         self.missions.append(newMission)
         FirestoreMission.saveFirestoreMission(mission: newMission)
         AppGroupMission.saveMissionAppGroup(missions: self.missions.map { MissionTransformer.transform(firestoreMission: $0) })
@@ -279,8 +307,8 @@ class MissionViewModel: ObservableObject {
     
     
     
-
-
+    
+    
     
     
     // 미션 모니터링 시작 함수

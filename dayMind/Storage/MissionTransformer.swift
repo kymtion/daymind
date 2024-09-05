@@ -13,7 +13,8 @@ struct MissionTransformer {
                                imageName: firestoreMission.imageName,
                                missionStatus: firestoreMission.missionStatus,
                                actualAmount: firestoreMission.actualAmount,
-                               userId: firestoreMission.userId)
+                               userId: firestoreMission.userId,
+                               missionCreationTime: firestoreMission.missionCreationTime) // 추가
     }
     
     static func transformToFirestore(appGroupMission: AppGroupMission) -> FirestoreMission {
@@ -25,6 +26,7 @@ struct MissionTransformer {
                                 imageName: appGroupMission.imageName,
                                 missionStatus: appGroupMission.missionStatus,
                                 actualAmount: appGroupMission.actualAmount,
-                                userId: appGroupMission.userId)
+                                userId: appGroupMission.userId,
+                                missionCreationTime: appGroupMission.missionCreationTime) // 추가
     }
 }
