@@ -21,60 +21,74 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         
         // 알림 권한 요청
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-             UNUserNotificationCenter.current().requestAuthorization(
-                 options: authOptions,
-                 completionHandler: { (granted, error) in
-                     if granted {
-                         DispatchQueue.main.async {
-                             application.registerForRemoteNotifications()
-                         }
-                     }
-                 }
-             )
+        UNUserNotificationCenter.current().requestAuthorization(
+            options: authOptions,
+            completionHandler: { (granted, error) in
+                if granted {
+                    DispatchQueue.main.async {
+                        application.registerForRemoteNotifications()
+                    }
+                }
+            }
+        )
         
         KakaoSDK.initSDK(appKey: "c7a9c099dc5f4cb1ee215efffb2a2bfb")
         
         // FCM 토큰을 생성하고 저장, 앱을 처음 실행할때 마다 호출되므로 매번 최신 토큰을 반영해줌
-               Messaging.messaging().token { token, error in
-                   if let error = error {
-                       print("Error fetching FCM registration token: \(error)")
-                   } else if let token = token {
-                       print("FCM registration token: \(token)")
-                       
-                       // 현재 로그인한 사용자의 정보를 불러와 Firestore에 저장
-                       UserManager.shared.loadUser { (loadedUser) in
-                           if let user = loadedUser {
-                               UserManager.shared.saveUserWithFCMToken(user: user, fcmToken: token)
-                           } else {
-                               print("Failed to load the current user.")
-                           }
-                       }
-                       
-                   }
-               }
+        Messaging.messaging().token { token, error in
+            if let error = error {
+                print("Error fetching FCM registration token: \(error)")
+            } else if let token = token {
+                print("FCM registration token: \(token)")
+                
+                // 디바이스 ID 가져오기
+                guard let deviceId = UIDevice.current.identifierForVendor?.uuidString else {
+                    print("Failed to retrieve device ID")
+                    return
+                }
+                print("Device ID: \(deviceId)")
+                
+                // 현재 로그인한 사용자의 정보를 불러와 Firestore에 저장
+                UserManager.shared.loadUser { (loadedUser) in
+                    if let user = loadedUser {
+                        // 저장할 때 FCM 토큰과 디바이스 ID를 함께 저장
+                        UserManager.shared.saveUserWithFCMTokenAndDeviceId(user: user, fcmToken: token, deviceId: deviceId)
+                    } else {
+                        print("Failed to load the current user.")
+                    }
+                }
+                
+            }
+        }
         return true
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-          Messaging.messaging().apnsToken = deviceToken
-         
-      }
+        Messaging.messaging().apnsToken = deviceToken
+        
+    }
     
     // FCM 토큰 갱신 시 호출되는 메서드, 약간 리스너 같은 역할임 변경되면 반영해줌
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         print("Firebase registration token: \(fcmToken ?? "")")
         
+        // 디바이스 ID 가져오기
+              guard let deviceId = UIDevice.current.identifierForVendor?.uuidString else {
+                  print("Failed to retrieve device ID")
+                  return
+              }
+        
         // 현재 로그인한 사용자의 정보를 불러옵니다.
         UserManager.shared.loadUser { (loadedUser) in
             if let user = loadedUser {
-                // 가져온 사용자 정보와 새로운 FCM 토큰으로 Firestore를 업데이트합니다.
-                UserManager.shared.saveUserWithFCMToken(user: user, fcmToken: fcmToken ?? "")
+                // 가져온 사용자 정보와 새로운 FCM 토큰, 디바이스 ID로 Firestore를 업데이트
+                UserManager.shared.saveUserWithFCMTokenAndDeviceId(user: user, fcmToken: fcmToken ?? "", deviceId: deviceId)
             } else {
                 print("Failed to load the current user.")
             }
         }
     }
-
+    
     
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
@@ -90,9 +104,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         return sceneConfiguration
     }
     
-   
-}
     
+}
+
 
 
 
