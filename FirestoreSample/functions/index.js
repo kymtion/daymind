@@ -71,40 +71,70 @@ exports.exchangeKakaoCode = functions.https.onCall(async (data, context) => {
   }
 });
 
-// 매일 저녁 6시에 실행되는 스케쥴러
+// Firestore에 FCM 토큰 저장할 때 디바이스 ID도 저장
+exports.saveFcmToken = functions.https.onCall(async (data, context) => {
+  const userId = context.auth.uid;
+  const fcmToken = data.fcmToken;
+  const deviceId = data.deviceId;
+
+  if (!fcmToken || !deviceId) {
+    throw new functions.https.HttpsError('invalid-argument', 'FCM 토큰과 디바이스 ID는 필수입니다.');
+  }
+
+  // Firestore에 FCM 토큰과 디바이스 ID 저장
+  await firestore.collection('users').doc(userId).set({
+    fcmTokens: admin.firestore.FieldValue.arrayUnion({ token: fcmToken, deviceId: deviceId }),
+  }, { merge: true });
+
+  return { success: true };
+});
+
+// 매일 저녁 7시에 실행되는 스케쥴러
 exports.scheduledFunction = functions.pubsub.schedule('0 19 * * *').timeZone('Asia/Seoul').onRun(async (context) => {
-  // Firestore에서 모든 사용자의 FCM 토큰을 가져옵니다.
   const usersSnapshot = await firestore.collection('users').get();
-  
-  usersSnapshot.forEach(async (doc) => {
-      const userData = doc.data();
-      const fcmToken = userData.fcmToken;
-      const firebasePushNotificationEnabled = userData.notificationSettings ? userData.notificationSettings.firebasePushNotificationEnabled : true;
+  const sentDeviceIds = new Set();  // 이미 알림을 보낸 디바이스 ID를 저장하는 Set
 
-      if (!fcmToken || !firebasePushNotificationEnabled) {
-        console.log('FCM Token not found for the user or push notification is disabled');
-        return;
-      }
+  for (const doc of usersSnapshot.docs) {
+    const userData = doc.data();
+    const fcmToken = userData.fcmToken;
+    const deviceId = userData.deviceId;
+    const firebasePushNotificationEnabled = userData.notificationSettings ? userData.notificationSettings.firebasePushNotificationEnabled : true;
 
-      // FCM 푸시 알람 보내기
-      const message = {
-        token: fcmToken,
-        notification: {
-          title: '오늘 밤 몇 시에 주무실 계획이신가요? 😀',
-          body: '건강한 내일을 위해, 지금 바로 수면 미션을 등록하세요!',
-        },
-        apns: {
-          payload: {
-            aps: {
-              sound: 'default', // 'default' 또는 사용자 정의 사운드
-            },
+    // 알림이 비활성화된 경우 스킵
+    if (!fcmToken || !firebasePushNotificationEnabled) {
+      console.log('FCM Token not found for the user or push notification is disabled');
+      continue;
+    }
+
+    // 이미 알림을 보낸 디바이스는 스킵
+    if (sentDeviceIds.has(deviceId)) {
+      console.log(`Skipping duplicate notification for device ${deviceId}`);
+      continue;
+    }
+
+    const message = {
+      token: fcmToken, // 단일 fcmToken 사용
+      notification: {
+        title: '오늘 밤 몇 시에 주무실 계획이신가요? 😀',
+        body: '수면 미션을 등록하세요!',
+      },
+      apns: {
+        payload: {
+          aps: {
+            sound: 'default', // 'default' 또는 사용자 정의 사운드
           },
         },
-      };
+      },
+    };
 
-      // 알림 전송
+    try {
       await admin.messaging().send(message);
-  });
+      console.log(`Notification sent to device ${deviceId}`);
+      sentDeviceIds.add(deviceId);
+    } catch (error) {
+      console.error(`Failed to send notification to device ${deviceId}: ${error.message}`);
+    }
+  }
 
   console.log('Notifications sent successfully at 7 PM');
   return null;
