@@ -228,10 +228,13 @@ struct ActionView: View {
                 // 자정 이후에 생기는 환급 버튼
                 if showMidnightButton {
                     GreenButton(title: "환 급") {
-                        refundMissionAmount()
-                        missionViewModel.completeMission(missionId: missionId)
+                        if let mission = mission {
+                            userInfoViewModel.saveWithdrawalTransaction(withdrawalAmount: mission.actualAmount) // 출금 트랜잭션 기록
+                            missionViewModel.completeMission(missionId: missionId) // 미션 완료 처리
+                        }
                     }
                 }
+                
                 //미션 상태가 인증완료 일때만 포기 버튼이 사라짐
                 if mission?.missionStatus != .verificationCompleted2 {
                     
@@ -253,10 +256,14 @@ struct ActionView: View {
                 //미션 타입 -> 집중
                 if mission?.missionStatus == .verificationCompleted2 && mission?.missionType == "집중" {
                     GreenButton(title: "환 급") {
-                        refundMissionAmount()
-                        missionViewModel.completeMission(missionId: missionId)
+                        if let mission = mission {
+                            userInfoViewModel.saveWithdrawalTransaction(withdrawalAmount: mission.actualAmount) // 출금 트랜잭션 기록
+                            missionViewModel.completeMission(missionId: missionId) // 미션 완료 처리
+                        }
                     }
                 }
+                
+                
                 if mission?.missionType == "집중" {
                     Text("차단된 앱을 클릭하여 '미션완료' 버튼을 \n누르면 '환급' 버튼이 생성됩니다.")
                         .font(.system(size: 16))
@@ -296,8 +303,10 @@ struct ActionView: View {
                         title: Text("경고"),
                         message: Text("정말로 미션을 취소하시겠습니까?\n(미션 등록 30분 이내 취소 가능)"),
                         primaryButton: .destructive(Text("예"), action: {
-                            refundMissionAmount() // 환급 로직
-                            missionViewModel.cancelMission(missionId: missionId) // 미션 취소 함수 호출
+                            if let mission = mission {
+                                userInfoViewModel.saveWithdrawalTransaction(withdrawalAmount: mission.actualAmount) // 출금 트랜잭션 기록
+                                missionViewModel.cancelMission(missionId: missionId) // 미션 취소 함수 호출
+                            }
                         }),
                         secondaryButton: .cancel(Text("아니오"))
                     )

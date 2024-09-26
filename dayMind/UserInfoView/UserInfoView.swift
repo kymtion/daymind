@@ -39,21 +39,22 @@ struct UserInfoView: View {
                 .padding(.top, 15)
                 
                 HStack {
-                    Spacer()
-                    VStack(spacing: 5) {
-                        Image(systemName: "wonsign.circle")
-                            .symbolRenderingMode(.hierarchical)
-                            .foregroundColor(.blue)
-                            .aspectRatio(contentMode: .fit)
-                            .font(.system(size: 40))
-                            .opacity(0.9)
+//                    Spacer()
+//                    VStack(spacing: 5) {
+//                        Image(systemName: "wonsign.circle")
+//                            .symbolRenderingMode(.hierarchical)
+//                            .foregroundColor(.blue)
+//                            .aspectRatio(contentMode: .fit)
+//                            .font(.system(size: 40))
+//                            .opacity(0.9)
                         
-                        Text("현재 보유 잔액")
-                            .font(.system(size: 13, weight: .semibold))
-                            .opacity(0.7)
-                        Text("\(userInfoViewModel.balance.formattedWithComma())원")
-                            .font(.system(size: 18, weight: .bold))
-                    }
+//                        Text("현재 보유 잔액")
+//                            .font(.system(size: 13, weight: .semibold))
+//                            .opacity(0.7)
+//                        Text("\(userInfoViewModel.balance.formattedWithComma())원")
+//                            .font(.system(size: 18, weight: .bold))
+//                    }
+                    
                     Spacer()
                     VStack(spacing: 5) {
                         Image(systemName: "banknote")
@@ -131,35 +132,35 @@ struct UserInfoView: View {
                         
                     }
                 }
-                NavigationLink {
-                    TransactionHistoryView().environmentObject(userInfoViewModel)
-                    
-                } label: {
-                    HStack {
-                        Text("충전 및 출금 현황")
-                            .font(.system(size: 20, weight: .semibold))
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 20))
-                            .opacity(0.7)
-                        
-                    }
-                }
+//                NavigationLink {
+//                    TransactionHistoryView().environmentObject(userInfoViewModel)
+//                    
+//                } label: {
+//                    HStack {
+//                        Text("충전 및 출금 현황")
+//                            .font(.system(size: 20, weight: .semibold))
+//                        Spacer()
+//                        Image(systemName: "chevron.right")
+//                            .font(.system(size: 20))
+//                            .opacity(0.7)
+//                        
+//                    }
+//                }
                 
-                NavigationLink {
-                    WithdrawalView().environmentObject(userInfoViewModel)
-                    
-                } label: {
-                    HStack {
-                        Text("잔액 출금")
-                            .font(.system(size: 20, weight: .semibold))
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 20))
-                            .opacity(0.7)
-                        
-                    }
-                }
+//                NavigationLink {
+//                    WithdrawalView().environmentObject(userInfoViewModel)
+//                    
+//                } label: {
+//                    HStack {
+//                        Text("잔액 출금")
+//                            .font(.system(size: 20, weight: .semibold))
+//                        Spacer()
+//                        Image(systemName: "chevron.right")
+//                            .font(.system(size: 20))
+//                            .opacity(0.7)
+//                        
+//                    }
+//                }
             }
             .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
             .padding()

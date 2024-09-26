@@ -100,10 +100,10 @@ struct PaymentView: View {
                                 .font(.system(size: 23, weight: .semibold))
                                 .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                             
-                            Text("현재 보유 금액 \(userInfoViewModel.balance)원")
-                                .font(.system(size: 13, weight: .regular))
-                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                                .opacity(0.7)
+//                            Text("현재 보유 금액 \(userInfoViewModel.balance)원")
+//                                .font(.system(size: 13, weight: .regular))
+//                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+//                                .opacity(0.7)
                             Spacer()
                         }
                         HStack {
@@ -114,20 +114,20 @@ struct PaymentView: View {
                         .font(.system(size: 17, weight: .medium))
                         .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                         
-                        HStack {
-                            Text("사용 금액 ")
-                            Spacer()
-                            Text("\(missionViewModel.actualAmount - calculateRechargeAmount()) 원")
-                        }
-                        .font(.system(size: 17, weight: .medium))
-                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+//                        HStack {
+//                            Text("사용 금액 ")
+//                            Spacer()
+//                            Text("\(missionViewModel.actualAmount - calculateRechargeAmount()) 원")
+//                        }
+//                        .font(.system(size: 17, weight: .medium))
+//                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                         
                         HStack {
                             Text("충전 금액")
                                 .font(.system(size: 23, weight: .semibold))
                                 .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                             Spacer()
-                            Text("\(calculateRechargeAmount()) 원")
+                            Text("\(missionViewModel.actualAmount) 원")
                                 .font(.system(size: 23, weight: .semibold))
                                 .foregroundColor(.red)
                                 .opacity(0.8)
@@ -154,15 +154,15 @@ struct PaymentView: View {
                             return Alert(title: Text("알림"), message: Text("미션을 등록하시겠습니까?"),
                                          primaryButton: .default(Text("예"), action: {
                                 // 금액 계산
-                                let rechargeAmount = calculateRechargeAmount()
+                                let rechargeAmount = missionViewModel.actualAmount
                                 var finalBalance = userInfoViewModel.balance
-                                
-                                if rechargeAmount > 0 {
-                                    finalBalance += rechargeAmount
-                                    finalBalance -= missionViewModel.actualAmount
-                                } else {
-                                    finalBalance -= missionViewModel.actualAmount
-                                }
+//                                
+//                                if rechargeAmount > 0 {
+//                                    finalBalance += rechargeAmount
+//                                    finalBalance -= missionViewModel.actualAmount
+//                                } else {
+//                                    finalBalance -= missionViewModel.actualAmount
+//                                }
                                 
                                 // 잔액 업데이트
                                 userInfoViewModel.updateBalance(newBalance: finalBalance) { error in
@@ -274,14 +274,14 @@ struct PaymentView: View {
     func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
-    // 예치금과 남은잔고의 크기 비교에 따른 충전금액 산출 로직
-    func calculateRechargeAmount() -> Int {
-        if missionViewModel.actualAmount > userInfoViewModel.balance {
-            return missionViewModel.actualAmount - userInfoViewModel.balance
-        } else {
-            return 0
-        }
-    }
+//    // 예치금과 남은잔고의 크기 비교에 따른 충전금액 산출 로직 -> 현대 카드 심사로 잠시 삭제
+//    func calculateRechargeAmount() -> Int {
+//        if missionViewModel.actualAmount > userInfoViewModel.balance {
+//            return missionViewModel.actualAmount - userInfoViewModel.balance
+//        } else {
+//            return 0
+//        }
+//    }
     
     
 }
